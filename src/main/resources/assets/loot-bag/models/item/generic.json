@@ -1,0 +1,8 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "loot-bag:item/bag_body",
+    "layer1": "loot-bag:item/bag_overlay",
+    "layer2": "loot-bag:item/bag_string"
+  }
+}
