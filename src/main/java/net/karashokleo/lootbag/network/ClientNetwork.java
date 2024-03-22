@@ -2,9 +2,9 @@ package net.karashokleo.lootbag.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.karashokleo.lootbag.client.OptionalLootBagScreen;
-import net.karashokleo.lootbag.client.RandomLootBagScreen;
-import net.karashokleo.lootbag.client.SingleLootBagScreen;
+import net.karashokleo.lootbag.client.screen.OptionalLootBagScreen;
+import net.karashokleo.lootbag.client.screen.RandomLootBagScreen;
+import net.karashokleo.lootbag.client.screen.SingleLootBagScreen;
 import net.karashokleo.lootbag.content.LootBagItem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;

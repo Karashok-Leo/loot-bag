@@ -4,7 +4,8 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.karashokleo.lootbag.LootBag;
 import net.karashokleo.lootbag.config.LootBagConfig;
-import net.karashokleo.lootbag.config.DefaultConfig.Entry;
+import net.karashokleo.lootbag.config.initial.LootBagEntries.Entry;
+import net.karashokleo.lootbag.config.initial.LootTableEntries;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -14,10 +15,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LootBagItems
 {
@@ -33,12 +31,17 @@ public class LootBagItems
 
     public static void registerLootBags()
     {
-        for (Map.Entry<String, Entry> entry : LootBagConfig.getBagEntries().entrySet())
+        for (Map.Entry<String, Entry> entry : LootBagConfig.getLootBagEntries().entrySet())
         {
             LootBagItem item = new LootBagItem(
                     entry.getValue().name,
                     entry.getValue().type,
-                    entry.getValue().loot_tables,
+                    Arrays
+                            .stream(entry.getValue().loot_tables)
+                            .map(s -> LootBagConfig.getLootTableEntries().get(s))
+                            .filter(Objects::nonNull)
+                            .toList()
+                            .toArray(new LootTableEntries.Entry[]{}),
                     entry.getValue().stack,
                     entry.getValue().rarity
             );

@@ -1,7 +1,7 @@
-package net.karashokleo.lootbag.client;
+package net.karashokleo.lootbag.client.screen;
 
 import net.karashokleo.lootbag.LootBag;
-import net.karashokleo.lootbag.config.DefaultConfig.Entry.LootEntry;
+import net.karashokleo.lootbag.config.initial.LootTableEntries.Entry;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -18,7 +18,7 @@ public class OptionalLootBagScreen extends ScrollableLootBagScreen
     private ToggleButtonWidget prevArrow;
     private ToggleButtonWidget nextArrow;
 
-    public OptionalLootBagScreen(LootEntry[] lootEntries, Hand hand)
+    public OptionalLootBagScreen(Entry[] lootEntries, Hand hand)
     {
         super(Text.translatable(TEXT_OPTIONAL), lootEntries, hand);
     }

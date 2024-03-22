@@ -1,7 +1,7 @@
-package net.karashokleo.lootbag.client;
+package net.karashokleo.lootbag.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.karashokleo.lootbag.config.DefaultConfig.Entry.LootEntry;
+import net.karashokleo.lootbag.config.initial.LootTableEntries.Entry;
 import net.karashokleo.lootbag.network.ClientNetwork;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
@@ -30,12 +30,12 @@ public class BaseLootBagScreen extends Screen
     private static final float ICON_SIZE = 64;
     private static final float ICON_Y = 40;
     protected int currentEntryIndex = 0;
-    protected LootEntry[] lootEntries;
+    protected Entry[] lootEntries;
     protected Hand hand;
     protected ButtonWidget openButton;
     protected MultilineText description;
 
-    protected BaseLootBagScreen(Text title, LootEntry[] lootEntries, Hand hand)
+    protected BaseLootBagScreen(Text title, Entry[] lootEntries, Hand hand)
     {
         super(title);
         this.lootEntries = lootEntries;
@@ -87,7 +87,7 @@ public class BaseLootBagScreen extends Screen
 //        context.drawCenteredTextWithShadow(textRenderer, Text.translatable(getCurrentEntry().description), width / 2, DESC_Y, DESC_COLOR);
     }
 
-    protected void drawIcon(DrawContext context, LootEntry.Icon icon, float offsetX, float scale, float alpha)
+    protected void drawIcon(DrawContext context, Entry.Icon icon, float offsetX, float scale, float alpha)
     {
         float scaleW = ICON_SIZE / icon.width;
 
@@ -146,7 +146,7 @@ public class BaseLootBagScreen extends Screen
         return index;
     }
 
-    protected LootEntry getCurrentEntry()
+    protected Entry getCurrentEntry()
     {
         return lootEntries[currentEntryIndex];
     }

@@ -1,7 +1,7 @@
 package net.karashokleo.lootbag.content;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.karashokleo.lootbag.config.DefaultConfig.Entry.LootEntry;
+import net.karashokleo.lootbag.config.initial.LootTableEntries.Entry;
 import net.karashokleo.lootbag.network.ServerNetwork;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,9 +28,9 @@ public class LootBagItem extends Item
 {
     public String name;
     public LootBagType type;
-    public LootEntry[] lootEntries;
+    public Entry[] lootEntries;
 
-    public LootBagItem(String name, LootBagType type, LootEntry[] lootEntries, int stack, Rarity rarity)
+    public LootBagItem(String name, LootBagType type, Entry[] lootEntries, int stack, Rarity rarity)
     {
         super(new FabricItemSettings().maxCount(stack).rarity(rarity));
         this.name = name;
