@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.karashokleo.lootbag.LootBag;
 import net.karashokleo.lootbag.config.LootBagConfig;
 import net.karashokleo.lootbag.config.initial.LootBagEntries.Entry;
-import net.karashokleo.lootbag.config.initial.LootTableEntries;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -36,12 +35,7 @@ public class LootBagItems
             LootBagItem item = new LootBagItem(
                     entry.getValue().name,
                     entry.getValue().type,
-                    Arrays
-                            .stream(entry.getValue().loot_tables)
-                            .map(s -> LootBagConfig.getLootTableEntries().get(s))
-                            .filter(Objects::nonNull)
-                            .toList()
-                            .toArray(new LootTableEntries.Entry[]{}),
+                    LootBagConfig.getLootTableEntries(entry.getValue().loot_tables),
                     entry.getValue().stack,
                     entry.getValue().rarity
             );

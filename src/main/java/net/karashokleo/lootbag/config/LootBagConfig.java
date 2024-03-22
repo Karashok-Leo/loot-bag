@@ -5,7 +5,9 @@ import net.karashokleo.lootbag.config.initial.LootBagEntries;
 import net.karashokleo.lootbag.config.initial.LootTableEntries;
 import net.tinyconfig.ConfigManager;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 public class LootBagConfig
 {
@@ -29,13 +31,19 @@ public class LootBagConfig
         return loot_bags.value.entries;
     }
 
-    public static Map<String, LootTableEntries.Entry> getLootTableEntries()
+    public static LootTableEntries.Entry[] getLootTableEntries(String[] tables)
     {
-        return loot_tables.value.entries;
+        return Arrays
+                .stream(tables)
+                .map(s -> loot_tables.value.entries.get(s))
+                .filter(Objects::nonNull)
+                .toList()
+                .toArray(new LootTableEntries.Entry[]{});
     }
 
     public static void init()
     {
         loot_bags.refresh();
+        loot_tables.refresh();
     }
 }

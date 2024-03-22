@@ -14,7 +14,6 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -36,18 +35,6 @@ public class LootBagItem extends Item
         this.name = name;
         this.type = type;
         this.lootEntries = lootEntries;
-    }
-
-    @Override
-    public Text getName(ItemStack stack)
-    {
-        return this.getName();
-    }
-
-    @Override
-    public Text getName()
-    {
-        return Text.translatable(name);
     }
 
     @Override
