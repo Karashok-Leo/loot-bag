@@ -1,6 +1,6 @@
 package net.karashokleo.lootbag.client.screen;
 
-import net.karashokleo.lootbag.config.initial.LootTableEntries.Entry;
+import net.karashokleo.lootbag.content.LootEntry;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -12,7 +12,7 @@ public class ScrollableLootBagScreen extends BaseLootBagScreen
     protected static final float OFFSET_MUL = 6;
     protected int offset = 0;
 
-    public ScrollableLootBagScreen(Text title, Entry[] lootEntries, Hand hand)
+    public ScrollableLootBagScreen(Text title, LootEntry[] lootEntries, Hand hand)
     {
         super(title, lootEntries, hand);
     }
@@ -56,7 +56,7 @@ public class ScrollableLootBagScreen extends BaseLootBagScreen
         return 1F * Math.abs(offset) / MAX_OFFSET;
     }
 
-    private Entry getOldEntry()
+    private LootEntry getOldEntry()
     {
         int oldIndex = currentEntryIndex - getDirection();
         oldIndex = adapt(oldIndex);

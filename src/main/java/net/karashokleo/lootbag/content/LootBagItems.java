@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.karashokleo.lootbag.LootBag;
 import net.karashokleo.lootbag.config.LootBagConfig;
-import net.karashokleo.lootbag.config.initial.LootBagEntries.Entry;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -20,7 +19,6 @@ public class LootBagItems
 {
     public static final RegistryKey<ItemGroup> ITEM_GROUP_KEY = RegistryKey.of(RegistryKeys.ITEM_GROUP, LootBag.id("loot_bag"));
     public static List<LootBagItem> itemList = new ArrayList<>();
-    public static Map<LootBagItem, Entry> entryMap = new HashMap<>();
 
     public static void init()
     {
@@ -30,18 +28,17 @@ public class LootBagItems
 
     public static void registerLootBags()
     {
-        for (Map.Entry<String, Entry> entry : LootBagConfig.getLootBagEntries().entrySet())
+        for (Map.Entry<String, LootBagEntry> entry : LootBagConfig.getLootBagEntries().entrySet())
         {
             LootBagItem item = new LootBagItem(
-                    entry.getValue().name,
                     entry.getValue().type,
+                    entry.getValue().color,
                     LootBagConfig.getLootTableEntries(entry.getValue().loot_tables),
                     entry.getValue().stack,
                     entry.getValue().rarity
             );
             Registry.register(Registries.ITEM, new Identifier(entry.getKey()), item);
             itemList.add(item);
-            entryMap.put(item, entry.getValue());
         }
     }
 

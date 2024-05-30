@@ -2,7 +2,9 @@ package net.karashokleo.lootbag.config;
 
 import net.karashokleo.lootbag.LootBag;
 import net.karashokleo.lootbag.config.initial.LootBagEntries;
-import net.karashokleo.lootbag.config.initial.LootTableEntries;
+import net.karashokleo.lootbag.config.initial.LootEntries;
+import net.karashokleo.lootbag.content.LootBagEntry;
+import net.karashokleo.lootbag.content.LootEntry;
 import net.tinyconfig.ConfigManager;
 
 import java.util.Arrays;
@@ -15,30 +17,26 @@ public class LootBagConfig
             ("loot_bag_entries", new LootBagEntries())
             .builder()
             .setDirectory(LootBag.MOD_ID)
-            .enableLogging(true)
-            .sanitize(true)
             .build();
-    private static final ConfigManager<LootTableEntries> loot_tables = new ConfigManager<>
-            ("loot_table_entries", new LootTableEntries())
+    private static final ConfigManager<LootEntries> loot_tables = new ConfigManager<>
+            ("loot_table_entries", new LootEntries())
             .builder()
             .setDirectory(LootBag.MOD_ID)
-            .enableLogging(true)
-            .sanitize(true)
             .build();
 
-    public static Map<String, LootBagEntries.Entry> getLootBagEntries()
+    public static Map<String, LootBagEntry> getLootBagEntries()
     {
         return loot_bags.value.entries;
     }
 
-    public static LootTableEntries.Entry[] getLootTableEntries(String[] tables)
+    public static LootEntry[] getLootTableEntries(String[] tables)
     {
         return Arrays
                 .stream(tables)
                 .map(s -> loot_tables.value.entries.get(s))
                 .filter(Objects::nonNull)
                 .toList()
-                .toArray(new LootTableEntries.Entry[]{});
+                .toArray(new LootEntry[]{});
     }
 
     public static void init()

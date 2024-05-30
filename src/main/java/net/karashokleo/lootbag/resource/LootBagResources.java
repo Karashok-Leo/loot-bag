@@ -2,7 +2,7 @@ package net.karashokleo.lootbag.resource;
 
 import net.karashokleo.lootbag.LootBag;
 import net.karashokleo.lootbag.config.LootBagConfig;
-import net.karashokleo.lootbag.config.initial.LootBagEntries;
+import net.karashokleo.lootbag.content.LootBagEntry;
 import net.karashokleo.lootbag.content.LootBagTags;
 import net.karashokleo.lootbag.content.LootBagType;
 import net.minecraft.util.Identifier;
@@ -39,7 +39,7 @@ public class LootBagResources
 
     private static void addTags()
     {
-        for (Map.Entry<String, LootBagEntries.Entry> entry : LootBagConfig.getLootBagEntries().entrySet())
+        for (Map.Entry<String, LootBagEntry> entry : LootBagConfig.getLootBagEntries().entrySet())
         {
             try
             {

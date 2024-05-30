@@ -1,16 +1,15 @@
 package net.karashokleo.lootbag.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.karashokleo.lootbag.config.initial.LootTableEntries.Entry;
+import net.karashokleo.lootbag.content.LootEntry;
 import net.karashokleo.lootbag.network.ClientNetwork;
-import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
@@ -30,12 +29,11 @@ public class BaseLootBagScreen extends Screen
     private static final float ICON_SIZE = 64;
     private static final float ICON_Y = 40;
     protected int currentEntryIndex = 0;
-    protected Entry[] lootEntries;
+    protected LootEntry[] lootEntries;
     protected Hand hand;
     protected ButtonWidget openButton;
-    protected MultilineText description;
 
-    protected BaseLootBagScreen(Text title, Entry[] lootEntries, Hand hand)
+    protected BaseLootBagScreen(Text title, LootEntry[] lootEntries, Hand hand)
     {
         super(title);
         this.lootEntries = lootEntries;
@@ -76,18 +74,16 @@ public class BaseLootBagScreen extends Screen
 
     protected void drawName(DrawContext context)
     {
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable(getCurrentEntry().name), width / 2, NAME_Y, NAME_COLOR);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable(getCurrentEntry().name).formatted(Formatting.BOLD), width / 2, NAME_Y, NAME_COLOR);
     }
 
     protected void drawDescription(DrawContext context)
     {
-        if (description == null)
-            description = MultilineText.create(textRenderer, StringVisitable.plain(getCurrentEntry().description), 100);
-        description.drawCenterWithShadow(context, width / 2, DESC_Y, 10, DESC_COLOR);
-//        context.drawCenteredTextWithShadow(textRenderer, Text.translatable(getCurrentEntry().description), width / 2, DESC_Y, DESC_COLOR);
+        for (int i = 0; i < getCurrentEntry().description.length; i++)
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable(getCurrentEntry().description[i]), width / 2, DESC_Y + i * 15, DESC_COLOR);
     }
 
-    protected void drawIcon(DrawContext context, Entry.Icon icon, float offsetX, float scale, float alpha)
+    protected void drawIcon(DrawContext context, LootEntry.Icon icon, float offsetX, float scale, float alpha)
     {
         float scaleW = ICON_SIZE / icon.width;
 
@@ -125,14 +121,12 @@ public class BaseLootBagScreen extends Screen
 
     protected void prev()
     {
-        description = null;
         currentEntryIndex--;
         currentEntryIndex = adapt(currentEntryIndex);
     }
 
     protected void next()
     {
-        description = null;
         currentEntryIndex++;
         currentEntryIndex = adapt(currentEntryIndex);
     }
@@ -146,7 +140,7 @@ public class BaseLootBagScreen extends Screen
         return index;
     }
 
-    protected Entry getCurrentEntry()
+    protected LootEntry getCurrentEntry()
     {
         return lootEntries[currentEntryIndex];
     }
