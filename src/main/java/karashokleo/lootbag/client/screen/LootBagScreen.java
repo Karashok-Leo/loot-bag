@@ -15,18 +15,13 @@ import org.joml.Matrix4f;
 
 public abstract class LootBagScreen<B extends Bag> extends Screen
 {
-    private static final String TEXT_OPEN = "text.loot-bag.open";
-    private static final int OPEN_WIDTH = 72;
-    private static final int OPEN_HEIGHT = 24;
-    private static final int OPEN_Y = 210;
-    private static final int TITLE_Y = 20;
+    private static final Text TEXT_OPEN = Text.translatable("text.loot-bag.open");
     private static final int TITLE_COLOR = 0xffffff;
-    private static final int NAME_Y = 120;
     private static final int NAME_COLOR = 0xffffff;
-    private static final int DESC_Y = 140;
     private static final int DESC_COLOR = 0xffffff;
     private static final float ICON_SIZE = 64;
-    private static final float ICON_Y = 40;
+    private static final int OPEN_WIDTH = 72;
+    private static final int OPEN_HEIGHT = 24;
     protected final B bag;
     protected final int slot;
     protected ButtonWidget openButton;
@@ -42,10 +37,35 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void init()
     {
         openButton = ButtonWidget
-                .builder(Text.translatable(TEXT_OPEN), button -> open())
-                .dimensions((width - OPEN_WIDTH) / 2, OPEN_Y - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
+                .builder(TEXT_OPEN, button -> open())
+                .dimensions((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
                 .build();
         addDrawableChild(openButton);
+    }
+
+    protected int getTitleY()
+    {
+        return (int) (0.08F * height);
+    }
+
+    protected float getIconY()
+    {
+        return 0.16F * height;
+    }
+
+    protected int getNameY()
+    {
+        return (int) (0.24F * height + ICON_SIZE);
+    }
+
+    protected int getDescY()
+    {
+        return this.getNameY() + 20;
+    }
+
+    protected int getOpenY()
+    {
+        return (int) (0.84F * height);
     }
 
     @Override
@@ -67,18 +87,18 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
 
     protected void drawTitle(DrawContext context)
     {
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, TITLE_Y, TITLE_COLOR);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, this.getTitleY(), TITLE_COLOR);
     }
 
     protected void drawName(DrawContext context)
     {
-        context.drawCenteredTextWithShadow(textRenderer, getCurrentContent().getName().formatted(Formatting.BOLD), width / 2, NAME_Y, NAME_COLOR);
+        context.drawCenteredTextWithShadow(textRenderer, getCurrentContent().getName().formatted(Formatting.BOLD), width / 2, this.getNameY(), NAME_COLOR);
     }
 
     protected void drawDescription(DrawContext context)
     {
         for (int i = 0; i < getCurrentContent().getDescriptionLines(); i++)
-            context.drawCenteredTextWithShadow(textRenderer, getCurrentContent().getDesc(i), width / 2, DESC_Y + i * 15, DESC_COLOR);
+            context.drawCenteredTextWithShadow(textRenderer, getCurrentContent().getDesc(i), width / 2, this.getDescY() + i * 15, DESC_COLOR);
     }
 
     protected void drawIcon(DrawContext context, Content.Icon icon, float offsetX, float scale, float alpha)
@@ -88,7 +108,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         MatrixStack matrixStack = context.getMatrices();
         matrixStack.push();
 
-        matrixStack.translate((width - ICON_SIZE) / 2F, ICON_Y, 0);
+        matrixStack.translate((width - ICON_SIZE) / 2F, this.getIconY(), 0);
         matrixStack.translate(offsetX > 0 ? offsetX * 2 : offsetX, (1F - scale) / 2F * ICON_SIZE, 0);
 
         matrixStack.scale(scaleW, scaleW, scaleW);

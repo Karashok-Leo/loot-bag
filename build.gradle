@@ -15,7 +15,17 @@ sourceSets {
 }
 
 fabricApi {
-    configureDataGeneration(setting -> setting.setAddToResources(false))
+    configureDataGeneration(setting -> {
+        setting.setOutputDirectory(project.file("example"))
+        setting.setAddToResources(false)
+    })
+}
+
+runDatagen.doLast {
+    copy {
+        from("example")
+        into("run/global_packs/required_data/loot_bag")
+    }
 }
 
 repositories {

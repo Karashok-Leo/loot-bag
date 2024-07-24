@@ -7,11 +7,11 @@ import net.minecraft.text.Text;
 
 public class SingleLootBagScreen extends LootBagScreen<SingleBag>
 {
-    private static final String TEXT_SINGLE = "text.loot-bag.single_screen";
+    private static final Text TEXT_SINGLE = Text.translatable("text.loot-bag.single_screen");
 
     public SingleLootBagScreen(SingleBag bag, int slot)
     {
-        super(Text.translatable(TEXT_SINGLE), bag, slot);
+        super(TEXT_SINGLE, bag, slot);
     }
 
     @Override

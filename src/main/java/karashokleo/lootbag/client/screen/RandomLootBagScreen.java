@@ -9,12 +9,12 @@ import java.util.Objects;
 
 public class RandomLootBagScreen extends ScrollableLootBagScreen<RandomBag>
 {
-    protected static final String TEXT_RANDOM = "text.loot-bag.random_screen";
+    protected static final Text TEXT_RANDOM = Text.translatable("text.loot-bag.random_screen");
     protected int tick;
 
     public RandomLootBagScreen(RandomBag bag, int slot)
     {
-        super(Text.translatable(TEXT_RANDOM), bag, slot);
+        super(TEXT_RANDOM, bag, slot);
     }
 
     @Override
