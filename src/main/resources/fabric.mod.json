@@ -15,19 +15,19 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.karashokleo.lootbag.LootBag"
+			"karashokleo.lootbag.LootBag"
 		],
 		"client": [
-			"net.karashokleo.lootbag.client.LootBagClient"
+			"karashokleo.lootbag.client.LootBagClient"
+		],
+		"fabric-datagen": [
+			"karashokleo.lootbag.data.LootBagData"
 		]
 	},
 	"depends": {
 		"fabricloader": ">=0.15.7",
-		"minecraft": "~1.20.1",
+		"minecraft": "1.20.1",
 		"java": ">=17",
-		"fabric-api": "*",
-		"brrp_v1": "*"
-	},
-	"suggests": {
+		"fabric-api": "*"
 	}
 }

@@ -1,0 +1,22 @@
+{
+  "type": "loot-bag:random",
+  "color": {
+    "bag_body": 0,
+    "bag_string": 16777215
+  },
+  "pool": [
+    {
+      "content": "loot-bag:zombie",
+      "weight": 3
+    },
+    {
+      "content": "loot-bag:skeleton",
+      "weight": 2
+    },
+    {
+      "content": "loot-bag:creeper",
+      "weight": 1
+    }
+  ],
+  "rarity": "EPIC"
+}

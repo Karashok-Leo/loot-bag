@@ -1,0 +1,12 @@
+{
+  "type": "loot-bag:optional",
+  "color": {
+    "bag_body": 65530,
+    "bag_string": 16777215
+  },
+  "options": [
+    "loot-bag:diamond_sword",
+    "loot-bag:stone"
+  ],
+  "rarity": "RARE"
+}

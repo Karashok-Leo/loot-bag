@@ -1,0 +1,14 @@
+{
+  "type": "loot-bag:item",
+  "icon": {
+    "texture": "minecraft:textures/item/bell.png"
+  },
+  "item": {
+    "Count": 1,
+    "id": "minecraft:diamond_sword",
+    "tag": {
+      "Damage": 66
+    }
+  },
+  "lines": 1
+}

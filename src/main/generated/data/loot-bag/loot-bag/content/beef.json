@@ -1,0 +1,11 @@
+{
+  "type": "loot-bag:item",
+  "icon": {
+    "texture": "minecraft:textures/item/beef.png"
+  },
+  "item": {
+    "Count": 1,
+    "id": "minecraft:beef"
+  },
+  "lines": 0
+}

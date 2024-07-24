@@ -1,0 +1,8 @@
+{
+  "type": "loot-bag:command",
+  "command": "/summon minecraft:creeper ~ ~ ~",
+  "icon": {
+    "texture": "minecraft:textures/item/gunpowder.png"
+  },
+  "lines": 5
+}
