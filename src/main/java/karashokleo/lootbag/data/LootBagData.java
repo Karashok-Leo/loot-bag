@@ -1,15 +1,15 @@
 package karashokleo.lootbag.data;
 
-import karashokleo.lootbag.LootBag;
-import karashokleo.lootbag.content.logic.LootBagRegistry;
-import karashokleo.lootbag.content.logic.bag.Bag;
-import karashokleo.lootbag.content.logic.bag.OptionalBag;
-import karashokleo.lootbag.content.logic.bag.RandomBag;
-import karashokleo.lootbag.content.logic.bag.SingleBag;
-import karashokleo.lootbag.content.logic.content.CommandContent;
-import karashokleo.lootbag.content.logic.content.Content;
-import karashokleo.lootbag.content.logic.content.ItemContent;
-import karashokleo.lootbag.content.logic.content.LootTableContent;
+import karashokleo.lootbag.fabric.LootBagMod;
+import karashokleo.lootbag.api.common.LootBagRegistry;
+import karashokleo.lootbag.api.common.bag.Bag;
+import karashokleo.lootbag.api.common.bag.OptionalBag;
+import karashokleo.lootbag.api.common.bag.RandomBag;
+import karashokleo.lootbag.api.common.bag.SingleBag;
+import karashokleo.lootbag.api.common.content.CommandContent;
+import karashokleo.lootbag.api.common.content.Content;
+import karashokleo.lootbag.api.common.content.ItemContent;
+import karashokleo.lootbag.api.common.content.LootTableContent;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.item.ItemStack;
@@ -25,15 +25,15 @@ import java.util.List;
 
 public class LootBagData implements DataGeneratorEntrypoint
 {
-    public static final RegistryKey<Content> BEEF = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("beef"));
-    public static final RegistryKey<Content> DIAMOND_SWORD = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("diamond_sword"));
-    public static final RegistryKey<Content> STONE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("stone"));
-    public static final RegistryKey<Content> ZOMBIE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("zombie"));
-    public static final RegistryKey<Content> SKELETON = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("skeleton"));
-    public static final RegistryKey<Content> CREEPER = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBag.id("creeper"));
-    public static final RegistryKey<Bag> SINGLE = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBag.id("single"));
-    public static final RegistryKey<Bag> OPTIONAL = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBag.id("optional"));
-    public static final RegistryKey<Bag> RANDOM = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBag.id("random"));
+    public static final RegistryKey<Content> BEEF = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("beef"));
+    public static final RegistryKey<Content> DIAMOND_SWORD = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("diamond_sword"));
+    public static final RegistryKey<Content> STONE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("stone"));
+    public static final RegistryKey<Content> ZOMBIE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("zombie"));
+    public static final RegistryKey<Content> SKELETON = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("skeleton"));
+    public static final RegistryKey<Content> CREEPER = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("creeper"));
+    public static final RegistryKey<Bag> SINGLE = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("single"));
+    public static final RegistryKey<Bag> OPTIONAL = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("optional"));
+    public static final RegistryKey<Bag> RANDOM = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("random"));
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator)
@@ -72,8 +72,8 @@ public class LootBagData implements DataGeneratorEntrypoint
     {
         RegistryEntryLookup<Content> lookup = registerable.getRegistryLookup(LootBagRegistry.CONTENT_KEY);
 
-        SingleBag single = new SingleBag(lookup.getOrThrow(BEEF), Rarity.COMMON, new Bag.Color(0x000000, 0xffffff));
-        OptionalBag optional = new OptionalBag(List.of(lookup.getOrThrow(DIAMOND_SWORD), lookup.getOrThrow(STONE)), Rarity.RARE, new Bag.Color(0x00fffa, 0xffffff));
+        SingleBag single = new SingleBag(lookup.getOrThrow(BEEF), Rarity.COMMON, new Bag.Color(0x3a3a3a, 0x8b8b8b));
+        OptionalBag optional = new OptionalBag(List.of(lookup.getOrThrow(DIAMOND_SWORD), lookup.getOrThrow(STONE)), Rarity.RARE, new Bag.Color(0x00fffa, 0x00ffff));
         RandomBag random = new RandomBag(List.of(new RandomBag.Entry(lookup.getOrThrow(ZOMBIE), 3), new RandomBag.Entry(lookup.getOrThrow(SKELETON), 2), new RandomBag.Entry(lookup.getOrThrow(CREEPER), 1)), Rarity.EPIC, new Bag.Color(0x000000, 0xffffff));
 
         registerable.register(SINGLE, single);

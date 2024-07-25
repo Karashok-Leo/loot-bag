@@ -1,16 +1,16 @@
 package karashokleo.lootbag.network;
 
+import karashokleo.lootbag.fabric.LootBagMod;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
-import karashokleo.lootbag.LootBag;
-import karashokleo.lootbag.content.LootBagItem;
+import karashokleo.lootbag.item.LootBagItem;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public record OpenBagPacket(int slot, int selectedIndex) implements FabricPacket
 {
-    public static final PacketType<OpenBagPacket> TYPE = PacketType.create(LootBag.id("open_bag"), buf -> new OpenBagPacket(buf.readVarInt(), buf.readInt()));
+    public static final PacketType<OpenBagPacket> TYPE = PacketType.create(LootBagMod.id("open_bag"), buf -> new OpenBagPacket(buf.readVarInt(), buf.readInt()));
 
     @Override
     public void write(PacketByteBuf buf)
@@ -25,6 +25,7 @@ public record OpenBagPacket(int slot, int selectedIndex) implements FabricPacket
         return TYPE;
     }
 
+    @SuppressWarnings("unused")
     public static void handle(OpenBagPacket packet, ServerPlayerEntity player, PacketSender responseSender)
     {
         LootBagItem.open(player, packet.slot(), packet.selectedIndex());

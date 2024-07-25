@@ -1,13 +1,13 @@
 package karashokleo.lootbag.network;
 
-import karashokleo.lootbag.client.LootBagScreenRegistry;
+import karashokleo.lootbag.api.client.LootBagScreenRegistry;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
-import karashokleo.lootbag.LootBag;
-import karashokleo.lootbag.client.screen.LootBagScreen;
-import karashokleo.lootbag.content.logic.LootBagRegistry;
-import karashokleo.lootbag.content.logic.bag.Bag;
+import karashokleo.lootbag.fabric.LootBagMod;
+import karashokleo.lootbag.api.client.screen.LootBagScreen;
+import karashokleo.lootbag.api.common.LootBagRegistry;
+import karashokleo.lootbag.api.common.bag.Bag;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacket
 {
-    public static final PacketType<SetScreenPacket> TYPE = PacketType.create(LootBag.id("set_screen"), buf -> new SetScreenPacket(buf.readVarInt(), buf.readIdentifier()));
+    public static final PacketType<SetScreenPacket> TYPE = PacketType.create(LootBagMod.id("set_screen"), buf -> new SetScreenPacket(buf.readVarInt(), buf.readIdentifier()));
 
     @Override
     public void write(PacketByteBuf buf)
@@ -30,6 +30,7 @@ public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacke
         return TYPE;
     }
 
+    @SuppressWarnings("unused")
     public static void handle(SetScreenPacket packet, ClientPlayerEntity player, PacketSender responseSender)
     {
         Bag bag = LootBagRegistry.getBag(packet.bagId);

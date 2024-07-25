@@ -1,7 +1,7 @@
 package karashokleo.lootbag.data;
 
-import karashokleo.lootbag.LootBag;
-import karashokleo.lootbag.content.logic.LootBagRegistry;
+import karashokleo.lootbag.fabric.LootBagMod;
+import karashokleo.lootbag.api.common.LootBagRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.registry.RegistryWrapper;
@@ -25,6 +25,6 @@ public class LootBagProvider extends FabricDynamicRegistryProvider
     @Override
     public String getName()
     {
-        return LootBag.MOD_ID;
+        return LootBagMod.MOD_ID;
     }
 }

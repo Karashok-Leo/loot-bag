@@ -15,10 +15,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"karashokleo.lootbag.LootBag"
+			"karashokleo.lootbag.fabric.LootBagMod"
 		],
 		"client": [
-			"karashokleo.lootbag.client.LootBagClient"
+			"karashokleo.lootbag.fabric.LootBagClient"
 		],
 		"fabric-datagen": [
 			"karashokleo.lootbag.data.LootBagData"

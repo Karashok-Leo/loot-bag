@@ -1,8 +1,8 @@
 {
   "type": "loot-bag:single",
   "color": {
-    "bag_body": 0,
-    "bag_string": 16777215
+    "bag_body": 3815994,
+    "bag_string": 9145227
   },
   "content": "loot-bag:beef"
 }
