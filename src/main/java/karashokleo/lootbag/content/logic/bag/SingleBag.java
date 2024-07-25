@@ -2,10 +2,9 @@ package karashokleo.lootbag.content.logic.bag;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import karashokleo.lootbag.content.logic.LootBagRegistry;
 import karashokleo.lootbag.content.logic.OpenBagContext;
 import karashokleo.lootbag.content.logic.content.Content;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Rarity;
 
 import java.util.Optional;
@@ -14,15 +13,15 @@ public class SingleBag extends Bag
 {
     public static final Codec<SingleBag> CODEC = RecordCodecBuilder.create(
             ins -> ins.group(
-                    Identifier.CODEC.fieldOf("content").forGetter(SingleBag::getContentId)
+                    Content.ENTRY_CODEC.fieldOf("content").forGetter(SingleBag::getContentEntry)
             ).and(bagFields(ins)).apply(ins, SingleBag::new)
     );
 
     public static final BagType<SingleBag> TYPE = new BagType<>(CODEC, true);
 
-    protected final Identifier content;
+    protected final RegistryEntry<Content> content;
 
-    public SingleBag(Identifier content, Rarity rarity, Color color)
+    public SingleBag(RegistryEntry<Content> content, Rarity rarity, Color color)
     {
         super(rarity, color);
         this.content = content;
@@ -34,14 +33,14 @@ public class SingleBag extends Bag
         return TYPE;
     }
 
-    public Identifier getContentId()
+    public RegistryEntry<Content> getContentEntry()
     {
         return this.content;
     }
 
     public Content getContent()
     {
-        return LootBagRegistry.CONTENT_REGISTRY.get(this.content);
+        return this.content.value();
     }
 
     @Override

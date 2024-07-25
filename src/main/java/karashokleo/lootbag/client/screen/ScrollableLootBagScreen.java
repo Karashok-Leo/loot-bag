@@ -1,5 +1,6 @@
 package karashokleo.lootbag.client.screen;
 
+import karashokleo.lootbag.content.logic.bag.ContentView;
 import karashokleo.lootbag.content.logic.bag.Bag;
 import karashokleo.lootbag.content.logic.content.Content;
 import net.minecraft.client.gui.DrawContext;
@@ -8,7 +9,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
-public abstract class ScrollableLootBagScreen<B extends Bag> extends LootBagScreen<B>
+public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> extends LootBagScreen<B>
 {
     protected static final int MAX_OFFSET = 10;
     protected static final float OFFSET_MUL = 6;
@@ -70,7 +71,10 @@ public abstract class ScrollableLootBagScreen<B extends Bag> extends LootBagScre
         return 1F * Math.abs(offset) / MAX_OFFSET;
     }
 
-    protected abstract List<Content> fetchContents();
+    protected List<Content> fetchContents()
+    {
+        return bag.getContents();
+    }
 
     protected List<Content> getContents()
     {

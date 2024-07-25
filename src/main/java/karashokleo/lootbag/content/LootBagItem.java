@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -38,10 +39,11 @@ public class LootBagItem extends Item
         if (nbt == null) return Optional.empty();
         NbtElement element = nbt.get(KEY);
         if (element == null) return Optional.empty();
-        return LootBagRegistry.BAG_REGISTRY.getCodec()
+        return Bag.ENTRY_CODEC
                 .decode(NbtOps.INSTANCE, element)
                 .result()
-                .map(Pair::getFirst);
+                .map(Pair::getFirst)
+                .map(RegistryEntry::value);
     }
 
     public ItemStack getStack(Identifier bagId)
@@ -83,7 +85,7 @@ public class LootBagItem extends Item
                 if (player.isSneaking() && type.quick())
                     open(player, stack, bag, 0);
                     // Open Through Screen
-                else ServerNetwork.sendScreen(player, slot, LootBagRegistry.BAG_REGISTRY.getId(bag));
+                else ServerNetwork.sendScreen(player, slot, LootBagRegistry.getBagId(bag));
             }, () -> player.sendMessage(INVALID, true));
         }
         return TypedActionResult.success(stack, world.isClient());

@@ -32,7 +32,7 @@ public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacke
 
     public static void handle(SetScreenPacket packet, ClientPlayerEntity player, PacketSender responseSender)
     {
-        Bag bag = LootBagRegistry.BAG_REGISTRY.get(packet.bagId);
+        Bag bag = LootBagRegistry.getBag(packet.bagId);
         if (bag == null) return;
         LootBagScreen<?> screen = LootBagScreenRegistry.getFactory(bag.getType()).createScreen(bag, packet.slot);
         MinecraftClient.getInstance().setScreen(screen);

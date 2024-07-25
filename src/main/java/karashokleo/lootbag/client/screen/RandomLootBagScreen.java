@@ -5,7 +5,6 @@ import karashokleo.lootbag.content.logic.content.Content;
 import net.minecraft.text.Text;
 
 import java.util.List;
-import java.util.Objects;
 
 public class RandomLootBagScreen extends ScrollableLootBagScreen<RandomBag>
 {
@@ -26,11 +25,5 @@ public class RandomLootBagScreen extends ScrollableLootBagScreen<RandomBag>
             tick = 0;
             next();
         }
-    }
-
-    @Override
-    protected List<Content> fetchContents()
-    {
-        return bag.getPool().stream().map(RandomBag.Entry::getContent).filter(Objects::nonNull).toList();
     }
 }

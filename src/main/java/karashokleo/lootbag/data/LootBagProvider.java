@@ -1,6 +1,7 @@
 package karashokleo.lootbag.data;
 
 import karashokleo.lootbag.LootBag;
+import karashokleo.lootbag.content.logic.LootBagRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.registry.RegistryWrapper;
@@ -17,8 +18,8 @@ public class LootBagProvider extends FabricDynamicRegistryProvider
     @Override
     protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries)
     {
-        LootBagData.CONTENTS.forEach(entries::add);
-        LootBagData.BAGS.forEach(entries::add);
+        entries.addAll(registries.getWrapperOrThrow(LootBagRegistry.CONTENT_KEY));
+        entries.addAll(registries.getWrapperOrThrow(LootBagRegistry.BAG_KEY));
     }
 
     @Override

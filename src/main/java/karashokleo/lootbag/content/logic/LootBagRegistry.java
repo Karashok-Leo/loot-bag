@@ -1,16 +1,17 @@
 package karashokleo.lootbag.content.logic;
 
+import karashokleo.lootbag.LootBag;
+import karashokleo.lootbag.content.logic.bag.*;
+import karashokleo.lootbag.content.logic.content.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
-import karashokleo.lootbag.LootBag;
-import karashokleo.lootbag.content.logic.bag.*;
-import karashokleo.lootbag.content.logic.content.*;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
+@SuppressWarnings("all")
 public class LootBagRegistry
 {
     public static final RegistryKey<Registry<ContentType<?>>> CONTENT_TYPE_KEY = RegistryKey.ofRegistry(LootBag.id("content_type"));
@@ -49,8 +50,27 @@ public class LootBagRegistry
         {
             CONTENT_REGISTRY = server.getRegistryManager().get(LootBagRegistry.CONTENT_KEY);
             BAG_REGISTRY = server.getRegistryManager().get(LootBagRegistry.BAG_KEY);
-            CommonCodecs.init();
         });
+    }
+
+    public static Content getContent(Identifier contentId)
+    {
+        return CONTENT_REGISTRY.get(contentId);
+    }
+
+    public static Identifier getContentId(Content content)
+    {
+        return CONTENT_REGISTRY.getId(content);
+    }
+
+    public static Bag getBag(Identifier bagId)
+    {
+        return BAG_REGISTRY.get(bagId);
+    }
+
+    public static Identifier getBagId(Bag bag)
+    {
+        return BAG_REGISTRY.getId(bag);
     }
 
     public static <T extends Content> ContentType<T> registerContentType(String path, ContentType<T> type)

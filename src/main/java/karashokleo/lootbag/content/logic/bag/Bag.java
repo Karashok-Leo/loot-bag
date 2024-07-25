@@ -7,6 +7,8 @@ import karashokleo.lootbag.content.logic.CommonCodecs;
 import karashokleo.lootbag.content.logic.LootBagRegistry;
 import karashokleo.lootbag.content.logic.OpenBagContext;
 import karashokleo.lootbag.content.logic.content.Content;
+import net.minecraft.registry.entry.RegistryElementCodec;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.Util;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public abstract class Bag
 {
     public static final Codec<Bag> CODEC = LootBagRegistry.BAG_TYPE_REGISTRY.getCodec().dispatch(Bag::getType, BagType::codec);
+    public static final Codec<RegistryEntry<Bag>> ENTRY_CODEC = RegistryElementCodec.of(LootBagRegistry.BAG_KEY, CODEC);
 
     public static <T extends Bag> Products.P2<RecordCodecBuilder.Mu<T>, Rarity, Color> bagFields(RecordCodecBuilder.Instance<T> instance)
     {
@@ -59,7 +62,7 @@ public abstract class Bag
     public String getNameKey()
     {
         if (this.translationKey == null)
-            this.translationKey = Util.createTranslationKey("bag", LootBagRegistry.BAG_REGISTRY.getId(this));
+            this.translationKey = Util.createTranslationKey("bag", LootBagRegistry.getBagId(this));
         return this.translationKey;
     }
 

@@ -2,19 +2,18 @@ package karashokleo.lootbag.content.logic.bag;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import karashokleo.lootbag.content.logic.LootBagRegistry;
 import karashokleo.lootbag.content.logic.OpenBagContext;
 import karashokleo.lootbag.content.logic.content.Content;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.random.Random;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public class RandomBag extends Bag
+public class RandomBag extends Bag implements ContentView
 {
     public static final Codec<RandomBag> CODEC = RecordCodecBuilder.create(
             ins -> ins.group(
@@ -32,15 +31,21 @@ public class RandomBag extends Bag
         this.pool = pool;
     }
 
+    @Override
+    public BagType<?> getType()
+    {
+        return TYPE;
+    }
+
     public List<Entry> getPool()
     {
         return pool;
     }
 
     @Override
-    public BagType<?> getType()
+    public List<Content> getContents()
     {
-        return TYPE;
+        return this.getPool().stream().map(Entry::getContent).filter(Objects::nonNull).toList();
     }
 
     @Override
@@ -77,19 +82,18 @@ public class RandomBag extends Bag
         return Optional.ofNullable(content);
     }
 
-    public record Entry(Identifier content, int weight)
+    public record Entry(RegistryEntry<Content> content, int weight)
     {
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(
                 ins -> ins.group(
-                        Identifier.CODEC.fieldOf("content").forGetter(Entry::content),
+                        Content.ENTRY_CODEC.fieldOf("content").forGetter(Entry::content),
                         Codec.INT.fieldOf("weight").forGetter(Entry::weight)
                 ).apply(ins, Entry::new)
         );
 
-        @Nullable
         public Content getContent()
         {
-            return LootBagRegistry.CONTENT_REGISTRY.get(this.content);
+            return this.content.value();
         }
     }
 }

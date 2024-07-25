@@ -56,10 +56,4 @@ public class OptionalLootBagScreen extends ScrollableLootBagScreen<OptionalBag>
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
-    @Override
-    protected List<Content> fetchContents()
-    {
-        return bag.getContents();
-    }
 }
