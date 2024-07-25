@@ -1,7 +1,7 @@
 {
   "type": "loot-bag:item",
   "icon": {
-    "texture": "minecraft:textures/item/bell.png"
+    "texture": "minecraft:textures/item/diamond_sword.png"
   },
   "item": {
     "Count": 1,

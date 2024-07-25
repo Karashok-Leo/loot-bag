@@ -23,8 +23,16 @@ fabricApi {
 
 runDatagen.doLast {
     copy {
-        from("example")
-        into("run/global_packs/required_data/loot_bag")
+        from("example/data")
+        into("run/global_packs/required_data/loot_bag/data")
+    }
+    copy {
+        from("example/assets")
+        into("run/global_packs/required_resources/loot_bag/assets")
+    }
+    copy {
+        from("run/global_packs/required_data/loot_bag/pack.mcmeta")
+        into("example")
     }
 }
 

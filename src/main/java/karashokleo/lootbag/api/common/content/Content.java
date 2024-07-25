@@ -65,7 +65,7 @@ public abstract class Content
 
     public MutableText getDesc(int lines)
     {
-        return Text.translatable(this.getDescKey() + lines);
+        return Text.translatable(this.getDescKey(lines));
     }
 
     public String getDescKey()
@@ -73,6 +73,11 @@ public abstract class Content
         if (this.descKey == null)
             this.descKey = getNameKey() + ".desc.";
         return this.descKey;
+    }
+
+    public String getDescKey(int lines)
+    {
+        return this.getDescKey() + lines;
     }
 
     public record Icon(Identifier texture, int width, int height)
