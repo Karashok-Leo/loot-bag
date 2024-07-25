@@ -1,6 +1,7 @@
 package karashokleo.lootbag.fabric;
 
 import karashokleo.lootbag.api.common.LootBagRegistry;
+import karashokleo.lootbag.api.common.LootBagRegistryKeys;
 import karashokleo.lootbag.api.common.bag.Bag;
 import karashokleo.lootbag.api.common.bag.OptionalBag;
 import karashokleo.lootbag.api.common.bag.RandomBag;
@@ -40,19 +41,19 @@ public class LootBagMod implements ModInitializer
     private static void initStaticRegistries()
     {
         LootBagRegistry.CONTENT_TYPE_REGISTRY = FabricRegistryBuilder
-                .createSimple(LootBagRegistry.CONTENT_TYPE_KEY)
+                .createSimple(LootBagRegistryKeys.CONTENT_TYPE_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
         LootBagRegistry.BAG_TYPE_REGISTRY = FabricRegistryBuilder
-                .createSimple(LootBagRegistry.BAG_TYPE_KEY)
+                .createSimple(LootBagRegistryKeys.BAG_TYPE_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
     }
 
-    private static void initDynamicRegistries()
+    public static void initDynamicRegistries()
     {
-        DynamicRegistries.registerSynced(LootBagRegistry.CONTENT_KEY, Content.CODEC);
-        DynamicRegistries.registerSynced(LootBagRegistry.BAG_KEY, Bag.CODEC);
+        DynamicRegistries.registerSynced(LootBagRegistryKeys.CONTENT_KEY, Content.CODEC);
+        DynamicRegistries.registerSynced(LootBagRegistryKeys.BAG_KEY, Bag.CODEC);
     }
 
     private static void registerContentType()
@@ -73,8 +74,8 @@ public class LootBagMod implements ModInitializer
     {
         ServerLifecycleEvents.SERVER_STARTED.register(server ->
         {
-            LootBagRegistry.CONTENT_REGISTRY = server.getRegistryManager().get(LootBagRegistry.CONTENT_KEY);
-            LootBagRegistry.BAG_REGISTRY = server.getRegistryManager().get(LootBagRegistry.BAG_KEY);
+            LootBagRegistry.CONTENT_REGISTRY = server.getRegistryManager().get(LootBagRegistryKeys.CONTENT_KEY);
+            LootBagRegistry.BAG_REGISTRY = server.getRegistryManager().get(LootBagRegistryKeys.BAG_KEY);
         });
     }
 

@@ -1,5 +1,6 @@
 package karashokleo.lootbag.data;
 
+import karashokleo.lootbag.api.common.LootBagRegistryKeys;
 import karashokleo.lootbag.fabric.LootBagMod;
 import karashokleo.lootbag.api.common.LootBagRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -18,8 +19,8 @@ public class LootBagProvider extends FabricDynamicRegistryProvider
     @Override
     protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries)
     {
-        entries.addAll(registries.getWrapperOrThrow(LootBagRegistry.CONTENT_KEY));
-        entries.addAll(registries.getWrapperOrThrow(LootBagRegistry.BAG_KEY));
+        entries.addAll(registries.getWrapperOrThrow(LootBagRegistryKeys.CONTENT_KEY));
+        entries.addAll(registries.getWrapperOrThrow(LootBagRegistryKeys.BAG_KEY));
     }
 
     @Override

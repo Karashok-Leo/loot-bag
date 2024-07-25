@@ -4,6 +4,7 @@ import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.lootbag.api.common.LootBagRegistry;
+import karashokleo.lootbag.api.common.LootBagRegistryKeys;
 import net.minecraft.registry.entry.RegistryElementCodec;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -15,7 +16,7 @@ import net.minecraft.util.Util;
 public abstract class Content
 {
     public static final Codec<Content> CODEC = LootBagRegistry.CONTENT_TYPE_REGISTRY.getCodec().dispatch(Content::getType, ContentType::codec);
-    public static final Codec<RegistryEntry<Content>> ENTRY_CODEC = RegistryElementCodec.of(LootBagRegistry.CONTENT_KEY, CODEC);
+    public static final Codec<RegistryEntry<Content>> ENTRY_CODEC = RegistryElementCodec.of(LootBagRegistryKeys.CONTENT_KEY, CODEC);
 
     protected static <T extends Content> Products.P2<RecordCodecBuilder.Mu<T>, Icon, Integer> contentFields(RecordCodecBuilder.Instance<T> instance)
     {

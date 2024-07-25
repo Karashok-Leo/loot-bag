@@ -1,6 +1,7 @@
 package karashokleo.lootbag.data;
 
 import karashokleo.lootbag.api.common.LootBagRegistry;
+import karashokleo.lootbag.api.common.LootBagRegistryKeys;
 import karashokleo.lootbag.api.common.bag.Bag;
 import karashokleo.lootbag.api.common.bag.OptionalBag;
 import karashokleo.lootbag.api.common.bag.RandomBag;
@@ -27,15 +28,15 @@ import java.util.Map;
 
 public class LootBagData implements DataGeneratorEntrypoint
 {
-    public static final RegistryKey<Content> BEEF = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("beef"));
-    public static final RegistryKey<Content> DIAMOND_SWORD = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("diamond_sword"));
-    public static final RegistryKey<Content> STONE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("stone"));
-    public static final RegistryKey<Content> ZOMBIE = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("zombie"));
-    public static final RegistryKey<Content> SKELETON = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("skeleton"));
-    public static final RegistryKey<Content> CREEPER = RegistryKey.of(LootBagRegistry.CONTENT_KEY, LootBagMod.id("creeper"));
-    public static final RegistryKey<Bag> SINGLE = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("single"));
-    public static final RegistryKey<Bag> OPTIONAL = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("optional"));
-    public static final RegistryKey<Bag> RANDOM = RegistryKey.of(LootBagRegistry.BAG_KEY, LootBagMod.id("random"));
+    public static final RegistryKey<Content> BEEF = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("beef"));
+    public static final RegistryKey<Content> DIAMOND_SWORD = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("diamond_sword"));
+    public static final RegistryKey<Content> STONE = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("stone"));
+    public static final RegistryKey<Content> ZOMBIE = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("zombie"));
+    public static final RegistryKey<Content> SKELETON = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("skeleton"));
+    public static final RegistryKey<Content> CREEPER = RegistryKey.of(LootBagRegistryKeys.CONTENT_KEY, LootBagMod.id("creeper"));
+    public static final RegistryKey<Bag> SINGLE = RegistryKey.of(LootBagRegistryKeys.BAG_KEY, LootBagMod.id("single"));
+    public static final RegistryKey<Bag> OPTIONAL = RegistryKey.of(LootBagRegistryKeys.BAG_KEY, LootBagMod.id("optional"));
+    public static final RegistryKey<Bag> RANDOM = RegistryKey.of(LootBagRegistryKeys.BAG_KEY, LootBagMod.id("random"));
 
     public static final Map<RegistryKey<Content>, Content> CONTENTS = new HashMap<>();
     public static final Map<RegistryKey<Bag>, Bag> BAGS = new HashMap<>();
@@ -51,8 +52,8 @@ public class LootBagData implements DataGeneratorEntrypoint
     @Override
     public void buildRegistry(RegistryBuilder registryBuilder)
     {
-        registryBuilder.addRegistry(LootBagRegistry.CONTENT_KEY, this::bootstrapContent);
-        registryBuilder.addRegistry(LootBagRegistry.BAG_KEY, this::bootstrapBag);
+        registryBuilder.addRegistry(LootBagRegistryKeys.CONTENT_KEY, this::bootstrapContent);
+        registryBuilder.addRegistry(LootBagRegistryKeys.BAG_KEY, this::bootstrapBag);
     }
 
     private void bootstrapContent(Registerable<Content> registerable)
@@ -78,7 +79,7 @@ public class LootBagData implements DataGeneratorEntrypoint
 
     private void bootstrapBag(Registerable<Bag> registerable)
     {
-        RegistryEntryLookup<Content> lookup = registerable.getRegistryLookup(LootBagRegistry.CONTENT_KEY);
+        RegistryEntryLookup<Content> lookup = registerable.getRegistryLookup(LootBagRegistryKeys.CONTENT_KEY);
 
         SingleBag single = new SingleBag(lookup.getOrThrow(BEEF), Rarity.COMMON, new Bag.Color(0x3a3a3a, 0x8b8b8b));
         OptionalBag optional = new OptionalBag(List.of(lookup.getOrThrow(DIAMOND_SWORD), lookup.getOrThrow(STONE)), Rarity.RARE, new Bag.Color(0x00fffa, 0x00ffff));

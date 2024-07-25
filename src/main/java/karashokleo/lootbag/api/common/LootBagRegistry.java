@@ -12,10 +12,6 @@ import net.minecraft.util.Identifier;
 @SuppressWarnings("all")
 public class LootBagRegistry
 {
-    public static final RegistryKey<Registry<ContentType<?>>> CONTENT_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("content_type"));
-    public static final RegistryKey<Registry<Content>> CONTENT_KEY = RegistryKey.ofRegistry(LootBagMod.id("content"));
-    public static final RegistryKey<Registry<BagType<?>>> BAG_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("bag_type"));
-    public static final RegistryKey<Registry<Bag>> BAG_KEY = RegistryKey.ofRegistry(LootBagMod.id("bag"));
 
     public static Registry<ContentType<?>> CONTENT_TYPE_REGISTRY;
     public static Registry<Content> CONTENT_REGISTRY;

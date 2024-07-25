@@ -3,6 +3,7 @@ package karashokleo.lootbag.api.common.bag;
 import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.lootbag.api.common.LootBagRegistryKeys;
 import karashokleo.lootbag.api.common.util.EnumCodecUtil;
 import karashokleo.lootbag.api.common.LootBagRegistry;
 import karashokleo.lootbag.api.common.OpenBagContext;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public abstract class Bag
 {
     public static final Codec<Bag> CODEC = LootBagRegistry.BAG_TYPE_REGISTRY.getCodec().dispatch(Bag::getType, BagType::codec);
-    public static final Codec<RegistryEntry<Bag>> ENTRY_CODEC = RegistryElementCodec.of(LootBagRegistry.BAG_KEY, CODEC);
+    public static final Codec<RegistryEntry<Bag>> ENTRY_CODEC = RegistryElementCodec.of(LootBagRegistryKeys.BAG_KEY, CODEC);
 
     public static <T extends Bag> Products.P2<RecordCodecBuilder.Mu<T>, Rarity, Color> bagFields(RecordCodecBuilder.Instance<T> instance)
     {
