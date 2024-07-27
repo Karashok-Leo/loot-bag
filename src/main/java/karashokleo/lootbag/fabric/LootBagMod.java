@@ -31,8 +31,6 @@ public class LootBagMod implements ModInitializer
     {
         initStaticRegistries();
         initDynamicRegistries();
-        registerContentType();
-        registerBagType();
         fetchDynamicRegistries();
         LootBagItemRegistry.init();
         ServerNetwork.init();
@@ -44,30 +42,22 @@ public class LootBagMod implements ModInitializer
                 .createSimple(LootBagRegistryKeys.CONTENT_TYPE_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
+        LootBagRegistry.registerContentType("item", ItemContent.TYPE);
+        LootBagRegistry.registerContentType("loot_table", LootTableContent.TYPE);
+        LootBagRegistry.registerContentType("command", CommandContent.TYPE);
         LootBagRegistry.BAG_TYPE_REGISTRY = FabricRegistryBuilder
                 .createSimple(LootBagRegistryKeys.BAG_TYPE_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
+        LootBagRegistry.registerBagType("single", SingleBag.TYPE);
+        LootBagRegistry.registerBagType("optional", OptionalBag.TYPE);
+        LootBagRegistry.registerBagType("random", RandomBag.TYPE);
     }
 
     public static void initDynamicRegistries()
     {
         DynamicRegistries.registerSynced(LootBagRegistryKeys.CONTENT_KEY, Content.CODEC);
         DynamicRegistries.registerSynced(LootBagRegistryKeys.BAG_KEY, Bag.CODEC);
-    }
-
-    private static void registerContentType()
-    {
-        LootBagRegistry.registerContentType("item", ItemContent.TYPE);
-        LootBagRegistry.registerContentType("loot_table", LootTableContent.TYPE);
-        LootBagRegistry.registerContentType("command", CommandContent.TYPE);
-    }
-
-    private static void registerBagType()
-    {
-        LootBagRegistry.registerBagType("single", SingleBag.TYPE);
-        LootBagRegistry.registerBagType("optional", OptionalBag.TYPE);
-        LootBagRegistry.registerBagType("random", RandomBag.TYPE);
     }
 
     private static void fetchDynamicRegistries()

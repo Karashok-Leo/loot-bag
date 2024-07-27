@@ -40,6 +40,6 @@ public class ItemContent extends StacksContent
     @Override
     protected List<ItemStack> getLootStacks(ServerPlayerEntity player)
     {
-        return Collections.singletonList(this.getStack());
+        return Collections.singletonList(this.getStack().copy());
     }
 }
