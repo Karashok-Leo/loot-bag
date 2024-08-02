@@ -3,6 +3,5 @@
   "icon": {
     "texture": "minecraft:textures/block/stone.png"
   },
-  "id": "minecraft:blocks/stone",
-  "lines": 2
+  "id": "minecraft:blocks/stone"
 }

@@ -3,6 +3,5 @@
   "command": "/kill",
   "icon": {
     "texture": "minecraft:textures/item/bone.png"
-  },
-  "lines": 4
+  }
 }
