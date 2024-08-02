@@ -20,7 +20,7 @@ public class LootBagItemRegistry
 
     public static void init()
     {
-        LOOT_BAG = Registry.register(Registries.ITEM, LootBagMod.id("loot_bag"), new LootBagItem(new FabricItemSettings().maxCount(16)));
+        LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), new LootBagItem(new FabricItemSettings().maxCount(16)));
 
         Registry.register(
                 Registries.ITEM_GROUP,
@@ -28,6 +28,10 @@ public class LootBagItemRegistry
                 FabricItemGroup
                         .builder()
                         .icon(() -> LootBagRegistry.BAG_REGISTRY.stream().map(LOOT_BAG::getStack).findFirst().orElse(ItemStack.EMPTY))
+//                        .entries((displayContext, entries) ->
+//                        {
+//                            displayContext.lookup().getOptionalWrapper(LootBagRegistryKeys.BAG_KEY).ifPresent(impl -> impl.streamEntries().forEach(ref -> entries.add(LOOT_BAG.getStack(ref.value()))));
+//                        })
                         .displayName(Text.translatable("itemGroup.loot-bag.loot_bag"))
                         .build()
         );

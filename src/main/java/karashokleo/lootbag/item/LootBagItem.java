@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import karashokleo.lootbag.api.common.LootBagRegistry;
 import karashokleo.lootbag.api.common.OpenBagContext;
 import karashokleo.lootbag.api.common.bag.Bag;
-import karashokleo.lootbag.api.common.bag.BagType;
 import karashokleo.lootbag.network.ServerNetwork;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -77,12 +76,11 @@ public class LootBagItem extends Item
             int slot = hand == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
             this.getBagEntry(stack).ifPresentOrElse(bag ->
             {
-                BagType<?> type = bag.getType();
                 // Open Without Screen While Sneaking
-                if (player.isSneaking() && type.quick())
+                if (player.isSneaking() && bag.getType().quick())
                     open(player, stack, bag, 0);
                     // Open Through Screen
-                else ServerNetwork.sendScreen(player, slot, LootBagRegistry.getBagId(bag));
+                else ServerNetwork.sendScreen(player, slot, bag);
             }, () -> player.sendMessage(INVALID, true));
         }
         return TypedActionResult.success(stack, world.isClient());

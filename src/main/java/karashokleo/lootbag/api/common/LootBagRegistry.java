@@ -6,13 +6,11 @@ import karashokleo.lootbag.api.common.content.Content;
 import karashokleo.lootbag.api.common.content.ContentType;
 import karashokleo.lootbag.fabric.LootBagMod;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 @SuppressWarnings("all")
 public class LootBagRegistry
 {
-
     public static Registry<ContentType<?>> CONTENT_TYPE_REGISTRY;
     public static Registry<Content> CONTENT_REGISTRY;
     public static Registry<BagType<?>> BAG_TYPE_REGISTRY;

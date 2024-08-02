@@ -1,8 +1,8 @@
 package karashokleo.lootbag.network;
 
+import karashokleo.lootbag.api.common.bag.Bag;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public class ServerNetwork
 {
@@ -11,8 +11,8 @@ public class ServerNetwork
         ServerPlayNetworking.registerGlobalReceiver(OpenBagPacket.TYPE, OpenBagPacket::handle);
     }
 
-    public static void sendScreen(ServerPlayerEntity player, int slot, Identifier bagId)
+    public static void sendScreen(ServerPlayerEntity player, int slot, Bag bag)
     {
-        ServerPlayNetworking.send(player, new SetScreenPacket(slot, bagId));
+        ServerPlayNetworking.send(player, new SetScreenPacket(slot, bag));
     }
 }
