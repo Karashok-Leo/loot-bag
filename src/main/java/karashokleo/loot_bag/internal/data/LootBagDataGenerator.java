@@ -37,14 +37,14 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("beef"),
                 new ItemContent(
                         Items.BEEF.getDefaultStack(),
-                        new Content.Icon(new Identifier("textures/item/beef.png"))
+                        new Content.Icon(Items.BEEF)
                 )
         );
         ContentEntry diamondSword = new ContentEntry(
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
                         diamondSwordStack,
-                        new Content.Icon(new Identifier("textures/item/diamond_sword.png"))
+                        new Content.Icon(Items.DIAMOND_SWORD)
                 )
         );
         ContentEntry stone = new ContentEntry(
@@ -58,7 +58,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("zombie"),
                 new LootTableContent(
                         new Identifier("entities/zombie"),
-                        new Content.Icon(new Identifier("textures/item/rotten_flesh.png"))
+                        new Content.Icon(new Identifier("rotten_flesh"), 16, 16)
                 )
         );
         ContentEntry skeleton = new ContentEntry(
@@ -78,15 +78,31 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
 
         BagEntry single = new BagEntry(
                 LootBagMod.id("single"),
-                new SingleBag(beef, Rarity.COMMON, new Bag.Color(0x3a3a3a, 0x8b8b8b))
+                new SingleBag(
+                        beef,
+                        Rarity.COMMON,
+                        new Bag.Color(0xFFDA76, 0xFF4E88)
+                )
         );
         BagEntry optional = new BagEntry(
                 LootBagMod.id("optional"),
-                new OptionalBag(List.of(diamondSword, stone), Rarity.RARE, new Bag.Color(0x00fffa, 0x00ffff))
+                new OptionalBag(
+                        List.of(diamondSword, stone),
+                        Rarity.RARE,
+                        new Bag.Color(0x28DF99, 0x493323)
+                )
         );
         BagEntry random = new BagEntry(
                 LootBagMod.id("random"),
-                new RandomBag(List.of(new RandomBag.Entry(zombie, 3), new RandomBag.Entry(skeleton, 2), new RandomBag.Entry(creeper, 1)), Rarity.EPIC, new Bag.Color(0x000000, 0xffffff))
+                new RandomBag(
+                        List.of(
+                                new RandomBag.Entry(zombie, 3),
+                                new RandomBag.Entry(skeleton, 2),
+                                new RandomBag.Entry(creeper, 1)
+                        ),
+                        Rarity.EPIC,
+                        new Bag.Color(0xAF47D2, 0xFFDB00)
+                )
         );
 
         CONTENTS.add(beef);

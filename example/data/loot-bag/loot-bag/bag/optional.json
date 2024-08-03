@@ -1,8 +1,8 @@
 {
   "type": "loot-bag:optional",
   "color": {
-    "bag_body": 65530,
-    "bag_string": 65535
+    "bag_body": 2678681,
+    "bag_string": 4797219
   },
   "options": [
     "loot-bag:diamond_sword",

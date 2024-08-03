@@ -4,6 +4,8 @@ import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -44,9 +46,32 @@ public abstract class Content
                 ).apply(ins, Icon::new)
         );
 
+        /**
+         * @param texture textureId (ends with ".png")
+         *                or itemId (will auto convert into textureId)
+         */
+        public Icon(Identifier texture, int width, int height)
+        {
+            this.texture = toTextureId(texture);
+            this.width = width;
+            this.height = height;
+        }
+
         public Icon(Identifier texture)
         {
             this(texture, 16, 16);
+        }
+
+        public Icon(ItemConvertible item)
+        {
+            this(Registries.ITEM.getId(item.asItem()));
+        }
+
+        private static Identifier toTextureId(Identifier id)
+        {
+            return id.getPath().endsWith(".png") ?
+                    id :
+                    id.withPrefixedPath("textures/item/").withSuffixedPath(".png");
         }
     }
 }

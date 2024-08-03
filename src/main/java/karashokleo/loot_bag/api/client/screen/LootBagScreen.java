@@ -138,10 +138,18 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        bufferBuilder.vertex(matrix4f, 0, 0, 0).color(1F, 1F, 1F, alpha).texture(0, 0).next();
-        bufferBuilder.vertex(matrix4f, 0, icon.height(), 0).color(1F, 1F, 1F, alpha).texture(0, 1).next();
-        bufferBuilder.vertex(matrix4f, icon.width(), icon.height(), 0).color(1F, 1F, 1F, alpha).texture(1, 1).next();
-        bufferBuilder.vertex(matrix4f, icon.width(), 0, 0).color(1F, 1F, 1F, alpha).texture(1, 0).next();
+        bufferBuilder.vertex(matrix4f, 0, 0, 0)
+                .color(1F, 1F, 1F, alpha)
+                .texture(0, 0).next();
+        bufferBuilder.vertex(matrix4f, 0, icon.height(), 0)
+                .color(1F, 1F, 1F, alpha)
+                .texture(0, 1).next();
+        bufferBuilder.vertex(matrix4f, icon.width(), icon.height(), 0)
+                .color(1F, 1F, 1F, alpha)
+                .texture(1, 1).next();
+        bufferBuilder.vertex(matrix4f, icon.width(), 0, 0)
+                .color(1F, 1F, 1F, alpha)
+                .texture(1, 0).next();
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
 
