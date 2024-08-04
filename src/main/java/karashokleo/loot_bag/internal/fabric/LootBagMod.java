@@ -5,10 +5,12 @@ import karashokleo.loot_bag.api.common.bag.OptionalBag;
 import karashokleo.loot_bag.api.common.bag.RandomBag;
 import karashokleo.loot_bag.api.common.bag.SingleBag;
 import karashokleo.loot_bag.api.common.content.CommandContent;
+import karashokleo.loot_bag.api.common.content.EffectContent;
 import karashokleo.loot_bag.api.common.content.ItemContent;
 import karashokleo.loot_bag.api.common.content.LootTableContent;
 import karashokleo.loot_bag.internal.data.LootBagData;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
+import karashokleo.loot_bag.internal.loot.LootBagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetwork;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -27,6 +29,7 @@ public class LootBagMod implements ModInitializer
     {
         initStaticRegistries();
         LootBagItemRegistry.init();
+        LootBagEntry.init();
         ServerNetwork.init();
         LootBagData.registerLoader();
     }
@@ -40,6 +43,7 @@ public class LootBagMod implements ModInitializer
         LootBagRegistry.registerContentType(id("item"), ItemContent.TYPE);
         LootBagRegistry.registerContentType(id("loot_table"), LootTableContent.TYPE);
         LootBagRegistry.registerContentType(id("command"), CommandContent.TYPE);
+        LootBagRegistry.registerContentType(id("effect"), EffectContent.TYPE);
         LootBagRegistry.BAG_TYPE_REGISTRY = FabricRegistryBuilder
                 .createSimple(LootBagRegistry.BAG_TYPE_KEY)
                 .attribute(RegistryAttribute.SYNCED)

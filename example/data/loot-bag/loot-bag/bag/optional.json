@@ -6,7 +6,8 @@
   },
   "options": [
     "loot-bag:diamond_sword",
-    "loot-bag:stone"
+    "loot-bag:stone",
+    "loot-bag:effect"
   ],
   "rarity": "RARE"
 }

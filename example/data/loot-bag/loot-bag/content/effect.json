@@ -1,0 +1,17 @@
+{
+  "type": "loot-bag:effect",
+  "effects": [
+    {
+      "type": "minecraft:absorption",
+      "duration": 2400
+    },
+    {
+      "type": "minecraft:regeneration",
+      "amplifier": 1,
+      "duration": 100
+    }
+  ],
+  "icon": {
+    "texture": "minecraft:textures/item/golden_apple.png"
+  }
+}

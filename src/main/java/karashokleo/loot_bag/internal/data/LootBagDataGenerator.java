@@ -5,6 +5,7 @@ import karashokleo.loot_bag.api.common.content.*;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
@@ -54,6 +55,16 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                         new Content.Icon(new Identifier("textures/block/stone.png"))
                 )
         );
+        ContentEntry effect = new ContentEntry(
+                LootBagMod.id("effect"),
+                new EffectContent(
+                        List.of(
+                                new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
+                                new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
+                        ),
+                        new Content.Icon(Items.GOLDEN_APPLE)
+                )
+        );
         ContentEntry zombie = new ContentEntry(
                 LootBagMod.id("zombie"),
                 new LootTableContent(
@@ -64,7 +75,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         ContentEntry skeleton = new ContentEntry(
                 LootBagMod.id("skeleton"),
                 new CommandContent(
-                        "/kill",
+                        "/kill @s",
                         new Content.Icon(new Identifier("textures/item/bone.png"))
                 )
         );
@@ -87,7 +98,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         BagEntry optional = new BagEntry(
                 LootBagMod.id("optional"),
                 new OptionalBag(
-                        List.of(diamondSword, stone),
+                        List.of(diamondSword, stone, effect),
                         Rarity.RARE,
                         new Bag.Color(0x28DF99, 0x493323)
                 )
@@ -108,6 +119,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         CONTENTS.add(beef);
         CONTENTS.add(diamondSword);
         CONTENTS.add(stone);
+        CONTENTS.add(effect);
         CONTENTS.add(zombie);
         CONTENTS.add(skeleton);
         CONTENTS.add(creeper);

@@ -1,7 +1,8 @@
-// 1.20.1	2024-08-03T22:30:41.8531801	Loot Bag/Loot Bag Example Contents
+// 1.20.1	2024-08-04T18:16:53.4347728	Loot Bag/Loot Bag Example Contents
+2044bb0045354b080a70dbe9870ac8b238950afd data\loot-bag\loot-bag\content\effect.json
 4533ece72d258b00ffebfdedf7a0210667160b34 data\loot-bag\loot-bag\content\zombie.json
 89861cd9a0b043091ef7085486b3b14f18e08164 data\loot-bag\loot-bag\content\stone.json
 3bdf2ababd759198aaab435d83168bd6cefbff33 data\loot-bag\loot-bag\content\creeper.json
-761872d5185a41125277d2448963d52a1b315e98 data\loot-bag\loot-bag\content\skeleton.json
+c05c342d4529dc23d195a3e11bea11b5d58faac3 data\loot-bag\loot-bag\content\skeleton.json
 bc20ab56302d0f79d151a07d82306be571d642b9 data\loot-bag\loot-bag\content\beef.json
 28d733e904c723a53673b6e24c24442bef700b03 data\loot-bag\loot-bag\content\diamond_sword.json
