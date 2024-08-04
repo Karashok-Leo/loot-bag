@@ -26,6 +26,11 @@ public class ItemContent extends StacksContent
         this.stack = stack;
     }
 
+    public ItemContent(ItemStack stack)
+    {
+        this(stack, new Icon(stack.getItem()));
+    }
+
     public ItemStack getStack()
     {
         return stack;
