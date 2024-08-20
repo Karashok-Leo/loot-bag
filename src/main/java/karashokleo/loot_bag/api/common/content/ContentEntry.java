@@ -23,7 +23,7 @@ public record ContentEntry(Identifier id, Content content, String nameKey, Strin
             id ->
             {
                 ContentEntry entry = LootBagData.CONTENTS.get(id);
-                return entry == null ? DataResult.error(() -> "Cannot find entry with id: " + id) : DataResult.success(entry);
+                return entry == null ? DataResult.error(() -> LootBagData.unknownContentMessage(id)) : DataResult.success(entry);
             },
             ContentEntry::id
     );

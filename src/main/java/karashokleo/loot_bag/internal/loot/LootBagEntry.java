@@ -3,6 +3,7 @@ package karashokleo.loot_bag.internal.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSyntaxException;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.data.LootBagData;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
@@ -69,12 +70,15 @@ public class LootBagEntry extends LeafEntry
         @Override
         protected LootBagEntry fromJson(JsonObject entryJson, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions, LootFunction[] functions)
         {
+            Identifier id = new Identifier(JsonHelper.getString(entryJson, KEY));
+            BagEntry bagEntry = LootBagData.BAGS.get(id);
+            if (bagEntry == null) throw new JsonSyntaxException(LootBagData.unknownBagMessage(id));
             return new LootBagEntry(
                     weight,
                     quality,
                     conditions,
                     functions,
-                    LootBagData.BAGS.get(new Identifier(JsonHelper.getString(entryJson, KEY)))
+                    bagEntry
             );
         }
     }

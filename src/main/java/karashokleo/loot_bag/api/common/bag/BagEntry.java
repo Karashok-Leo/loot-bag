@@ -17,7 +17,7 @@ public record BagEntry(Identifier id, Bag bag, String nameKey)
             id ->
             {
                 BagEntry entry = LootBagData.BAGS.get(id);
-                return entry == null ? DataResult.error(() -> "Cannot find entry with id: " + id) : DataResult.success(entry);
+                return entry == null ? DataResult.error(() -> LootBagData.unknownBagMessage(id)) : DataResult.success(entry);
             },
             BagEntry::id
     );

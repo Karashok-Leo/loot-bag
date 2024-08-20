@@ -29,6 +29,16 @@ public class LootBagData
     public static final Map<Identifier, ContentEntry> CONTENTS = new HashMap<>();
     public static final Map<Identifier, BagEntry> BAGS = new HashMap<>();
 
+    public static String unknownContentMessage(Identifier id)
+    {
+        return "Unknown loot content: '%s'".formatted(id);
+    }
+
+    public static String unknownBagMessage(Identifier id)
+    {
+        return "Unknown loot bag: '%s'".formatted(id);
+    }
+
     public static void putContent(Identifier id, Content content)
     {
         CONTENTS.put(id, new ContentEntry(id, content));

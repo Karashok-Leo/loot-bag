@@ -5,6 +5,8 @@ import karashokleo.loot_bag.api.client.screen.LootBagScreen;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.data.LootBagData;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
@@ -36,11 +38,12 @@ public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacke
         return TYPE;
     }
 
+    @Environment(EnvType.CLIENT)
     @SuppressWarnings("unused")
     public static void handle(SetScreenPacket packet, ClientPlayerEntity player, PacketSender responseSender)
     {
         BagEntry entry = LootBagData.BAGS.get(packet.bagId());
-        if (entry == null) return;
+        if (entry == null) throw new IllegalStateException(LootBagData.unknownBagMessage(packet.bagId()));
         LootBagScreen<?> screen = LootBagScreenRegistry.getFactory(entry.bag().getType()).createScreen(entry.bag(), packet.slot);
         MinecraftClient.getInstance().setScreen(screen);
     }

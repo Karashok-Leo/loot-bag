@@ -6,6 +6,8 @@ import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.data.LootBagData;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -32,6 +34,7 @@ public class SyncDataPacket
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @SuppressWarnings("unused")
     public static void handle(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender)
     {
