@@ -3,7 +3,6 @@ package karashokleo.loot_bag.internal.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSyntaxException;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.data.LootBagData;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
@@ -26,18 +25,20 @@ public class LootBagEntry extends LeafEntry
     public static final Serializer SERIALIZER = new Serializer();
     public static final LootPoolEntryType TYPE = new LootPoolEntryType(SERIALIZER);
 
-    private final BagEntry bag;
+    private final Identifier bagId;
 
-    protected LootBagEntry(int weight, int quality, LootCondition[] conditions, LootFunction[] functions, BagEntry bag)
+    protected LootBagEntry(int weight, int quality, LootCondition[] conditions, LootFunction[] functions, Identifier bagId)
     {
         super(weight, quality, conditions, functions);
-        this.bag = bag;
+        this.bagId = bagId;
     }
 
     @Override
     protected void generateLoot(Consumer<ItemStack> lootConsumer, LootContext context)
     {
-        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bag));
+        BagEntry bagEntry = LootBagData.BAGS.get(bagId);
+        if (bagEntry == null) LootBagMod.LOGGER.error(LootBagData.unknownBagMessage(bagId));
+        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bagEntry));
     }
 
     @Override
@@ -53,7 +54,12 @@ public class LootBagEntry extends LeafEntry
 
     public static LeafEntry.Builder<?> builder(BagEntry bag)
     {
-        return LootBagEntry.builder((int weight, int quality, LootCondition[] conditions, LootFunction[] functions) -> new LootBagEntry(weight, quality, conditions, functions, bag));
+        return builder(bag.id());
+    }
+
+    public static LeafEntry.Builder<?> builder(Identifier bagId)
+    {
+        return LootBagEntry.builder((int weight, int quality, LootCondition[] conditions, LootFunction[] functions) -> new LootBagEntry(weight, quality, conditions, functions, bagId));
     }
 
     public static class Serializer extends LeafEntry.Serializer<LootBagEntry>
@@ -64,21 +70,18 @@ public class LootBagEntry extends LeafEntry
         public void addEntryFields(JsonObject jsonObject, LootBagEntry leafEntry, JsonSerializationContext jsonSerializationContext)
         {
             super.addEntryFields(jsonObject, leafEntry, jsonSerializationContext);
-            jsonObject.addProperty(KEY, leafEntry.bag.id().toString());
+            jsonObject.addProperty(KEY, leafEntry.bagId.toString());
         }
 
         @Override
         protected LootBagEntry fromJson(JsonObject entryJson, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions, LootFunction[] functions)
         {
-            Identifier id = new Identifier(JsonHelper.getString(entryJson, KEY));
-            BagEntry bagEntry = LootBagData.BAGS.get(id);
-            if (bagEntry == null) throw new JsonSyntaxException(LootBagData.unknownBagMessage(id));
             return new LootBagEntry(
                     weight,
                     quality,
                     conditions,
                     functions,
-                    bagEntry
+                    new Identifier(JsonHelper.getString(entryJson, KEY))
             );
         }
     }
