@@ -15,11 +15,11 @@ import net.minecraft.text.Text;
 public class LootBagItemRegistry
 {
     public static final RegistryKey<ItemGroup> ITEM_GROUP_KEY = RegistryKey.of(RegistryKeys.ITEM_GROUP, LootBagMod.id("loot_bag"));
-    public static LootBagItem LOOT_BAG;
+    public static LootBagItem LOOT_BAG = new LootBagItem(new FabricItemSettings().maxCount(16));
 
     public static void init()
     {
-        LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), new LootBagItem(new FabricItemSettings().maxCount(16)));
+        LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), LOOT_BAG);
 
         Registry.register(
                 Registries.ITEM_GROUP,

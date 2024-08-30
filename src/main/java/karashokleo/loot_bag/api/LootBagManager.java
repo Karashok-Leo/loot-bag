@@ -31,5 +31,7 @@ public interface LootBagManager
 
     void putBag(Identifier id, Bag bag);
 
-    void clearAllEntries();
+    void clearAllContentEntries();
+
+    void clearAllBagEntries();
 }

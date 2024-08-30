@@ -35,7 +35,7 @@ public class ClientNetworkHandlers
     private static void handleSyncContent(SyncDataPackets.SyncContentPacket packet, ClientPlayerEntity player, PacketSender responseSender)
     {
         LootBagManager manager = LootBagManager.getInstance();
-        manager.clearAllEntries();
+        manager.clearAllContentEntries();
         for (ContentEntry entry : packet.entries())
             manager.putContent(entry.id(), entry.content());
         responseSender.sendPacket(
@@ -49,6 +49,7 @@ public class ClientNetworkHandlers
     private static void handleSyncBag(SyncDataPackets.SyncBagPacket packet, ClientPlayerEntity player, PacketSender responseSender)
     {
         LootBagManager manager = LootBagManager.getInstance();
+        manager.clearAllBagEntries();
         for (BagEntry entry : packet.entries())
             manager.putBag(entry.id(), entry.bag());
     }

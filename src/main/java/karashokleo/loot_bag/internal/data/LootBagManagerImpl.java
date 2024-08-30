@@ -74,9 +74,14 @@ public final class LootBagManagerImpl implements LootBagManager
     }
 
     @Override
-    public void clearAllEntries()
+    public void clearAllContentEntries()
     {
         CONTENTS.clear();
+    }
+
+    @Override
+    public void clearAllBagEntries()
+    {
         BAGS.clear();
     }
 
@@ -98,8 +103,9 @@ public final class LootBagManagerImpl implements LootBagManager
         @Override
         public void reload(ResourceManager manager)
         {
-            INSTANCE.clearAllEntries();
+            INSTANCE.clearAllContentEntries();
             this.tryLoad(manager, ConstantTexts.CONTENT_DIR, Content.CODEC, INSTANCE::putContent);
+            INSTANCE.clearAllBagEntries();
             this.tryLoad(manager, ConstantTexts.BAG_DIR, Bag.CODEC, INSTANCE::putBag);
         }
 
