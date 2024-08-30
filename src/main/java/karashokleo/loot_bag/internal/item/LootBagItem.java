@@ -4,16 +4,18 @@ import com.mojang.datafixers.util.Pair;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
-import karashokleo.loot_bag.internal.network.ServerNetwork;
+import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -45,6 +47,16 @@ public class LootBagItem extends Item
     public Optional<Bag> getBag(ItemStack stack)
     {
         return this.getBagEntry(stack).map(BagEntry::bag);
+    }
+
+    public ItemStack getStack(Identifier bagId)
+    {
+        ItemStack stack = this.getDefaultStack();
+        stack.setSubNbt(
+                KEY,
+                NbtString.of(bagId.toString())
+        );
+        return stack;
     }
 
     public ItemStack getStack(BagEntry entry)
@@ -87,7 +99,7 @@ public class LootBagItem extends Item
                 if (player.isSneaking() && entry.bag().getType().quick())
                     open(player, stack, entry.bag(), 0);
                     // Open Through Screen
-                else ServerNetwork.sendScreen(player, slot, entry.id());
+                else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
             }, () -> player.sendMessage(INVALID, true));
         }
         return TypedActionResult.success(stack, world.isClient());

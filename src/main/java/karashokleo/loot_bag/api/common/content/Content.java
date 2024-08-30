@@ -4,8 +4,6 @@ import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -60,11 +58,6 @@ public abstract class Content
         public Icon(Identifier texture)
         {
             this(texture, 16, 16);
-        }
-
-        public Icon(ItemConvertible item)
-        {
-            this(Registries.ITEM.getId(item.asItem()));
         }
 
         private static Identifier toTextureId(Identifier id)

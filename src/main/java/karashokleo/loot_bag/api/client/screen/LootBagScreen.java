@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
-import karashokleo.loot_bag.internal.network.ClientNetwork;
+import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -161,7 +161,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void open(int selectedIndex)
     {
         if (client != null && client.player != null)
-            ClientNetwork.sendOpen(slot, selectedIndex);
+            ClientNetworkHandlers.sendOpen(slot, selectedIndex);
         close();
     }
 

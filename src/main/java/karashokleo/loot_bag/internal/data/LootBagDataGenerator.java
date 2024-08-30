@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
@@ -38,14 +39,14 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("beef"),
                 new ItemContent(
                         Items.BEEF.getDefaultStack(),
-                        new Content.Icon(Items.BEEF)
+                        new Content.Icon(Registries.ITEM.getId(Items.BEEF))
                 )
         );
         ContentEntry diamondSword = new ContentEntry(
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
                         diamondSwordStack,
-                        new Content.Icon(Items.DIAMOND_SWORD)
+                        new Content.Icon(Registries.ITEM.getId(Items.DIAMOND_SWORD))
                 )
         );
         ContentEntry stone = new ContentEntry(
@@ -62,7 +63,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                                 new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
                                 new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
                         ),
-                        new Content.Icon(Items.GOLDEN_APPLE)
+                        new Content.Icon(Registries.ITEM.getId(Items.GOLDEN_APPLE))
                 )
         );
         ContentEntry zombie = new ContentEntry(

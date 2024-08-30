@@ -8,13 +8,11 @@ import karashokleo.loot_bag.api.common.content.CommandContent;
 import karashokleo.loot_bag.api.common.content.EffectContent;
 import karashokleo.loot_bag.api.common.content.ItemContent;
 import karashokleo.loot_bag.api.common.content.LootTableContent;
-import karashokleo.loot_bag.internal.data.LootBagData;
+import karashokleo.loot_bag.api.common.loot.LootBagEntry;
+import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
-import karashokleo.loot_bag.internal.loot.LootBagEntry;
-import karashokleo.loot_bag.internal.network.ServerNetwork;
+import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,24 +28,16 @@ public class LootBagMod implements ModInitializer
         initStaticRegistries();
         LootBagItemRegistry.init();
         LootBagEntry.init();
-        ServerNetwork.init();
-        LootBagData.registerLoader();
+        ServerNetworkHandlers.init();
+        LootBagManagerImpl.registerLoader();
     }
 
     private static void initStaticRegistries()
     {
-        LootBagRegistry.CONTENT_TYPE_REGISTRY = FabricRegistryBuilder
-                .createSimple(LootBagRegistry.CONTENT_TYPE_KEY)
-                .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
         LootBagRegistry.registerContentType(id("item"), ItemContent.TYPE);
         LootBagRegistry.registerContentType(id("loot_table"), LootTableContent.TYPE);
         LootBagRegistry.registerContentType(id("command"), CommandContent.TYPE);
         LootBagRegistry.registerContentType(id("effect"), EffectContent.TYPE);
-        LootBagRegistry.BAG_TYPE_REGISTRY = FabricRegistryBuilder
-                .createSimple(LootBagRegistry.BAG_TYPE_KEY)
-                .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
         LootBagRegistry.registerBagType(id("single"), SingleBag.TYPE);
         LootBagRegistry.registerBagType(id("optional"), OptionalBag.TYPE);
         LootBagRegistry.registerBagType(id("random"), RandomBag.TYPE);

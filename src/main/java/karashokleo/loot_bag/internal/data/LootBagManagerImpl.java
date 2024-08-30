@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -14,39 +15,69 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class LootBagData
+public final class LootBagManagerImpl implements LootBagManager
 {
-    private static final String PARENT_DIR = LootBagMod.MOD_ID + "/";
-    public static final String CONTENT_DIR = PARENT_DIR + "content";
-    public static final String BAG_DIR = PARENT_DIR + "bag";
-    public static final Map<Identifier, ContentEntry> CONTENTS = new HashMap<>();
-    public static final Map<Identifier, BagEntry> BAGS = new HashMap<>();
+    public static final LootBagManager INSTANCE = new LootBagManagerImpl();
 
-    public static String unknownContentMessage(Identifier id)
+    public final Map<Identifier, ContentEntry> CONTENTS = new HashMap<>();
+    public final Map<Identifier, BagEntry> BAGS = new HashMap<>();
+
+    private LootBagManagerImpl()
     {
-        return "Unknown loot content: '%s'".formatted(id);
     }
 
-    public static String unknownBagMessage(Identifier id)
+    @Override
+    public Collection<ContentEntry> getAllContentEntries()
     {
-        return "Unknown loot bag: '%s'".formatted(id);
+        return CONTENTS.values();
     }
 
-    public static void putContent(Identifier id, Content content)
+    @Override
+    public Collection<BagEntry> getAllBagEntries()
+    {
+        return BAGS.values();
+    }
+
+    @Nullable
+    @Override
+    public ContentEntry getContentEntry(Identifier id)
+    {
+        return CONTENTS.get(id);
+    }
+
+    @Nullable
+    @Override
+    public BagEntry getBagEntry(Identifier id)
+    {
+        return BAGS.get(id);
+    }
+
+    @Override
+    public void putContent(Identifier id, Content content)
     {
         CONTENTS.put(id, new ContentEntry(id, content));
     }
 
-    public static void putBag(Identifier id, Bag bag)
+    @Override
+    public void putBag(Identifier id, Bag bag)
     {
         BAGS.put(id, new BagEntry(id, bag));
+    }
+
+    @Override
+    public void clearAllEntries()
+    {
+        CONTENTS.clear();
+        BAGS.clear();
     }
 
     public static void registerLoader()
@@ -67,10 +98,9 @@ public class LootBagData
         @Override
         public void reload(ResourceManager manager)
         {
-            CONTENTS.clear();
-            BAGS.clear();
-            this.tryLoad(manager, CONTENT_DIR, Content.CODEC, LootBagData::putContent);
-            this.tryLoad(manager, BAG_DIR, Bag.CODEC, LootBagData::putBag);
+            INSTANCE.clearAllEntries();
+            this.tryLoad(manager, ConstantTexts.CONTENT_DIR, Content.CODEC, INSTANCE::putContent);
+            this.tryLoad(manager, ConstantTexts.BAG_DIR, Bag.CODEC, INSTANCE::putBag);
         }
 
         private <T> void tryLoad(ResourceManager manager, String path, Codec<T> codec, BiConsumer<Identifier, T> consumer)
@@ -94,6 +124,4 @@ public class LootBagData
             });
         }
     }
-
-    ;
 }

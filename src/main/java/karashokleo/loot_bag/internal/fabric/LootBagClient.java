@@ -8,7 +8,7 @@ import karashokleo.loot_bag.api.common.bag.OptionalBag;
 import karashokleo.loot_bag.api.common.bag.RandomBag;
 import karashokleo.loot_bag.api.common.bag.SingleBag;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
-import karashokleo.loot_bag.internal.network.ClientNetwork;
+import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
@@ -21,7 +21,7 @@ public class LootBagClient implements ClientModInitializer
         LootBagScreenRegistry.register(OptionalBag.TYPE, OptionalLootBagScreen::new);
         LootBagScreenRegistry.register(RandomBag.TYPE, RandomLootBagScreen::new);
 
-        ClientNetwork.init();
+        ClientNetworkHandlers.init();
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
     }

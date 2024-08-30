@@ -1,10 +1,9 @@
 package karashokleo.loot_bag.internal.item;
 
-import karashokleo.loot_bag.internal.data.LootBagData;
+import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -27,12 +26,23 @@ public class LootBagItemRegistry
                 LootBagMod.id("loot_bag"),
                 FabricItemGroup
                         .builder()
-                        .icon(() -> LootBagData.BAGS.values().stream().map(LOOT_BAG::getStack).findFirst().orElse(ItemStack.EMPTY))
-                        .entries((displayContext, entries) -> entries.addAll(LootBagData.BAGS.values().stream().map(LOOT_BAG::getStack).toList()))
+                        .icon(() -> LootBagManager
+                                .getInstance()
+                                .getAllBagEntries()
+                                .stream()
+                                .map(LOOT_BAG::getStack)
+                                .findFirst()
+                                .orElse(ItemStack.EMPTY)
+                        )
+                        .entries((displayContext, entries) -> entries.addAll(LootBagManager
+                                .getInstance()
+                                .getAllBagEntries()
+                                .stream()
+                                .map(LOOT_BAG::getStack)
+                                .toList()
+                        ))
                         .displayName(Text.translatable("itemGroup.loot-bag.loot_bag"))
                         .build()
         );
-
-//        ItemGroupEvents.modifyEntriesEvent(ITEM_GROUP_KEY).register(entries -> entries.addAll(LootBagData.BAGS.values().stream().map(LOOT_BAG::getStack).toList()));
     }
 }
