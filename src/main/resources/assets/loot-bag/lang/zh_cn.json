@@ -5,5 +5,8 @@
   "text.loot-bag.optional_screen": "可选战利品袋",
   "text.loot-bag.random_screen": "随机战利品袋",
   "text.loot-bag.open": "打开",
-  "text.loot-bag.invalid": "无效的战利品袋!"
+  "text.loot-bag.invalid": "无效的战利品袋!",
+  "tooltip.loot-bag.open_screen": "[右键] 打开预览界面",
+  "tooltip.loot-bag.quick_open": "[主手持有 + Shift + 右键] 直接打开",
+  "tooltip.loot-bag.quick_open_stack": "[副手持有 + Shift + 右键] 直接打开整组"
 }

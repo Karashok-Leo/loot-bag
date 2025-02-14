@@ -5,6 +5,7 @@ import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,19 +14,22 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 public class LootBagItem extends Item
 {
-    private static final Text INVALID = Text.translatable("text.loot-bag.invalid");
-    private static final String KEY = "BagId";
+    protected static final MutableText INVALID = Text.translatable("text.loot-bag.invalid").formatted(Formatting.RED);
+    protected static final MutableText OPEN_PREVIEW_SCREEN = Text.translatable("tooltip.loot-bag.open_screen").formatted(Formatting.GRAY);
+    protected static final MutableText QUICK_OPEN = Text.translatable("tooltip.loot-bag.quick_open").formatted(Formatting.GRAY);
+    protected static final MutableText QUICK_OPEN_STACK = Text.translatable("tooltip.loot-bag.quick_open_stack").formatted(Formatting.GRAY);
+    protected static final String KEY = "BagId";
 
     public LootBagItem(Settings settings)
     {
@@ -96,9 +100,22 @@ public class LootBagItem extends Item
             this.getBagEntry(stack).ifPresentOrElse(entry ->
             {
                 // Open Without Screen While Sneaking
-                if (player.isSneaking() && entry.bag().getType().quick())
-                    open(player, stack, entry.bag(), 0);
-                    // Open Through Screen
+                Bag bag = entry.bag();
+                if (player.isSneaking() && bag.getType().quick())
+                {
+                    if (hand == Hand.MAIN_HAND)
+                    {
+                        open(player, stack, bag, 0);
+                    } else
+                    {
+                        int count = stack.getCount();
+                        for (int i = 0; i < count; i++)
+                        {
+                            open(player, stack, bag, 0);
+                        }
+                    }
+                }
+                // Open Through Screen
                 else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
             }, () -> player.sendMessage(INVALID, true));
         }
@@ -123,5 +140,20 @@ public class LootBagItem extends Item
                     bag -> open(player, stack, bag, selectedIndex),
                     () -> player.sendMessage(INVALID, true)
             );
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+    {
+        Optional<Bag> optional = this.getBag(stack);
+        if (optional.isEmpty())
+        {
+            tooltip.add(INVALID);
+            return;
+        }
+        tooltip.add(OPEN_PREVIEW_SCREEN);
+        if (!optional.get().getType().quick()) return;
+        tooltip.add(QUICK_OPEN);
+        tooltip.add(QUICK_OPEN_STACK);
     }
 }

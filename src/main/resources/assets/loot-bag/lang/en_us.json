@@ -5,5 +5,8 @@
   "text.loot-bag.optional_screen": "Optional Loot Bag",
   "text.loot-bag.random_screen": "Random Loot Bag",
   "text.loot-bag.open": "Open",
-  "text.loot-bag.invalid": "Invalid Loot Bag!"
+  "text.loot-bag.invalid": "Invalid Loot Bag!",
+  "tooltip.loot-bag.open_screen": "[Right-click] Open preview screen",
+  "tooltip.loot-bag.quick_open": "[Main hand + Shift + Right-click] Quick open",
+  "tooltip.loot-bag.quick_open_stack": "[Off hand + Shift + Right-click] Quick open the whole stack"
 }

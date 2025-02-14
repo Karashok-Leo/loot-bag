@@ -3,9 +3,7 @@ package karashokleo.loot_bag.api.common.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
-import karashokleo.loot_bag.internal.data.ConstantTexts;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
 import net.minecraft.item.ItemStack;
@@ -37,9 +35,7 @@ public class LootBagEntry extends LeafEntry
     @Override
     protected void generateLoot(Consumer<ItemStack> lootConsumer, LootContext context)
     {
-        BagEntry bagEntry = LootBagManager.getInstance().getBagEntry(bagId);
-        if (bagEntry == null) LootBagMod.LOGGER.error(ConstantTexts.unknownBagMessage(bagId));
-        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bagEntry));
+        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bagId));
     }
 
     @Override
