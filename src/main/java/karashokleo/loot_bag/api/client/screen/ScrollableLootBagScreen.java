@@ -1,5 +1,6 @@
 package karashokleo.loot_bag.api.client.screen;
 
+import karashokleo.loot_bag.api.client.render.DrawableIcon;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.ContentView;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
@@ -16,6 +17,8 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected int currentIndex = 0;
     protected int offset = 0;
     protected List<ContentEntry> contents;
+    protected DrawableIcon previousIcon;
+    protected DrawableIcon currentIcon;
 
     protected ScrollableLootBagScreen(Text title, B bag, int slot)
     {
@@ -23,10 +26,30 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     }
 
     @Override
-    protected void drawIcon(DrawContext context)
+    protected void init()
     {
-        drawIcon(context, this.getCurrentContent().content().getIcon(), offset * OFFSET_MUL, 1F - getPercent(), 1F - getPercent());
-        drawIcon(context, this.getPreviousContent().content().getIcon(), (offset - MAX_OFFSET * getDirection()) * OFFSET_MUL, getPercent(), getPercent());
+        super.init();
+        this.previousIcon = new DrawableIcon(getPreviousContent().content().getIcon());
+        this.currentIcon = new DrawableIcon(getCurrentContent().content().getIcon());
+        this.addDrawable(this.previousIcon);
+        this.addDrawable(this.currentIcon);
+    }
+
+    @Override
+    protected void updateDrawableIcon(DrawContext context, int mouseX, int mouseY, float delta)
+    {
+        updateDrawableIconInternal(
+                this.previousIcon,
+                (offset - MAX_OFFSET * getDirection()) * OFFSET_MUL,
+                getPercent(),
+                getPercent()
+        );
+        updateDrawableIconInternal(
+                this.currentIcon,
+                offset * OFFSET_MUL,
+                1F - getPercent(),
+                1F - getPercent()
+        );
     }
 
     @Override
@@ -39,20 +62,22 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected void prev()
     {
         currentIndex--;
-        currentIndex = adapt(currentIndex);
+        currentIndex = adaptIndex(currentIndex);
         offset = -MAX_OFFSET;
-        this.updateContent();
+        this.updateIcon();
+        this.updateContentText();
     }
 
     protected void next()
     {
         currentIndex++;
-        currentIndex = adapt(currentIndex);
+        currentIndex = adaptIndex(currentIndex);
         offset = MAX_OFFSET;
-        this.updateContent();
+        this.updateIcon();
+        this.updateContentText();
     }
 
-    protected int adapt(int index)
+    protected int adaptIndex(int index)
     {
         int length = getContents().size();
         if (index > length - 1)
@@ -60,6 +85,12 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
         if (index < 0)
             return length - 1;
         return index;
+    }
+
+    protected void updateIcon()
+    {
+        this.previousIcon.setIcon(getPreviousContent().content().getIcon());
+        this.currentIcon.setIcon(getCurrentContent().content().getIcon());
     }
 
     protected int getDirection()
@@ -93,7 +124,7 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected ContentEntry getPreviousContent()
     {
         int previousIndex = currentIndex - this.getDirection();
-        previousIndex = adapt(previousIndex);
+        previousIndex = adaptIndex(previousIndex);
         return getContents().get(previousIndex);
     }
 

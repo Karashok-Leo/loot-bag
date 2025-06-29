@@ -1,29 +1,28 @@
 package karashokleo.loot_bag.api.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import karashokleo.loot_bag.api.client.render.DrawableIcon;
 import karashokleo.loot_bag.api.common.bag.Bag;
-import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
+import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.joml.Matrix4f;
 
 public abstract class LootBagScreen<B extends Bag> extends Screen
 {
     private static final Text TEXT_OPEN = Text.translatable("text.loot-bag.open");
+    // colors of the texts
     private static final int TITLE_COLOR = 0xffffff;
     private static final int NAME_COLOR = 0xffffff;
     private static final int DESC_COLOR = 0xffffff;
-    private static final float ICON_SIZE = 64;
+    // size of the open button
     private static final int OPEN_WIDTH = 72;
     private static final int OPEN_HEIGHT = 24;
+
     protected final B bag;
     protected final int slot;
     protected ButtonWidget openButton;
@@ -40,12 +39,12 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     @Override
     protected void init()
     {
-        updateContent();
         this.openButton = ButtonWidget
                 .builder(TEXT_OPEN, button -> open())
                 .dimensions((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
                 .build();
         addDrawableChild(openButton);
+        updateContentText();
     }
 
     protected int getTitleY()
@@ -53,14 +52,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         return (int) (0.08F * height);
     }
 
-    protected float getIconY()
-    {
-        return 0.16F * height;
-    }
-
     protected int getNameY()
     {
-        return (int) (0.24F * height + ICON_SIZE);
+        return (int) (0.24F * height + Icon.SIZE);
     }
 
     protected int getDescY()
@@ -87,11 +81,11 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         this.drawTitle(context);
         this.drawName(context);
         this.drawDescription(context);
-        this.drawIcon(context);
+        this.updateDrawableIcon(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
     }
 
-    protected void updateContent()
+    protected void updateContentText()
     {
         ContentEntry entry = this.getCurrentContent();
         this.contentName = entry.getName().formatted(Formatting.BOLD);
@@ -114,46 +108,21 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         this.contentDesc.drawCenterWithShadow(context, width / 2, this.getDescY(), this.textRenderer.fontHeight, DESC_COLOR);
     }
 
-    protected void drawIcon(DrawContext context)
+    protected abstract void updateDrawableIcon(DrawContext context, int mouseX, int mouseY, float delta);
+
+    protected void updateDrawableIconInternal(DrawableIcon drawableIcon, float offsetX, float scale, float alpha)
     {
-        this.drawIcon(context, this.getCurrentContent().content().getIcon(), 0, 1, 1F);
-    }
+//        float x = (width - ICON_SIZE) / 2F;
+//        float y = this.getIconY();
+//        x += offsetX > 0 ? offsetX * 2 : offsetX;
+//        y += (1F - scale) / 2F * ICON_SIZE;
+        float x = 0.5F * width + offsetX;
+        float y = 0.25F * height;
 
-    protected void drawIcon(DrawContext context, Content.Icon icon, float offsetX, float scale, float alpha)
-    {
-        float scaleW = ICON_SIZE / icon.width();
-
-        MatrixStack matrixStack = context.getMatrices();
-        matrixStack.push();
-
-        matrixStack.translate((width - ICON_SIZE) / 2F, this.getIconY(), 0);
-        matrixStack.translate(offsetX > 0 ? offsetX * 2 : offsetX, (1F - scale) / 2F * ICON_SIZE, 0);
-
-        matrixStack.scale(scaleW, scaleW, scaleW);
-        matrixStack.scale(scale, scale, scale);
-
-        RenderSystem.setShaderTexture(0, icon.texture());
-        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
-        RenderSystem.enableBlend();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        bufferBuilder.vertex(matrix4f, 0, 0, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(0, 0).next();
-        bufferBuilder.vertex(matrix4f, 0, icon.height(), 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(0, 1).next();
-        bufferBuilder.vertex(matrix4f, icon.width(), icon.height(), 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(1, 1).next();
-        bufferBuilder.vertex(matrix4f, icon.width(), 0, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(1, 0).next();
-        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-        RenderSystem.disableBlend();
-
-        matrixStack.pop();
+        drawableIcon.setX((int) x);
+        drawableIcon.setY((int) y);
+        drawableIcon.setScale(scale);
+        drawableIcon.setAlpha(alpha);
     }
 
     protected abstract void open();
@@ -166,4 +135,22 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     }
 
     protected abstract ContentEntry getCurrentContent();
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    {
+
+        if (super.keyPressed(keyCode, scanCode, modifiers))
+        {
+            return true;
+        } else if (this.client != null &&
+                   this.client.options.inventoryKey.matchesKey(keyCode, scanCode))
+        {
+            this.close();
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
 }
