@@ -1,4 +1,4 @@
-package karashokleo.loot_bag.api.provider;
+package karashokleo.loot_bag.api.data;
 
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.internal.data.ConstantTexts;
