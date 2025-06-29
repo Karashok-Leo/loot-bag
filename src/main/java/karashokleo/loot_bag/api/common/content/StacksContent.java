@@ -1,5 +1,6 @@
 package karashokleo.loot_bag.api.common.content;
 
+import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;

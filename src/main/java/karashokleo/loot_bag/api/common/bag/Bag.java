@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
-import karashokleo.loot_bag.api.common.util.EnumCodecUtil;
+import karashokleo.loot_bag.api.common.util.CodecUtil;
 import net.minecraft.util.Rarity;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public abstract class Bag
     public static <T extends Bag> Products.P2<RecordCodecBuilder.Mu<T>, Rarity, Color> bagFields(RecordCodecBuilder.Instance<T> instance)
     {
         return instance.group(
-                EnumCodecUtil.getEnumCodec(Rarity.class).optionalFieldOf("rarity", Rarity.COMMON).forGetter(Bag::getRarity),
+                CodecUtil.getEnumCodec(Rarity.class).optionalFieldOf("rarity", Rarity.COMMON).forGetter(Bag::getRarity),
                 Color.CODEC.fieldOf("color").forGetter(Bag::getColor)
         );
     }

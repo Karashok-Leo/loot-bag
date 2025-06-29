@@ -4,8 +4,8 @@ import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
+import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public abstract class Content
 {
@@ -33,38 +33,4 @@ public abstract class Content
     protected abstract ContentType<?> getType();
 
     public abstract void reward(ServerPlayerEntity player);
-
-    public record Icon(Identifier texture, int width, int height)
-    {
-        public static final Codec<Icon> CODEC = RecordCodecBuilder.create(
-                ins -> ins.group(
-                        Identifier.CODEC.fieldOf("texture").forGetter(Icon::texture),
-                        Codec.INT.optionalFieldOf("width", 16).forGetter(Icon::width),
-                        Codec.INT.optionalFieldOf("height", 16).forGetter(Icon::height)
-                ).apply(ins, Icon::new)
-        );
-
-        /**
-         * @param texture textureId (ends with ".png")
-         *                or itemId (will auto convert into textureId)
-         */
-        public Icon(Identifier texture, int width, int height)
-        {
-            this.texture = toTextureId(texture);
-            this.width = width;
-            this.height = height;
-        }
-
-        public Icon(Identifier texture)
-        {
-            this(texture, 16, 16);
-        }
-
-        private static Identifier toTextureId(Identifier id)
-        {
-            return id.getPath().endsWith(".png") ?
-                    id :
-                    id.withPrefixedPath("textures/item/").withSuffixedPath(".png");
-        }
-    }
 }

@@ -2,6 +2,7 @@ package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Registries;

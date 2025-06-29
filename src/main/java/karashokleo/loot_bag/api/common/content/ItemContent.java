@@ -2,6 +2,8 @@ package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.icon.Icon;
+import karashokleo.loot_bag.api.common.util.CodecUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -12,7 +14,7 @@ public class ItemContent extends StacksContent
 {
     public static final Codec<ItemContent> CODEC = RecordCodecBuilder.create(
             ins -> ins.group(
-                    ItemStack.CODEC.fieldOf("item").forGetter(ItemContent::getStack)
+                    CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemContent::getStack)
             ).and(contentFields(ins).t1()).apply(ins, ItemContent::new)
     );
 
