@@ -1,7 +1,7 @@
 package karashokleo.loot_bag.internal.data;
 
 import karashokleo.loot_bag.api.common.bag.Bag;
-import karashokleo.loot_bag.api.provider.AbstractBagProvider;
+import karashokleo.loot_bag.api.data.AbstractBagProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.util.Identifier;
 
