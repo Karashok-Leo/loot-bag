@@ -1,7 +1,12 @@
 {
   "type": "loot-bag:loot_table",
   "icon": {
-    "texture": "minecraft:textures/item/rotten_flesh.png"
+    "type": "loot-bag:texture",
+    "texture": "minecraft:textures/item/rotten_flesh.png",
+    "u0": 0.25,
+    "u1": 0.75,
+    "v0": 0.25,
+    "v1": 0.75
   },
   "id": "minecraft:entities/zombie"
 }

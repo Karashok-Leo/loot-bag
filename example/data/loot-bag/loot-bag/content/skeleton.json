@@ -2,6 +2,7 @@
   "type": "loot-bag:command",
   "command": "/kill @s",
   "icon": {
+    "type": "loot-bag:texture",
     "texture": "minecraft:textures/item/bone.png"
   }
 }

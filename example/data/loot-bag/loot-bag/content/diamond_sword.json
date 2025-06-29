@@ -1,7 +1,21 @@
 {
   "type": "loot-bag:item",
   "icon": {
-    "texture": "minecraft:textures/item/diamond_sword.png"
+    "type": "loot-bag:item",
+    "item": {
+      "Count": 1,
+      "id": "minecraft:diamond_sword",
+      "tag": {
+        "Damage": 0,
+        "Enchantments": [
+          {
+            "id": "minecraft:looting",
+            "lvl": 3
+          }
+        ]
+      }
+    },
+    "translucent": false
   },
   "item": {
     "Count": 1,

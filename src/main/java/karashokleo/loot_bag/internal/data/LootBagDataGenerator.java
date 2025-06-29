@@ -2,13 +2,15 @@ package karashokleo.loot_bag.internal.data;
 
 import karashokleo.loot_bag.api.common.bag.*;
 import karashokleo.loot_bag.api.common.content.*;
+import karashokleo.loot_bag.api.common.icon.ItemIcon;
+import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
@@ -32,28 +34,29 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
 
     private static void bootstrap()
     {
-        ItemStack diamondSwordStack = Items.DIAMOND_SWORD.getDefaultStack();
-        diamondSwordStack.setDamage(66);
-
         ContentEntry beef = new ContentEntry(
                 LootBagMod.id("beef"),
                 new ItemContent(
                         Items.BEEF.getDefaultStack(),
-                        new Content.Icon(Registries.ITEM.getId(Items.BEEF))
+                        new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F, true)
                 )
         );
+        ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
+        contentDiamondSword.setDamage(66);
+        ItemStack iconDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
+        iconDiamondSword.addEnchantment(Enchantments.LOOTING, 3);
         ContentEntry diamondSword = new ContentEntry(
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
-                        diamondSwordStack,
-                        new Content.Icon(Registries.ITEM.getId(Items.DIAMOND_SWORD))
+                        contentDiamondSword,
+                        new ItemIcon(iconDiamondSword, 1, false)
                 )
         );
         ContentEntry stone = new ContentEntry(
                 LootBagMod.id("stone"),
                 new LootTableContent(
                         new Identifier("blocks/stone"),
-                        new Content.Icon(new Identifier("textures/block/stone.png"))
+                        new ItemIcon(Items.STONE)
                 )
         );
         ContentEntry effect = new ContentEntry(
@@ -63,28 +66,28 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                                 new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
                                 new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
                         ),
-                        new Content.Icon(Registries.ITEM.getId(Items.GOLDEN_APPLE))
+                        new TextureIcon(new Identifier("textures/block/stone.png"))
                 )
         );
         ContentEntry zombie = new ContentEntry(
                 LootBagMod.id("zombie"),
                 new LootTableContent(
                         new Identifier("entities/zombie"),
-                        new Content.Icon(new Identifier("rotten_flesh"), 16, 16)
+                        new TextureIcon(new Identifier("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
                 )
         );
         ContentEntry skeleton = new ContentEntry(
                 LootBagMod.id("skeleton"),
                 new CommandContent(
                         "/kill @s",
-                        new Content.Icon(new Identifier("textures/item/bone.png"))
+                        new TextureIcon(new Identifier("textures/item/bone.png"))
                 )
         );
         ContentEntry creeper = new ContentEntry(
                 LootBagMod.id("creeper"),
                 new CommandContent(
                         "/summon minecraft:creeper ~ ~ ~",
-                        new Content.Icon(new Identifier("textures/item/gunpowder.png"))
+                        new TextureIcon(new Identifier("textures/item/gunpowder.png"))
                 )
         );
 

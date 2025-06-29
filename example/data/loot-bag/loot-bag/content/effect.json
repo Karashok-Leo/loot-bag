@@ -12,6 +12,7 @@
     }
   ],
   "icon": {
-    "texture": "minecraft:textures/item/golden_apple.png"
+    "type": "loot-bag:texture",
+    "texture": "minecraft:textures/block/stone.png"
   }
 }

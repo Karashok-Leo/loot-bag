@@ -1,7 +1,8 @@
 {
   "type": "loot-bag:loot_table",
   "icon": {
-    "texture": "minecraft:textures/block/stone.png"
+    "type": "loot-bag:item",
+    "item": "minecraft:stone"
   },
   "id": "minecraft:blocks/stone"
 }
