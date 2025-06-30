@@ -49,6 +49,7 @@ public abstract class Icon
 
     protected abstract IconType<?> getType();
 
+    /// override this method must be annotated with <code>@Environment(EnvType.CLIENT)</code> !!!
     @Environment(EnvType.CLIENT)
     public abstract void render(DrawContext context, MatrixStack matrices, float alpha, float delta);
 }
