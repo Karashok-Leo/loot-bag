@@ -5,6 +5,7 @@ import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 
+@Deprecated
 public class AlphaVertexConsumerWrapper extends VertexConsumerWrapper
 {
     private final int alpha;
@@ -26,7 +27,7 @@ public class AlphaVertexConsumerWrapper extends VertexConsumerWrapper
         @Override
         public VertexConsumer getBuffer(RenderLayer layer)
         {
-            RenderLayer renderLayer = TexturedRenderLayers.getEntityTranslucentCull();
+            RenderLayer renderLayer = TexturedRenderLayers.getItemEntityTranslucentCull();
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
             return new AlphaVertexConsumerWrapper(vertexConsumer, alpha);
         }

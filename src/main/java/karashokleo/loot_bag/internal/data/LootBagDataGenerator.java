@@ -38,7 +38,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("beef"),
                 new ItemContent(
                         Items.BEEF.getDefaultStack(),
-                        new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F, true)
+                        new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F)
                 )
         );
         ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
@@ -49,7 +49,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
                         contentDiamondSword,
-                        new ItemIcon(iconDiamondSword, 1, false)
+                        new ItemIcon(iconDiamondSword, 1)
                 )
         );
         ContentEntry stone = new ContentEntry(

@@ -3,7 +3,9 @@ package karashokleo.loot_bag.api.common.content;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
+import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -26,6 +28,18 @@ public class ItemContent extends StacksContent
     {
         super(icon);
         this.stack = stack;
+    }
+
+    public ItemContent(ItemStack stack)
+    {
+        super(new ItemIcon(stack));
+        this.stack = stack;
+    }
+
+    public ItemContent(ItemConvertible item)
+    {
+        super(new ItemIcon(item));
+        this.stack = item.asItem().getDefaultStack();
     }
 
     public ItemStack getStack()

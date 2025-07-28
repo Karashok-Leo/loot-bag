@@ -1,6 +1,6 @@
 package karashokleo.loot_bag.api.common.icon;
 
-import com.mojang.datafixers.Products;
+import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
@@ -13,38 +13,28 @@ public abstract class Icon
 {
     public static final Codec<Icon> CODEC = LootBagRegistry.ICON_TYPE_REGISTRY.getCodec().dispatch(Icon::getType, IconType::codec);
 
-    protected static <T extends Icon> Products.P2<RecordCodecBuilder.Mu<T>, Float, Boolean> iconFields(RecordCodecBuilder.Instance<T> instance)
+    protected static <T extends Icon> App<RecordCodecBuilder.Mu<T>, Float> iconFields()
     {
-        return instance.group(
-                Codec.FLOAT.optionalFieldOf("scale", 1.0F).forGetter(Icon::getScale),
-                Codec.BOOL.optionalFieldOf("translucent", true).forGetter(Icon::isTranslucent)
-        );
+        return Codec.FLOAT.optionalFieldOf("scale", 1.0F).forGetter(Icon::getScale);
     }
 
     public static final int SIZE = 64;
 
     protected final float scale;
-    protected final boolean translucent;
 
-    protected Icon(float scale, boolean translucent)
+    protected Icon(float scale)
     {
         this.scale = scale;
-        this.translucent = translucent;
     }
 
     protected Icon()
     {
-        this(1.0F, true);
+        this(1.0F);
     }
 
     public float getScale()
     {
         return scale;
-    }
-
-    public boolean isTranslucent()
-    {
-        return translucent;
     }
 
     protected abstract IconType<?> getType();

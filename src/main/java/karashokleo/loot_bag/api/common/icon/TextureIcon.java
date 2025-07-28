@@ -20,7 +20,7 @@ public class TextureIcon extends Icon
                     Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
                     Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
                     Codec.FLOAT.optionalFieldOf("v1", 1F).forGetter(TextureIcon::getV1)
-            ).and(iconFields(ins)).apply(ins, TextureIcon::new)
+            ).and(iconFields()).apply(ins, TextureIcon::new)
     );
 
     public static final IconType<TextureIcon> TYPE = new IconType<>(CODEC);
@@ -28,9 +28,9 @@ public class TextureIcon extends Icon
     protected final Identifier texture;
     protected final float u0, v0, u1, v1;
 
-    public TextureIcon(Identifier texture, float u0, float v0, float u1, float v1, float scale, boolean translucent)
+    public TextureIcon(Identifier texture, float u0, float v0, float u1, float v1, float scale)
     {
-        super(scale, translucent);
+        super(scale);
         this.texture = texture;
         this.u0 = u0;
         this.v0 = v0;
@@ -99,7 +99,6 @@ public class TextureIcon extends Icon
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        alpha = this.isTranslucent() ? alpha : 1F;
         bufferBuilder.vertex(matrix4f, -0.5F, -0.5F, 0)
                 .color(1F, 1F, 1F, alpha)
                 .texture(u0, v0).next();
