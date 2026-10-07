@@ -4,9 +4,9 @@ import karashokleo.loot_bag.api.client.render.DrawableIcon;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.ContentView;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected DrawableIcon previousIcon;
     protected DrawableIcon currentIcon;
 
-    protected ScrollableLootBagScreen(Text title, B bag, int slot)
+    protected ScrollableLootBagScreen(Component title, B bag, int slot)
     {
         super(title, bag, slot);
     }
@@ -31,12 +31,12 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
         super.init();
         this.previousIcon = new DrawableIcon(getPreviousContent().content().getIcon());
         this.currentIcon = new DrawableIcon(getCurrentContent().content().getIcon());
-        this.addDrawable(this.previousIcon);
-        this.addDrawable(this.currentIcon);
+        this.addRenderableOnly(this.previousIcon);
+        this.addRenderableOnly(this.currentIcon);
     }
 
     @Override
-    protected void updateDrawableIcon(DrawContext context, int mouseX, int mouseY, float delta)
+    protected void updateDrawableIcon(GuiGraphics context, int mouseX, int mouseY, float delta)
     {
         updateDrawableIconInternal(
                 this.previousIcon,
@@ -95,7 +95,7 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
 
     protected int getDirection()
     {
-        return MathHelper.sign(offset);
+        return Mth.sign(offset);
     }
 
     protected float getPercent()

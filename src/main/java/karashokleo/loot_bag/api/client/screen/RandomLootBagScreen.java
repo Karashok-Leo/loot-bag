@@ -1,11 +1,11 @@
 package karashokleo.loot_bag.api.client.screen;
 
 import karashokleo.loot_bag.api.common.bag.RandomBag;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class RandomLootBagScreen extends ScrollableLootBagScreen<RandomBag>
 {
-    protected static final Text TEXT_RANDOM = Text.translatable("text.loot-bag.random_screen");
+    protected static final Component TEXT_RANDOM = Component.translatable("text.loot-bag.random_screen");
     protected int tick;
 
     public RandomLootBagScreen(RandomBag bag, int slot)

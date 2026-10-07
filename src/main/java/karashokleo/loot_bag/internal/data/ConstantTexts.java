@@ -1,7 +1,7 @@
 package karashokleo.loot_bag.internal.data;
 
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.minecraft.util.Identifier;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
+import net.minecraft.resources.ResourceLocation;
 
 public final class ConstantTexts
 {
@@ -9,12 +9,12 @@ public final class ConstantTexts
     public static final String BAG_DIR = PARENT_DIR + "bag";
     public static final String CONTENT_DIR = PARENT_DIR + "content";
 
-    public static String unknownContentMessage(Identifier id)
+    public static String unknownContentMessage(ResourceLocation id)
     {
         return "Unknown loot content: '%s'".formatted(id);
     }
 
-    public static String unknownBagMessage(Identifier id)
+    public static String unknownBagMessage(ResourceLocation id)
     {
         return "Unknown loot bag: '%s'".formatted(id);
     }

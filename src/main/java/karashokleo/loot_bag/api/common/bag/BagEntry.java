@@ -4,17 +4,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.internal.data.ConstantTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
-public record BagEntry(Identifier id, Bag bag, String nameKey)
+public record BagEntry(ResourceLocation id, Bag bag, String nameKey)
 {
-    public BagEntry(Identifier id, Bag bag)
+    public BagEntry(ResourceLocation id, Bag bag)
     {
-        this(id, bag, id.toTranslationKey("bag"));
+        this(id, bag, id.toLanguageKey("bag"));
     }
 
-    public static final Codec<BagEntry> CODEC = Identifier.CODEC.comapFlatMap(
+    public static final Codec<BagEntry> CODEC = ResourceLocation.CODEC.comapFlatMap(
             id ->
             {
                 BagEntry entry = LootBagManager.getInstance().getBagEntry(id);
@@ -23,8 +23,8 @@ public record BagEntry(Identifier id, Bag bag, String nameKey)
             BagEntry::id
     );
 
-    public Text getName()
+    public Component getName()
     {
-        return Text.translatable(this.nameKey);
+        return Component.translatable(this.nameKey);
     }
 }

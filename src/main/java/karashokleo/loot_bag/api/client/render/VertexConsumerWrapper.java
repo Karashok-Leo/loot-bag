@@ -1,6 +1,6 @@
 package karashokleo.loot_bag.api.client.render;
 
-import net.minecraft.client.render.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 public abstract class VertexConsumerWrapper implements VertexConsumer
 {
@@ -12,62 +12,45 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer vertex(double x, double y, double z)
+    public VertexConsumer addVertex(float x, float y, float z)
     {
-        this.parent.vertex(x, y, z);
+        this.parent.addVertex(x, y, z);
         return this;
     }
 
     @Override
-    public VertexConsumer color(int red, int green, int blue, int alpha)
+    public VertexConsumer setColor(int red, int green, int blue, int alpha)
     {
-        this.parent.color(red, green, blue, alpha);
+        this.parent.setColor(red, green, blue, alpha);
         return this;
     }
 
     @Override
-    public VertexConsumer texture(float u, float v)
+    public VertexConsumer setUv(float u, float v)
     {
-        this.parent.texture(u, v);
+        this.parent.setUv(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer overlay(int u, int v)
+    public VertexConsumer setUv1(int u, int v)
     {
-        this.parent.overlay(u, v);
+        this.parent.setUv1(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer light(int u, int v)
+    public VertexConsumer setUv2(int u, int v)
     {
-        this.parent.light(u, v);
+        this.parent.setUv2(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer normal(float x, float y, float z)
+    public VertexConsumer setNormal(float x, float y, float z)
     {
-        this.parent.normal(x, y, z);
+        this.parent.setNormal(x, y, z);
         return this;
     }
 
-    @Override
-    public void next()
-    {
-        this.parent.next();
-    }
-
-    @Override
-    public void fixedColor(int red, int green, int blue, int alpha)
-    {
-        this.parent.fixedColor(red, green, blue, alpha);
-    }
-
-    @Override
-    public void unfixColor()
-    {
-        this.parent.unfixColor();
-    }
 }

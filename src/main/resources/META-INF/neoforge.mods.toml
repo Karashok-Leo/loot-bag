@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+[[mods]]
+modId="loot_bag"
+version="${version}"
+displayName="Loot Bag"
+displayURL="https://github.com/Karashok-Leo/loot-bag"
+logoFile="assets/loot-bag/icon.png"
+authors="Karashok-Leo"
+description='''Loot Bag'''
+[[mixins]]
+config="loot-bag.mixins.json"
+[[dependencies.loot_bag]]
+modId="neoforge"
+type="required"
+versionRange="[21.1,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.loot_bag]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.21.2)"
+ordering="NONE"
+side="BOTH"

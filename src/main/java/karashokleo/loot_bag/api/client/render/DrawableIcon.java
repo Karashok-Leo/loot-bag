@@ -1,11 +1,11 @@
 package karashokleo.loot_bag.api.client.render;
 
 import karashokleo.loot_bag.api.common.icon.Icon;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-public class DrawableIcon implements Drawable
+public class DrawableIcon implements Renderable
 {
     private Icon icon;
     private int x = 0;
@@ -69,13 +69,13 @@ public class DrawableIcon implements Drawable
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta)
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta)
     {
-        MatrixStack matrixStack = context.getMatrices();
-        matrixStack.push();
+        PoseStack matrixStack = context.pose();
+        matrixStack.pushPose();
         matrixStack.translate(x, y, 150);
         matrixStack.scale(scale, scale, 1);
         icon.render(context, matrixStack, alpha, delta);
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

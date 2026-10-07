@@ -3,18 +3,18 @@ package karashokleo.loot_bag.api.common.util;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class CodecUtil
 {
     public static final Codec<ItemStack> ITEM_STACK_CODEC = Codec.either(
-            Registries.ITEM.getCodec(),
+            BuiltInRegistries.ITEM.byNameCodec(),
             ItemStack.CODEC
     ).xmap(
-            either -> either.map(Item::getDefaultStack, stack -> stack),
-            stack -> stack.getCount() != 1 || stack.hasNbt() ? Either.right(stack) : Either.left(stack.getItem())
+            either -> either.map(Item::getDefaultInstance, stack -> stack),
+            stack -> stack.getCount() != 1 || !stack.getComponentsPatch().isEmpty() ? Either.right(stack) : Either.left(stack.getItem())
     );
 
     public static <E extends Enum<E>> Codec<E> getEnumCodec(Class<E> cls)

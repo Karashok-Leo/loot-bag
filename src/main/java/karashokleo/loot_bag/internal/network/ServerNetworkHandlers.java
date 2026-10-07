@@ -7,57 +7,60 @@ import karashokleo.loot_bag.internal.item.LootBagItem;
 import karashokleo.loot_bag.internal.network.packet.OpenBagPacket;
 import karashokleo.loot_bag.internal.network.packet.SetScreenPacket;
 import karashokleo.loot_bag.internal.network.packet.SyncDataPackets;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Collection;
 
 public class ServerNetworkHandlers
 {
-    public static void sendScreen(ServerPlayerEntity player, int slot, Identifier bagId)
+    public static void sendScreen(ServerPlayer player, int slot, ResourceLocation bagId)
     {
-        ServerPlayNetworking.send(player, new SetScreenPacket(slot, bagId));
+        PacketDistributor.sendToPlayer(player, new SetScreenPacket(slot, bagId));
     }
 
-    public static void init()
+    public static void register(RegisterPayloadHandlersEvent event)
     {
-        ServerPlayNetworking.registerGlobalReceiver(SyncDataPackets.ACK_ID, ServerNetworkHandlers::handleAck);
-        ServerPlayNetworking.registerGlobalReceiver(OpenBagPacket.TYPE, ServerNetworkHandlers::handleOpenBag);
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(ServerNetworkHandlers::sendSyncData);
+        var registrar = event.registrar("1");
+        registrar.playToServer(SyncDataPackets.AckPacket.TYPE, SyncDataPackets.AckPacket.STREAM_CODEC, ServerNetworkHandlers::handleAck);
+        registrar.playToServer(OpenBagPacket.TYPE, OpenBagPacket.STREAM_CODEC, ServerNetworkHandlers::handleOpenBag);
+        registrar.playToClient(SyncDataPackets.SYNC_CONTENT_TYPE, SyncDataPackets.SyncContentPacket.STREAM_CODEC, (packet, context) -> ClientNetworkHandlers.handleSyncContent(packet, context));
+        registrar.playToClient(SyncDataPackets.SYNC_BAG_TYPE, SyncDataPackets.SyncBagPacket.STREAM_CODEC, (packet, context) -> ClientNetworkHandlers.handleSyncBag(packet, context));
+        registrar.playToClient(SetScreenPacket.TYPE, SetScreenPacket.STREAM_CODEC, (packet, context) -> ClientNetworkHandlers.handleSetScreen(packet, context));
     }
 
-    private static void sendSyncData(ServerPlayerEntity player, boolean joined)
+    public static void sendSyncData(OnDatapackSyncEvent event)
     {
-        sendSyncContent(player);
+        if (event.getPlayer() != null) sendSyncContent(event.getPlayer());
+        else event.getPlayerList().getPlayers().forEach(ServerNetworkHandlers::sendSyncContent);
     }
 
-    private static void sendSyncContent(ServerPlayerEntity player)
+    private static void sendSyncContent(ServerPlayer player)
     {
         Collection<ContentEntry> contentEntries = LootBagManager.getInstance().getAllContentEntries();
-        ServerPlayNetworking.send(player, new SyncDataPackets.SyncContentPacket(contentEntries));
+        PacketDistributor.sendToPlayer(player, new SyncDataPackets.SyncContentPacket(contentEntries));
     }
 
-    private static void sendSyncBag(ServerPlayerEntity player)
+    private static void sendSyncBag(ServerPlayer player)
     {
         Collection<BagEntry> bagEntries = LootBagManager.getInstance().getAllBagEntries();
-        ServerPlayNetworking.send(player, new SyncDataPackets.SyncBagPacket(bagEntries));
+        PacketDistributor.sendToPlayer(player, new SyncDataPackets.SyncBagPacket(bagEntries));
     }
 
-    private static void handleAck(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender)
+    private static void handleAck(SyncDataPackets.AckPacket packet, IPayloadContext context)
     {
-        if (buf.readVarInt() == LootBagManager.getInstance().getAllContentEntries().size())
+        ServerPlayer player = (ServerPlayer) context.player();
+        if (packet.count() == LootBagManager.getInstance().getAllContentEntries().size())
             sendSyncBag(player);
         else sendSyncContent(player);
     }
 
-    private static void handleOpenBag(OpenBagPacket packet, ServerPlayerEntity player, PacketSender responseSender)
+    private static void handleOpenBag(OpenBagPacket packet, IPayloadContext context)
     {
-        LootBagItem.open(player, packet.slot(), packet.selectedIndex());
+        LootBagItem.open((ServerPlayer) context.player(), packet.slot(), packet.selectedIndex());
     }
 }

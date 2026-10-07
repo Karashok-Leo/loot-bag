@@ -5,11 +5,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.icon.Icon;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public abstract class Content
 {
-    public static final Codec<Content> CODEC = LootBagRegistry.CONTENT_TYPE_REGISTRY.getCodec().dispatch(Content::getType, ContentType::codec);
+    public static final Codec<Content> CODEC = LootBagRegistry.CONTENT_TYPE_REGISTRY.byNameCodec().dispatch(Content::getType, ContentType::codec);
 
     protected static <T extends Content> Products.P1<RecordCodecBuilder.Mu<T>, Icon> contentFields(RecordCodecBuilder.Instance<T> instance)
     {
@@ -32,5 +32,5 @@ public abstract class Content
 
     protected abstract ContentType<?> getType();
 
-    public abstract void reward(ServerPlayerEntity player);
+    public abstract void reward(ServerPlayer player);
 }

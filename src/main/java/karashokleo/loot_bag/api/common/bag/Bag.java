@@ -7,13 +7,13 @@ import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
-import net.minecraft.util.Rarity;
+import net.minecraft.world.item.Rarity;
 
 import java.util.Optional;
 
 public abstract class Bag
 {
-    public static final Codec<Bag> CODEC = LootBagRegistry.BAG_TYPE_REGISTRY.getCodec().dispatch(Bag::getType, BagType::codec);
+    public static final Codec<Bag> CODEC = LootBagRegistry.BAG_TYPE_REGISTRY.byNameCodec().dispatch(Bag::getType, BagType::codec);
 
     public static <T extends Bag> Products.P2<RecordCodecBuilder.Mu<T>, Rarity, Color> bagFields(RecordCodecBuilder.Instance<T> instance)
     {

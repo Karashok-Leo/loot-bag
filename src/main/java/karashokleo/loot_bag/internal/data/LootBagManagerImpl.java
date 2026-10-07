@@ -9,12 +9,14 @@ import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -28,8 +30,8 @@ public final class LootBagManagerImpl implements LootBagManager
 {
     public static final LootBagManager INSTANCE = new LootBagManagerImpl();
 
-    public final Map<Identifier, ContentEntry> CONTENTS = new HashMap<>();
-    public final Map<Identifier, BagEntry> BAGS = new HashMap<>();
+    public final Map<ResourceLocation, ContentEntry> CONTENTS = new HashMap<>();
+    public final Map<ResourceLocation, BagEntry> BAGS = new HashMap<>();
 
     private LootBagManagerImpl()
     {
@@ -49,26 +51,26 @@ public final class LootBagManagerImpl implements LootBagManager
 
     @Nullable
     @Override
-    public ContentEntry getContentEntry(Identifier id)
+    public ContentEntry getContentEntry(ResourceLocation id)
     {
         return CONTENTS.get(id);
     }
 
     @Nullable
     @Override
-    public BagEntry getBagEntry(Identifier id)
+    public BagEntry getBagEntry(ResourceLocation id)
     {
         return BAGS.get(id);
     }
 
     @Override
-    public void putContent(Identifier id, Content content)
+    public void putContent(ResourceLocation id, Content content)
     {
         CONTENTS.put(id, new ContentEntry(id, content));
     }
 
     @Override
-    public void putBag(Identifier id, Bag bag)
+    public void putBag(ResourceLocation id, Bag bag)
     {
         BAGS.put(id, new BagEntry(id, bag));
     }
@@ -85,23 +87,22 @@ public final class LootBagManagerImpl implements LootBagManager
         BAGS.clear();
     }
 
-    public static void registerLoader()
+    public static void registerLoader(AddReloadListenerEvent event)
     {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new Loader());
+        event.addListener(new Loader(event.getRegistryAccess()));
     }
 
-    private static class Loader implements SimpleSynchronousResourceReloadListener
+    private static class Loader implements ResourceManagerReloadListener
     {
-        private final Identifier LOADER_ID = LootBagMod.id("loader");
+        private final HolderLookup.Provider registries;
 
-        @Override
-        public Identifier getFabricId()
+        public Loader(HolderLookup.Provider registries)
         {
-            return LOADER_ID;
+            this.registries = registries;
         }
 
         @Override
-        public void reload(ResourceManager manager)
+        public void onResourceManagerReload(ResourceManager manager)
         {
             INSTANCE.clearAllContentEntries();
             this.tryLoad(manager, ConstantTexts.CONTENT_DIR, Content.CODEC, INSTANCE::putContent);
@@ -109,19 +110,19 @@ public final class LootBagManagerImpl implements LootBagManager
             this.tryLoad(manager, ConstantTexts.BAG_DIR, Bag.CODEC, INSTANCE::putBag);
         }
 
-        private <T> void tryLoad(ResourceManager manager, String path, Codec<T> codec, BiConsumer<Identifier, T> consumer)
+        private <T> void tryLoad(ResourceManager manager, String path, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer)
         {
-            manager.findResources(path, id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) ->
+            manager.listResources(path, id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) ->
             {
                 try
                 {
-                    InputStream stream = resourceRef.getInputStream();
+                    InputStream stream = resourceRef.open();
                     JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
                     consumer.accept(
                             id.withPath(s -> s
                                     .replaceFirst(path + "/", "")
                                     .replaceFirst(".json", "")),
-                            codec.decode(JsonOps.INSTANCE, data).result().orElseThrow().getFirst()
+                            codec.decode(registries.createSerializationContext(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
                     );
                 } catch (Exception e)
                 {

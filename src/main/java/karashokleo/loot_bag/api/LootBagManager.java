@@ -5,7 +5,7 @@ import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -22,14 +22,14 @@ public interface LootBagManager
     Collection<BagEntry> getAllBagEntries();
 
     @Nullable
-    ContentEntry getContentEntry(Identifier id);
+    ContentEntry getContentEntry(ResourceLocation id);
 
     @Nullable
-    BagEntry getBagEntry(Identifier id);
+    BagEntry getBagEntry(ResourceLocation id);
 
-    void putContent(Identifier id, Content content);
+    void putContent(ResourceLocation id, Content content);
 
-    void putBag(Identifier id, Bag bag);
+    void putBag(ResourceLocation id, Bag bag);
 
     void clearAllContentEntries();
 

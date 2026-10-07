@@ -6,44 +6,42 @@ import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentType;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.api.common.icon.IconType;
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
+import net.neoforged.neoforge.registries.RegistryBuilder;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("all")
 public class LootBagRegistry
 {
-    public static final RegistryKey<Registry<ContentType<?>>> CONTENT_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("content_type"));
-    public static final RegistryKey<Registry<BagType<?>>> BAG_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("bag_type"));
-    public static final RegistryKey<Registry<IconType<?>>> ICON_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("icon_type"));
+    public static final ResourceKey<Registry<ContentType<?>>> CONTENT_TYPE_KEY = ResourceKey.createRegistryKey(LootBagMod.id("content_type"));
+    public static final ResourceKey<Registry<BagType<?>>> BAG_TYPE_KEY = ResourceKey.createRegistryKey(LootBagMod.id("bag_type"));
+    public static final ResourceKey<Registry<IconType<?>>> ICON_TYPE_KEY = ResourceKey.createRegistryKey(LootBagMod.id("icon_type"));
 
-    public static final Registry<ContentType<?>> CONTENT_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.CONTENT_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
-    public static final Registry<BagType<?>> BAG_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.BAG_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
-    public static final Registry<IconType<?>> ICON_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.ICON_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
+    public static final Registry<ContentType<?>> CONTENT_TYPE_REGISTRY = new RegistryBuilder<>(CONTENT_TYPE_KEY).sync(true).create();
+    public static final Registry<BagType<?>> BAG_TYPE_REGISTRY = new RegistryBuilder<>(BAG_TYPE_KEY).sync(true).create();
+    public static final Registry<IconType<?>> ICON_TYPE_REGISTRY = new RegistryBuilder<>(ICON_TYPE_KEY).sync(true).create();
 
-    public static <T extends Content> ContentType<T> registerContentType(Identifier id, ContentType<T> type)
+    public static void registerRegistries(NewRegistryEvent event)
+    {
+        event.register(CONTENT_TYPE_REGISTRY);
+        event.register(BAG_TYPE_REGISTRY);
+        event.register(ICON_TYPE_REGISTRY);
+    }
+
+    public static <T extends Content> ContentType<T> registerContentType(ResourceLocation id, ContentType<T> type)
     {
         return Registry.register(CONTENT_TYPE_REGISTRY, id, type);
     }
 
-    public static <T extends Bag> BagType<T> registerBagType(Identifier id, BagType<T> type)
+    public static <T extends Bag> BagType<T> registerBagType(ResourceLocation id, BagType<T> type)
     {
         return Registry.register(BAG_TYPE_REGISTRY, id, type);
     }
 
-    public static <T extends Icon> IconType<T> registerIconType(Identifier id, IconType<T> type)
+    public static <T extends Icon> IconType<T> registerIconType(ResourceLocation id, IconType<T> type)
     {
         return Registry.register(ICON_TYPE_REGISTRY, id, type);
     }

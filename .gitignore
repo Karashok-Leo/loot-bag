@@ -41,3 +41,6 @@ replay_*.log
 
 # datagen
 example/.cache
+
+# Local Gradle cache
+.gradle-user/

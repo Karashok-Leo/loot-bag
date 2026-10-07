@@ -1,13 +1,14 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CommandContent extends Content
 {
-    public static final Codec<CommandContent> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<CommandContent> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     Codec.STRING.fieldOf("command").forGetter(CommandContent::getCommand)
             ).and(contentFields(ins).t1()).apply(ins, CommandContent::new)
@@ -35,14 +36,14 @@ public class CommandContent extends Content
     }
 
     @Override
-    public void reward(ServerPlayerEntity player)
+    public void reward(ServerPlayer player)
     {
         player.server
-                .getCommandManager()
-                .executeWithPrefix(
-                        player.getCommandSource()
-                                .withLevel(player.server.getFunctionPermissionLevel())
-                                .withSilent(),
+                .getCommands()
+                .performPrefixedCommand(
+                        player.createCommandSourceStack()
+                                .withPermission(player.server.getFunctionCompilationLevel())
+                                .withSuppressedOutput(),
                         command
                 );
     }

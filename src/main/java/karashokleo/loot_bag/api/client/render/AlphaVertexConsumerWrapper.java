@@ -1,9 +1,9 @@
 package karashokleo.loot_bag.api.client.render;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 
 @Deprecated
 public class AlphaVertexConsumerWrapper extends VertexConsumerWrapper
@@ -17,17 +17,17 @@ public class AlphaVertexConsumerWrapper extends VertexConsumerWrapper
     }
 
     @Override
-    public VertexConsumer color(int red, int green, int blue, int alpha)
+    public VertexConsumer setColor(int red, int green, int blue, int alpha)
     {
-        return super.color(red, green, blue, this.alpha);
+        return super.setColor(red, green, blue, this.alpha);
     }
 
-    public record Provider(VertexConsumerProvider vertexConsumerProvider, int alpha) implements VertexConsumerProvider
+    public record Provider(MultiBufferSource vertexConsumerProvider, int alpha) implements MultiBufferSource
     {
         @Override
-        public VertexConsumer getBuffer(RenderLayer layer)
+        public VertexConsumer getBuffer(RenderType layer)
         {
-            RenderLayer renderLayer = TexturedRenderLayers.getItemEntityTranslucentCull();
+            RenderType renderLayer = Sheets.translucentItemSheet();
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
             return new AlphaVertexConsumerWrapper(vertexConsumer, alpha);
         }

@@ -1,18 +1,19 @@
 package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemIcon extends Icon
 {
-    public static final Codec<ItemIcon> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<ItemIcon> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
             ).and(iconFields()).apply(ins, ItemIcon::new)
@@ -34,9 +35,9 @@ public class ItemIcon extends Icon
         this.stack = stack;
     }
 
-    public ItemIcon(ItemConvertible item)
+    public ItemIcon(ItemLike item)
     {
-        this(item.asItem().getDefaultStack());
+        this(item.asItem().getDefaultInstance());
     }
 
     public ItemStack getStack()
@@ -50,22 +51,22 @@ public class ItemIcon extends Icon
         return TYPE;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void render(DrawContext context, MatrixStack matrices, float alpha, float delta)
+    public void render(GuiGraphics context, PoseStack matrices, float alpha, float delta)
     {
         if (stack.isEmpty()) return;
 
-        matrices.push();
+        matrices.pushPose();
 //        matrices.multiplyPositionMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
         matrices.scale(scale, scale, 1);
         matrices.scale(SIZE, SIZE, 1);
         matrices.scale(1 / 16F, 1 / 16F, 1);
 
-        context.drawItem(stack, -8, -8);
+        context.renderItem(stack, -8, -8);
 
-        // get the item renderer from the client singleton
-//        ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+        // get the item renderer from the minecraft singleton
+//        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 //
 //        BakedModel bakedModel = itemRenderer.getModel(stack, null, null, 0);
 //
@@ -76,7 +77,7 @@ public class ItemIcon extends Icon
 //        }
 //
 //        // use AlphaVertexConsumerWrapper if translucent
-//        VertexConsumerProvider.Immediate vertexConsumers = context.getVertexConsumers();
+//        MultiBufferSource.Immediate vertexConsumers = context.getVertexConsumers();
 //        var vertexConsumerProvider = this.isTranslucent() ? new AlphaVertexConsumerWrapper.Provider(vertexConsumers, (int) (alpha * 255)) : vertexConsumers;
 //
 //        itemRenderer.renderItem(stack, ModelTransformationMode.GUI, false, matrices, vertexConsumerProvider, 15728880, OverlayTexture.DEFAULT_UV, bakedModel);
@@ -86,6 +87,6 @@ public class ItemIcon extends Icon
 //            DiffuseLighting.enableGuiDepthLighting();
 //        }
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

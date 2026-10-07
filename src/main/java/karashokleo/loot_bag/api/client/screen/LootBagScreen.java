@@ -5,16 +5,16 @@ import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
-import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public abstract class LootBagScreen<B extends Bag> extends Screen
 {
-    private static final Text TEXT_OPEN = Text.translatable("text.loot-bag.open");
+    private static final Component TEXT_OPEN = Component.translatable("text.loot-bag.open");
     // colors of the texts
     private static final int TITLE_COLOR = 0xffffff;
     private static final int NAME_COLOR = 0xffffff;
@@ -25,11 +25,11 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
 
     protected final B bag;
     protected final int slot;
-    protected ButtonWidget openButton;
-    protected Text contentName = Text.empty();
-    protected MultilineText contentDesc = MultilineText.EMPTY;
+    protected Button openButton;
+    protected Component contentName = Component.empty();
+    protected MultiLineLabel contentDesc = MultiLineLabel.EMPTY;
 
-    protected LootBagScreen(Text title, B bag, int slot)
+    protected LootBagScreen(Component title, B bag, int slot)
     {
         super(title);
         this.bag = bag;
@@ -39,11 +39,11 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     @Override
     protected void init()
     {
-        this.openButton = ButtonWidget
+        this.openButton = Button
                 .builder(TEXT_OPEN, button -> open())
-                .dimensions((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
+                .bounds((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
                 .build();
-        addDrawableChild(openButton);
+        addRenderableWidget(openButton);
         updateContentText();
     }
 
@@ -68,15 +68,15 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     }
 
     @Override
-    public boolean shouldPause()
+    public boolean isPauseScreen()
     {
         return false;
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta)
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta)
     {
-        this.renderBackground(context);
+        this.renderTransparentBackground(context);
         this.setFocused(null);
         this.drawTitle(context);
         this.drawName(context);
@@ -85,30 +85,36 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         super.render(context, mouseX, mouseY, delta);
     }
 
+    @Override
+    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta)
+    {
+        // The original gradient is drawn before the labels; 1.21 Screen.render calls this again.
+    }
+
     protected void updateContentText()
     {
         ContentEntry entry = this.getCurrentContent();
-        this.contentName = entry.getName().formatted(Formatting.BOLD);
-        this.contentDesc = MultilineText.create(this.textRenderer, entry.getDesc(), this.width / 2);
+        this.contentName = entry.getName().withStyle(ChatFormatting.BOLD);
+        this.contentDesc = MultiLineLabel.create(this.font, entry.getDesc(), this.width / 2);
     }
 
-    protected void drawTitle(DrawContext context)
+    protected void drawTitle(GuiGraphics context)
     {
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, this.getTitleY(), TITLE_COLOR);
+        context.drawCenteredString(font, title, width / 2, this.getTitleY(), TITLE_COLOR);
     }
 
-    protected void drawName(DrawContext context)
+    protected void drawName(GuiGraphics context)
     {
-        context.drawCenteredTextWithShadow(textRenderer, this.contentName, width / 2, this.getNameY(), NAME_COLOR);
+        context.drawCenteredString(font, this.contentName, width / 2, this.getNameY(), NAME_COLOR);
     }
 
-    protected void drawDescription(DrawContext context)
+    protected void drawDescription(GuiGraphics context)
     {
         // Font Height 15?
-        this.contentDesc.drawCenterWithShadow(context, width / 2, this.getDescY(), this.textRenderer.fontHeight, DESC_COLOR);
+        this.contentDesc.renderCentered(context, width / 2, this.getDescY(), this.font.lineHeight, DESC_COLOR);
     }
 
-    protected abstract void updateDrawableIcon(DrawContext context, int mouseX, int mouseY, float delta);
+    protected abstract void updateDrawableIcon(GuiGraphics context, int mouseX, int mouseY, float delta);
 
     protected void updateDrawableIconInternal(DrawableIcon drawableIcon, float offsetX, float scale, float alpha)
     {
@@ -129,9 +135,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
 
     protected void open(int selectedIndex)
     {
-        if (client != null && client.player != null)
+        if (minecraft != null && minecraft.player != null)
             ClientNetworkHandlers.sendOpen(slot, selectedIndex);
-        close();
+        onClose();
     }
 
     protected abstract ContentEntry getCurrentContent();
@@ -143,10 +149,10 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         if (super.keyPressed(keyCode, scanCode, modifiers))
         {
             return true;
-        } else if (this.client != null &&
-                   this.client.options.inventoryKey.matchesKey(keyCode, scanCode))
+        } else if (this.minecraft != null &&
+                   this.minecraft.options.keyInventory.matches(keyCode, scanCode))
         {
-            this.close();
+            this.onClose();
             return true;
         } else
         {

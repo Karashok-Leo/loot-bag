@@ -1,8 +1,8 @@
 package karashokleo.loot_bag.api.common;
 
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
-public record OpenBagContext(Random random, int selectedIndex)
+public record OpenBagContext(RandomSource random, int selectedIndex)
 {
     public OpenBagContext
     {

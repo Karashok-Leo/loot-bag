@@ -4,23 +4,23 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.internal.data.ConstantTexts;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
-public record ContentEntry(Identifier id, Content content, String nameKey, String descKey)
+public record ContentEntry(ResourceLocation id, Content content, String nameKey, String descKey)
 {
-    public ContentEntry(Identifier id, Content content)
+    public ContentEntry(ResourceLocation id, Content content)
     {
         this(
                 id,
                 content,
-                id.toTranslationKey("content"),
-                id.toTranslationKey("content") + ".desc"
+                id.toLanguageKey("content"),
+                id.toLanguageKey("content") + ".desc"
         );
     }
 
-    public static final Codec<ContentEntry> CODEC = Identifier.CODEC.comapFlatMap(
+    public static final Codec<ContentEntry> CODEC = ResourceLocation.CODEC.comapFlatMap(
             id ->
             {
                 ContentEntry entry = LootBagManager.getInstance().getContentEntry(id);
@@ -29,13 +29,13 @@ public record ContentEntry(Identifier id, Content content, String nameKey, Strin
             ContentEntry::id
     );
 
-    public MutableText getName()
+    public MutableComponent getName()
     {
-        return Text.translatable(this.nameKey);
+        return Component.translatable(this.nameKey);
     }
 
-    public MutableText getDesc()
+    public MutableComponent getDesc()
     {
-        return Text.translatable(this.descKey);
+        return Component.translatable(this.descKey);
     }
 }

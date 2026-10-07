@@ -1,39 +1,40 @@
 package karashokleo.loot_bag.api.common.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.entry.LeafEntry;
-import net.minecraft.loot.entry.LootPoolEntryType;
-import net.minecraft.loot.function.LootFunction;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.function.Consumer;
 
-public class LootBagEntry extends LeafEntry
+public class LootBagEntry extends LootPoolSingletonContainer
 {
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final LootPoolEntryType TYPE = new LootPoolEntryType(SERIALIZER);
+    public static final MapCodec<LootBagEntry> CODEC = RecordCodecBuilder.mapCodec(ins -> singletonFields(ins)
+            .and(ResourceLocation.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId))
+            .apply(ins, LootBagEntry::new));
+    public static final LootPoolEntryType TYPE = new LootPoolEntryType(CODEC);
 
-    private final Identifier bagId;
+    private final ResourceLocation bagId;
 
-    protected LootBagEntry(int weight, int quality, LootCondition[] conditions, LootFunction[] functions, Identifier bagId)
+    protected LootBagEntry(int weight, int quality, List<LootItemCondition> conditions, List<LootItemFunction> functions, ResourceLocation bagId)
     {
         super(weight, quality, conditions, functions);
         this.bagId = bagId;
     }
 
     @Override
-    protected void generateLoot(Consumer<ItemStack> lootConsumer, LootContext context)
+    protected void createItemStack(Consumer<ItemStack> lootConsumer, LootContext context)
     {
         lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bagId));
     }
@@ -46,40 +47,16 @@ public class LootBagEntry extends LeafEntry
 
     public static void init()
     {
-        Registry.register(Registries.LOOT_POOL_ENTRY_TYPE, LootBagMod.id("loot_bag"), TYPE);
+        Registry.register(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE, LootBagMod.id("loot_bag"), TYPE);
     }
 
-    public static LeafEntry.Builder<?> builder(BagEntry bag)
+    public static LootPoolSingletonContainer.Builder<?> builder(BagEntry bag)
     {
         return builder(bag.id());
     }
 
-    public static LeafEntry.Builder<?> builder(Identifier bagId)
+    public static LootPoolSingletonContainer.Builder<?> builder(ResourceLocation bagId)
     {
-        return LootBagEntry.builder((int weight, int quality, LootCondition[] conditions, LootFunction[] functions) -> new LootBagEntry(weight, quality, conditions, functions, bagId));
-    }
-
-    public static class Serializer extends LeafEntry.Serializer<LootBagEntry>
-    {
-        private static final String KEY = "bag";
-
-        @Override
-        public void addEntryFields(JsonObject jsonObject, LootBagEntry leafEntry, JsonSerializationContext jsonSerializationContext)
-        {
-            super.addEntryFields(jsonObject, leafEntry, jsonSerializationContext);
-            jsonObject.addProperty(KEY, leafEntry.bagId.toString());
-        }
-
-        @Override
-        protected LootBagEntry fromJson(JsonObject entryJson, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions, LootFunction[] functions)
-        {
-            return new LootBagEntry(
-                    weight,
-                    quality,
-                    conditions,
-                    functions,
-                    new Identifier(JsonHelper.getString(entryJson, KEY))
-            );
-        }
+        return simpleBuilder((weight, quality, conditions, functions) -> new LootBagEntry(weight, quality, conditions, functions, bagId));
     }
 }

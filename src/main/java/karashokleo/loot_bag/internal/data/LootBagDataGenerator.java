@@ -4,47 +4,67 @@ import karashokleo.loot_bag.api.common.bag.*;
 import karashokleo.loot_bag.api.common.content.*;
 import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.icon.TextureIcon;
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.InclusiveRange;
+import java.util.Optional;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Rarity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LootBagDataGenerator implements DataGeneratorEntrypoint
+public class LootBagDataGenerator
 {
     public static final List<ContentEntry> CONTENTS = new ArrayList<>();
     public static final List<BagEntry> BAGS = new ArrayList<>();
 
-    @Override
-    public void onInitializeDataGenerator(FabricDataGenerator generator)
+    public static void gatherData(GatherDataEvent event)
     {
-        bootstrap();
-        FabricDataGenerator.Pack pack = generator.createPack();
-        pack.addProvider(LanguageProvider::new);
-        pack.addProvider(ContentProvider::new);
-        pack.addProvider(BagProvider::new);
+        var ready = event.getLookupProvider().thenApply(registries ->
+        {
+            bootstrap(registries);
+            return registries;
+        });
+        var generator = event.getGenerator();
+        var output = generator.getPackOutput();
+        generator.addProvider(true, new PackMetadataGenerator(output).add(PackMetadataSection.TYPE,
+                new PackMetadataSection(Component.literal("Loot Bag Example"), 48,
+                        Optional.of(new InclusiveRange<>(34, 48)))));
+        generator.addProvider(event.includeClient(), new LanguageProvider(output)
+        {
+            @Override
+            public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput cache)
+            {
+                return ready.thenCompose(registries -> super.run(cache));
+            }
+        });
+        generator.addProvider(event.includeServer(), new ContentProvider(output, ready));
+        generator.addProvider(event.includeServer(), new BagProvider(output, ready));
     }
 
-    private static void bootstrap()
+    private static void bootstrap(HolderLookup.Provider registries)
     {
         ContentEntry beef = new ContentEntry(
                 LootBagMod.id("beef"),
                 new ItemContent(
-                        Items.BEEF.getDefaultStack(),
-                        new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F)
+                        Items.BEEF.getDefaultInstance(),
+                        new ItemIcon(Items.BEEF.getDefaultInstance(), 0.5F)
                 )
         );
-        ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
-        contentDiamondSword.setDamage(66);
-        ItemStack iconDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
-        iconDiamondSword.addEnchantment(Enchantments.LOOTING, 3);
+        ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultInstance();
+        contentDiamondSword.setDamageValue(66);
+        ItemStack iconDiamondSword = Items.DIAMOND_SWORD.getDefaultInstance();
+        iconDiamondSword.enchant(registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), 3);
         ContentEntry diamondSword = new ContentEntry(
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
@@ -55,7 +75,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         ContentEntry stone = new ContentEntry(
                 LootBagMod.id("stone"),
                 new LootTableContent(
-                        new Identifier("blocks/stone"),
+                        ResourceLocation.parse("blocks/stone"),
                         new ItemIcon(Items.STONE)
                 )
         );
@@ -63,31 +83,31 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 LootBagMod.id("effect"),
                 new EffectContent(
                         List.of(
-                                new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
-                                new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
+                                new EffectContent.Effect(MobEffects.ABSORPTION, 2400),
+                                new EffectContent.Effect(MobEffects.REGENERATION, 100, 1)
                         ),
-                        new TextureIcon(new Identifier("textures/block/stone.png"))
+                        new TextureIcon(ResourceLocation.parse("textures/block/stone.png"))
                 )
         );
         ContentEntry zombie = new ContentEntry(
                 LootBagMod.id("zombie"),
                 new LootTableContent(
-                        new Identifier("entities/zombie"),
-                        new TextureIcon(new Identifier("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
+                        ResourceLocation.parse("entities/zombie"),
+                        new TextureIcon(ResourceLocation.parse("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
                 )
         );
         ContentEntry skeleton = new ContentEntry(
                 LootBagMod.id("skeleton"),
                 new CommandContent(
                         "/kill @s",
-                        new TextureIcon(new Identifier("textures/item/bone.png"))
+                        new TextureIcon(ResourceLocation.parse("textures/item/bone.png"))
                 )
         );
         ContentEntry creeper = new ContentEntry(
                 LootBagMod.id("creeper"),
                 new CommandContent(
                         "/summon minecraft:creeper ~ ~ ~",
-                        new TextureIcon(new Identifier("textures/item/gunpowder.png"))
+                        new TextureIcon(ResourceLocation.parse("textures/item/gunpowder.png"))
                 )
         );
 

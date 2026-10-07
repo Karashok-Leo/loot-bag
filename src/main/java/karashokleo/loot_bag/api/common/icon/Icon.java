@@ -4,14 +4,14 @@ import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 public abstract class Icon
 {
-    public static final Codec<Icon> CODEC = LootBagRegistry.ICON_TYPE_REGISTRY.getCodec().dispatch(Icon::getType, IconType::codec);
+    public static final Codec<Icon> CODEC = LootBagRegistry.ICON_TYPE_REGISTRY.byNameCodec().dispatch(Icon::getType, IconType::codec);
 
     protected static <T extends Icon> App<RecordCodecBuilder.Mu<T>, Float> iconFields()
     {
@@ -39,7 +39,7 @@ public abstract class Icon
 
     protected abstract IconType<?> getType();
 
-    /// override this method must be annotated with <code>@Environment(EnvType.CLIENT)</code> !!!
-    @Environment(EnvType.CLIENT)
-    public abstract void render(DrawContext context, MatrixStack matrices, float alpha, float delta);
+    /// override this method must be annotated with <code>@OnlyIn(Dist.CLIENT)</code> !!!
+    @OnlyIn(Dist.CLIENT)
+    public abstract void render(GuiGraphics context, PoseStack matrices, float alpha, float delta);
 }

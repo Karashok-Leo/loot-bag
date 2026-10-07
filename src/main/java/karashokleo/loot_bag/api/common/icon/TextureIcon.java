@@ -2,20 +2,22 @@ package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public class TextureIcon extends Icon
 {
-    public static final Codec<TextureIcon> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<TextureIcon> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
-                    Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
+                    ResourceLocation.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
                     Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
                     Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
                     Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
@@ -25,10 +27,10 @@ public class TextureIcon extends Icon
 
     public static final IconType<TextureIcon> TYPE = new IconType<>(CODEC);
 
-    protected final Identifier texture;
+    protected final ResourceLocation texture;
     protected final float u0, v0, u1, v1;
 
-    public TextureIcon(Identifier texture, float u0, float v0, float u1, float v1, float scale)
+    public TextureIcon(ResourceLocation texture, float u0, float v0, float u1, float v1, float scale)
     {
         super(scale);
         this.texture = texture;
@@ -38,7 +40,7 @@ public class TextureIcon extends Icon
         this.v1 = v1;
     }
 
-    public TextureIcon(Identifier texture, float u0, float v0, float u1, float v1)
+    public TextureIcon(ResourceLocation texture, float u0, float v0, float u1, float v1)
     {
         super();
         this.texture = texture;
@@ -48,12 +50,12 @@ public class TextureIcon extends Icon
         this.v1 = v1;
     }
 
-    public TextureIcon(Identifier texture)
+    public TextureIcon(ResourceLocation texture)
     {
         this(texture, 0, 0, 1, 1);
     }
 
-    public Identifier getTexture()
+    public ResourceLocation getTexture()
     {
         return texture;
     }
@@ -84,36 +86,38 @@ public class TextureIcon extends Icon
         return TYPE;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void render(DrawContext context, MatrixStack matrices, float alpha, float delta)
+    public void render(GuiGraphics context, PoseStack matrices, float alpha, float delta)
     {
-        matrices.push();
+        matrices.pushPose();
 
         matrices.scale(scale, scale, 1);
         matrices.scale(SIZE, SIZE, 1);
 
         RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
-        Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        bufferBuilder.vertex(matrix4f, -0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v0).next();
-        bufferBuilder.vertex(matrix4f, -0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v1).next();
-        bufferBuilder.vertex(matrix4f, 0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v1).next();
-        bufferBuilder.vertex(matrix4f, 0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v0).next();
-        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+        // Match the blend state formerly supplied by the 1.20 position_color_tex shader.
+        RenderSystem.blendEquation(org.lwjgl.opengl.GL14.GL_FUNC_ADD);
+        RenderSystem.blendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Matrix4f matrix4f = matrices.last().pose();
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferBuilder.addVertex(matrix4f, -0.5F, -0.5F, 0)
+                .setColor(1F, 1F, 1F, alpha)
+                .setUv(u0, v0);
+        bufferBuilder.addVertex(matrix4f, -0.5F, 0.5F, 0)
+                .setColor(1F, 1F, 1F, alpha)
+                .setUv(u0, v1);
+        bufferBuilder.addVertex(matrix4f, 0.5F, 0.5F, 0)
+                .setColor(1F, 1F, 1F, alpha)
+                .setUv(u1, v1);
+        bufferBuilder.addVertex(matrix4f, 0.5F, -0.5F, 0)
+                .setColor(1F, 1F, 1F, alpha)
+                .setUv(u1, v0);
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         RenderSystem.disableBlend();
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

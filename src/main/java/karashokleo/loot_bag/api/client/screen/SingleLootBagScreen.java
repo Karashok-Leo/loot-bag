@@ -3,12 +3,12 @@ package karashokleo.loot_bag.api.client.screen;
 import karashokleo.loot_bag.api.client.render.DrawableIcon;
 import karashokleo.loot_bag.api.common.bag.SingleBag;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class SingleLootBagScreen extends LootBagScreen<SingleBag>
 {
-    protected static final Text TEXT_SINGLE = Text.translatable("text.loot-bag.single_screen");
+    protected static final Component TEXT_SINGLE = Component.translatable("text.loot-bag.single_screen");
     protected DrawableIcon icon;
 
     public SingleLootBagScreen(SingleBag bag, int slot)
@@ -21,11 +21,11 @@ public class SingleLootBagScreen extends LootBagScreen<SingleBag>
     {
         super.init();
         this.icon = new DrawableIcon(this.getCurrentContent().content().getIcon());
-        this.addDrawable(icon);
+        this.addRenderableOnly(icon);
     }
 
     @Override
-    protected void updateDrawableIcon(DrawContext context, int mouseX, int mouseY, float delta)
+    protected void updateDrawableIcon(GuiGraphics context, int mouseX, int mouseY, float delta)
     {
         this.updateDrawableIconInternal(icon, 0, 1, 1F);
     }

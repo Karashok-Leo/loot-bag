@@ -3,24 +3,22 @@
   "icon": {
     "type": "loot-bag:item",
     "item": {
-      "Count": 1,
-      "id": "minecraft:diamond_sword",
-      "tag": {
-        "Damage": 0,
-        "Enchantments": [
-          {
-            "id": "minecraft:looting",
-            "lvl": 3
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "minecraft:looting": 3
           }
-        ]
-      }
+        }
+      },
+      "count": 1,
+      "id": "minecraft:diamond_sword"
     }
   },
   "item": {
-    "Count": 1,
-    "id": "minecraft:diamond_sword",
-    "tag": {
-      "Damage": 66
-    }
+    "components": {
+      "minecraft:damage": 66
+    },
+    "count": 1,
+    "id": "minecraft:diamond_sword"
   }
 }

@@ -5,19 +5,26 @@ import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
-import net.minecraft.world.World;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -25,22 +32,22 @@ import java.util.Optional;
 
 public class LootBagItem extends Item
 {
-    protected static final MutableText INVALID = Text.translatable("text.loot-bag.invalid").formatted(Formatting.RED);
-    protected static final MutableText OPEN_PREVIEW_SCREEN = Text.translatable("tooltip.loot-bag.open_screen").formatted(Formatting.GRAY);
-    protected static final MutableText QUICK_OPEN = Text.translatable("tooltip.loot-bag.quick_open").formatted(Formatting.GRAY);
-    protected static final MutableText QUICK_OPEN_STACK = Text.translatable("tooltip.loot-bag.quick_open_stack").formatted(Formatting.GRAY);
+    protected static final MutableComponent INVALID = Component.translatable("text.loot-bag.invalid").withStyle(ChatFormatting.RED);
+    protected static final MutableComponent OPEN_PREVIEW_SCREEN = Component.translatable("tooltip.loot-bag.open_screen").withStyle(ChatFormatting.GRAY);
+    protected static final MutableComponent QUICK_OPEN = Component.translatable("tooltip.loot-bag.quick_open").withStyle(ChatFormatting.GRAY);
+    protected static final MutableComponent QUICK_OPEN_STACK = Component.translatable("tooltip.loot-bag.quick_open_stack").withStyle(ChatFormatting.GRAY);
     protected static final String KEY = "BagId";
 
-    public LootBagItem(Settings settings)
+    public LootBagItem(Properties settings)
     {
         super(settings);
     }
 
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
-        NbtCompound nbt = stack.getNbt();
+        CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (nbt == null) return Optional.empty();
-        NbtElement element = nbt.get(KEY);
+        Tag element = nbt.get(KEY);
         if (element == null) return Optional.empty();
         return BagEntry.CODEC
                 .decode(NbtOps.INSTANCE, element)
@@ -48,25 +55,30 @@ public class LootBagItem extends Item
                 .map(Pair::getFirst);
     }
 
+    private static void setBagData(ItemStack stack, String key, Tag value)
+    {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.put(key, value));
+    }
+
     public Optional<Bag> getBag(ItemStack stack)
     {
         return this.getBagEntry(stack).map(BagEntry::bag);
     }
 
-    public ItemStack getStack(Identifier bagId)
+    public ItemStack getStack(ResourceLocation bagId)
     {
-        ItemStack stack = this.getDefaultStack();
-        stack.setSubNbt(
+        ItemStack stack = this.getDefaultInstance();
+        setBagData(stack,
                 KEY,
-                NbtString.of(bagId.toString())
+                StringTag.valueOf(bagId.toString())
         );
         return stack;
     }
 
     public ItemStack getStack(BagEntry entry)
     {
-        ItemStack stack = this.getDefaultStack();
-        stack.setSubNbt(
+        ItemStack stack = this.getDefaultInstance();
+        setBagData(stack,
                 KEY,
                 BagEntry.CODEC
                         .encodeStart(NbtOps.INSTANCE, entry)
@@ -77,33 +89,32 @@ public class LootBagItem extends Item
     }
 
     @Override
-    public Text getName(ItemStack stack)
+    public Component getName(ItemStack stack)
     {
         return this.getBagEntry(stack)
                 .map(BagEntry::getName)
-                .orElseGet(this::getName);
+                .orElseGet(() -> super.getName(stack));
     }
 
-    @Override
     public Rarity getRarity(ItemStack stack)
     {
         return this.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON);
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand)
     {
-        ItemStack stack = user.getStackInHand(hand);
-        if (user instanceof ServerPlayerEntity player)
+        ItemStack stack = user.getItemInHand(hand);
+        if (user instanceof ServerPlayer player)
         {
-            int slot = hand == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
+            int slot = hand == InteractionHand.MAIN_HAND ? player.getInventory().selected : 40;
             this.getBagEntry(stack).ifPresentOrElse(entry ->
             {
                 // Open Without Screen While Sneaking
                 Bag bag = entry.bag();
-                if (player.isSneaking() && bag.getType().quick())
+                if (player.isShiftKeyDown() && bag.getType().quick())
                 {
-                    if (hand == Hand.MAIN_HAND)
+                    if (hand == InteractionHand.MAIN_HAND)
                     {
                         open(player, stack, bag, 0);
                     } else
@@ -117,33 +128,33 @@ public class LootBagItem extends Item
                 }
                 // Open Through Screen
                 else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
-            }, () -> player.sendMessage(INVALID, true));
+            }, () -> player.displayClientMessage(INVALID, true));
         }
-        return TypedActionResult.success(stack, world.isClient());
+        return InteractionResultHolder.sidedSuccess(stack, world.isClientSide());
     }
 
-    public static void open(ServerPlayerEntity player, ItemStack stack, Bag bag, int selectedIndex)
+    public static void open(ServerPlayer player, ItemStack stack, Bag bag, int selectedIndex)
     {
         bag.getContent(new OpenBagContext(player.getRandom(), selectedIndex)).ifPresent(content ->
         {
             content.reward(player);
             if (!player.isCreative())
-                stack.decrement(1);
+                stack.shrink(1);
         });
     }
 
-    public static void open(ServerPlayerEntity player, int slot, int selectedIndex)
+    public static void open(ServerPlayer player, int slot, int selectedIndex)
     {
-        ItemStack stack = player.getInventory().getStack(slot);
+        ItemStack stack = player.getInventory().getItem(slot);
         if (stack.getItem() instanceof LootBagItem item)
             item.getBag(stack).ifPresentOrElse(
                     bag -> open(player, stack, bag, selectedIndex),
-                    () -> player.sendMessage(INVALID, true)
+                    () -> player.displayClientMessage(INVALID, true)
             );
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag)
     {
         Optional<Bag> optional = this.getBag(stack);
         if (optional.isEmpty())

@@ -1,7 +1,7 @@
 package karashokleo.loot_bag.api.common.bag;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
-public record BagType<T extends Bag>(Codec<T> codec, boolean quick)
+public record BagType<T extends Bag>(MapCodec<T> codec, boolean quick)
 {
 }
