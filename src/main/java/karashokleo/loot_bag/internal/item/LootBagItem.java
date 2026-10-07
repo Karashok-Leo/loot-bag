@@ -5,7 +5,9 @@ import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,8 +40,7 @@ public class LootBagItem extends Item
 
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt == null) return Optional.empty();
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         NbtElement element = nbt.get(KEY);
         if (element == null) return Optional.empty();
         return BagEntry.CODEC
@@ -56,23 +57,15 @@ public class LootBagItem extends Item
     public ItemStack getStack(Identifier bagId)
     {
         ItemStack stack = this.getDefaultStack();
-        stack.setSubNbt(
-                KEY,
-                NbtString.of(bagId.toString())
-        );
+        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.putString(KEY, bagId.toString()));
         return stack;
     }
 
     public ItemStack getStack(BagEntry entry)
     {
         ItemStack stack = this.getDefaultStack();
-        stack.setSubNbt(
-                KEY,
-                BagEntry.CODEC
-                        .encodeStart(NbtOps.INSTANCE, entry)
-                        .result()
-                        .orElseThrow()
-        );
+        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.put(
+                KEY, BagEntry.CODEC.encodeStart(NbtOps.INSTANCE, entry).result().orElseThrow()));
         return stack;
     }
 
@@ -84,7 +77,6 @@ public class LootBagItem extends Item
                 .orElseGet(this::getName);
     }
 
-    @Override
     public Rarity getRarity(ItemStack stack)
     {
         return this.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON);
@@ -143,7 +135,7 @@ public class LootBagItem extends Item
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context)
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type)
     {
         Optional<Bag> optional = this.getBag(stack);
         if (optional.isEmpty())

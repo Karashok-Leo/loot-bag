@@ -1,18 +1,20 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.List;
 
 public class EffectContent extends Content
 {
-    public static final Codec<EffectContent> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<EffectContent> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     Effect.CODEC.listOf().fieldOf("effects").forGetter(EffectContent::getEffects)
             ).and(contentFields(ins).t1()).apply(ins, EffectContent::new)
@@ -47,7 +49,7 @@ public class EffectContent extends Content
     }
 
     public record Effect(
-            StatusEffect type,
+            RegistryEntry<StatusEffect> type,
             int duration,
             int amplifier,
             boolean ambient,
@@ -57,7 +59,7 @@ public class EffectContent extends Content
     {
         public static final Codec<Effect> CODEC = RecordCodecBuilder.create(
                 ins -> ins.group(
-                        Registries.STATUS_EFFECT.getCodec().fieldOf("type").forGetter(Effect::type),
+                        Registries.STATUS_EFFECT.getEntryCodec().fieldOf("type").forGetter(Effect::type),
                         Codec.INT.optionalFieldOf("duration", 20).forGetter(Effect::duration),
                         Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Effect::amplifier),
                         Codec.BOOL.optionalFieldOf("ambient", false).forGetter(Effect::ambient),
@@ -67,22 +69,22 @@ public class EffectContent extends Content
         );
         public static final int DEFAULT_DURATION = 20;
 
-        public Effect(StatusEffect type)
+        public Effect(RegistryEntry<StatusEffect> type)
         {
             this(type, DEFAULT_DURATION);
         }
 
-        public Effect(StatusEffect type, int duration)
+        public Effect(RegistryEntry<StatusEffect> type, int duration)
         {
             this(type, duration, 0);
         }
 
-        public Effect(StatusEffect type, int duration, int amplifier)
+        public Effect(RegistryEntry<StatusEffect> type, int duration, int amplifier)
         {
             this(type, duration, amplifier, false, true);
         }
 
-        public Effect(StatusEffect type, int duration, int amplifier, boolean ambient, boolean visible)
+        public Effect(RegistryEntry<StatusEffect> type, int duration, int amplifier, boolean ambient, boolean visible)
         {
             this(type, duration, amplifier, ambient, visible, visible);
         }

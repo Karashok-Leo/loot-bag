@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public class RandomBag extends Bag implements ContentView
 {
-    public static final Codec<RandomBag> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<RandomBag> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     Entry.CODEC.listOf().fieldOf("pool").forGetter(RandomBag::getPool)
             ).and(bagFields(ins)).apply(ins, RandomBag::new)

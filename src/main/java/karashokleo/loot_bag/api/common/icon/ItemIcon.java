@@ -1,6 +1,6 @@
 package karashokleo.loot_bag.api.common.icon;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
 import net.fabricmc.api.EnvType;
@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemIcon extends Icon
 {
-    public static final Codec<ItemIcon> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<ItemIcon> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
             ).and(iconFields()).apply(ins, ItemIcon::new)

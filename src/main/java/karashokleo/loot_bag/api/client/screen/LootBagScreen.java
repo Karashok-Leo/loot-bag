@@ -76,13 +76,19 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta)
     {
-        this.renderBackground(context);
+        this.renderInGameBackground(context);
         this.setFocused(null);
         this.drawTitle(context);
         this.drawName(context);
         this.drawDescription(context);
         this.updateDrawableIcon(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta)
+    {
+        // Screen.render now calls this; the original unblurred background is drawn above.
     }
 
     protected void updateContentText()

@@ -23,6 +23,6 @@ public class LootBagClient implements ClientModInitializer
 
         ClientNetworkHandlers.init();
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0xff000000 | LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
     }
 }

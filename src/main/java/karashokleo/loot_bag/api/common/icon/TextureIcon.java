@@ -1,7 +1,9 @@
 package karashokleo.loot_bag.api.common.icon;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,10 +12,11 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL14;
 
 public class TextureIcon extends Icon
 {
-    public static final Codec<TextureIcon> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<TextureIcon> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
                     Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
@@ -94,23 +97,25 @@ public class TextureIcon extends Icon
         matrices.scale(SIZE, SIZE, 1);
 
         RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.enableBlend();
+        // Blend state was removed from shader JSON in 1.21; keep the original factors.
+        RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
+        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
+        BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         bufferBuilder.vertex(matrix4f, -0.5F, -0.5F, 0)
                 .color(1F, 1F, 1F, alpha)
-                .texture(u0, v0).next();
+                .texture(u0, v0);
         bufferBuilder.vertex(matrix4f, -0.5F, 0.5F, 0)
                 .color(1F, 1F, 1F, alpha)
-                .texture(u0, v1).next();
+                .texture(u0, v1);
         bufferBuilder.vertex(matrix4f, 0.5F, 0.5F, 0)
                 .color(1F, 1F, 1F, alpha)
-                .texture(u1, v1).next();
+                .texture(u1, v1);
         bufferBuilder.vertex(matrix4f, 0.5F, -0.5F, 0)
                 .color(1F, 1F, 1F, alpha)
-                .texture(u1, v0).next();
+                .texture(u1, v0);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
 

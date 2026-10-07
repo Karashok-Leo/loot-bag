@@ -10,6 +10,8 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -25,14 +27,14 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator)
     {
-        bootstrap();
+        bootstrap(generator.getRegistries().join());
         FabricDataGenerator.Pack pack = generator.createPack();
         pack.addProvider(LanguageProvider::new);
         pack.addProvider(ContentProvider::new);
         pack.addProvider(BagProvider::new);
     }
 
-    private static void bootstrap()
+    private static void bootstrap(RegistryWrapper.WrapperLookup registries)
     {
         ContentEntry beef = new ContentEntry(
                 LootBagMod.id("beef"),
@@ -44,7 +46,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
         contentDiamondSword.setDamage(66);
         ItemStack iconDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
-        iconDiamondSword.addEnchantment(Enchantments.LOOTING, 3);
+        iconDiamondSword.addEnchantment(registries.getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), 3);
         ContentEntry diamondSword = new ContentEntry(
                 LootBagMod.id("diamond_sword"),
                 new ItemContent(
@@ -55,7 +57,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         ContentEntry stone = new ContentEntry(
                 LootBagMod.id("stone"),
                 new LootTableContent(
-                        new Identifier("blocks/stone"),
+                        Identifier.of("blocks/stone"),
                         new ItemIcon(Items.STONE)
                 )
         );
@@ -66,28 +68,28 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                                 new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
                                 new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
                         ),
-                        new TextureIcon(new Identifier("textures/block/stone.png"))
+                        new TextureIcon(Identifier.of("textures/block/stone.png"))
                 )
         );
         ContentEntry zombie = new ContentEntry(
                 LootBagMod.id("zombie"),
                 new LootTableContent(
-                        new Identifier("entities/zombie"),
-                        new TextureIcon(new Identifier("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
+                        Identifier.of("entities/zombie"),
+                        new TextureIcon(Identifier.of("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
                 )
         );
         ContentEntry skeleton = new ContentEntry(
                 LootBagMod.id("skeleton"),
                 new CommandContent(
                         "/kill @s",
-                        new TextureIcon(new Identifier("textures/item/bone.png"))
+                        new TextureIcon(Identifier.of("textures/item/bone.png"))
                 )
         );
         ContentEntry creeper = new ContentEntry(
                 LootBagMod.id("creeper"),
                 new CommandContent(
                         "/summon minecraft:creeper ~ ~ ~",
-                        new TextureIcon(new Identifier("textures/item/gunpowder.png"))
+                        new TextureIcon(Identifier.of("textures/item/gunpowder.png"))
                 )
         );
 

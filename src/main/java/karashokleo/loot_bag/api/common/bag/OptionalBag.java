@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 public class OptionalBag extends Bag implements ContentView
 {
-    public static final Codec<OptionalBag> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<OptionalBag> CODEC = RecordCodecBuilder.mapCodec(
             ins -> ins.group(
                     ContentEntry.CODEC.listOf()
                             .fieldOf("options")

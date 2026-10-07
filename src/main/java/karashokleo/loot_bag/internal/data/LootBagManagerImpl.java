@@ -12,6 +12,7 @@ import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -87,12 +88,18 @@ public final class LootBagManagerImpl implements LootBagManager
 
     public static void registerLoader()
     {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new Loader());
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(LootBagMod.id("loader"), Loader::new);
     }
 
     private static class Loader implements SimpleSynchronousResourceReloadListener
     {
         private final Identifier LOADER_ID = LootBagMod.id("loader");
+        private final RegistryWrapper.WrapperLookup registries;
+
+        private Loader(RegistryWrapper.WrapperLookup registries)
+        {
+            this.registries = registries;
+        }
 
         @Override
         public Identifier getFabricId()
@@ -121,7 +128,7 @@ public final class LootBagManagerImpl implements LootBagManager
                             id.withPath(s -> s
                                     .replaceFirst(path + "/", "")
                                     .replaceFirst(".json", "")),
-                            codec.decode(JsonOps.INSTANCE, data).result().orElseThrow().getFirst()
+                            codec.decode(registries.getOps(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
                     );
                 } catch (Exception e)
                 {

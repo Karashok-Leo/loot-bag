@@ -1,22 +1,17 @@
 package karashokleo.loot_bag.internal.network.packet;
 
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacket
+public record SetScreenPacket(int slot, Identifier bagId) implements CustomPayload
 {
-    public static final PacketType<SetScreenPacket> TYPE = PacketType.create(
-            LootBagMod.id("set_screen"),
-            buf -> new SetScreenPacket(
-                    buf.readVarInt(),
-                    buf.readIdentifier()
-            )
-    );
+    public static final Id<SetScreenPacket> TYPE = new Id<>(LootBagMod.id("set_screen"));
+    public static final PacketCodec<RegistryByteBuf, SetScreenPacket> CODEC = PacketCodec.of(SetScreenPacket::write, buf -> new SetScreenPacket(buf.readVarInt(), buf.readIdentifier()));
 
-    @Override
     public void write(PacketByteBuf buf)
     {
         buf.writeVarInt(this.slot);
@@ -24,7 +19,7 @@ public record SetScreenPacket(int slot, Identifier bagId) implements FabricPacke
     }
 
     @Override
-    public PacketType<?> getType()
+    public Id<? extends CustomPayload> getId()
     {
         return TYPE;
     }

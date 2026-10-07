@@ -1,8 +1,8 @@
 package karashokleo.loot_bag.api.common.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.List;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
@@ -15,18 +15,21 @@ import net.minecraft.loot.function.LootFunction;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 
 import java.util.function.Consumer;
 
 public class LootBagEntry extends LeafEntry
 {
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final LootPoolEntryType TYPE = new LootPoolEntryType(SERIALIZER);
+    public static final MapCodec<LootBagEntry> CODEC = RecordCodecBuilder.mapCodec(
+            instance -> addLeafFields(instance).and(
+                    Identifier.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId)
+            ).apply(instance, LootBagEntry::new)
+    );
+    public static final LootPoolEntryType TYPE = new LootPoolEntryType(CODEC);
 
     private final Identifier bagId;
 
-    protected LootBagEntry(int weight, int quality, LootCondition[] conditions, LootFunction[] functions, Identifier bagId)
+    protected LootBagEntry(int weight, int quality, List<LootCondition> conditions, List<LootFunction> functions, Identifier bagId)
     {
         super(weight, quality, conditions, functions);
         this.bagId = bagId;
@@ -56,30 +59,7 @@ public class LootBagEntry extends LeafEntry
 
     public static LeafEntry.Builder<?> builder(Identifier bagId)
     {
-        return LootBagEntry.builder((int weight, int quality, LootCondition[] conditions, LootFunction[] functions) -> new LootBagEntry(weight, quality, conditions, functions, bagId));
+        return LootBagEntry.builder((int weight, int quality, List<LootCondition> conditions, List<LootFunction> functions) -> new LootBagEntry(weight, quality, conditions, functions, bagId));
     }
 
-    public static class Serializer extends LeafEntry.Serializer<LootBagEntry>
-    {
-        private static final String KEY = "bag";
-
-        @Override
-        public void addEntryFields(JsonObject jsonObject, LootBagEntry leafEntry, JsonSerializationContext jsonSerializationContext)
-        {
-            super.addEntryFields(jsonObject, leafEntry, jsonSerializationContext);
-            jsonObject.addProperty(KEY, leafEntry.bagId.toString());
-        }
-
-        @Override
-        protected LootBagEntry fromJson(JsonObject entryJson, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions, LootFunction[] functions)
-        {
-            return new LootBagEntry(
-                    weight,
-                    quality,
-                    conditions,
-                    functions,
-                    new Identifier(JsonHelper.getString(entryJson, KEY))
-            );
-        }
-    }
 }

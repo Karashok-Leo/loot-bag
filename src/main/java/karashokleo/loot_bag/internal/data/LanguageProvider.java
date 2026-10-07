@@ -1,17 +1,19 @@
 package karashokleo.loot_bag.internal.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.minecraft.registry.RegistryWrapper;
+import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
 public class LanguageProvider extends FabricLanguageProvider
 {
-    public LanguageProvider(FabricDataOutput dataOutput)
+    public LanguageProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture)
     {
-        super(dataOutput);
+        super(dataOutput, registriesFuture);
     }
 
     @Override
-    public void generateTranslations(TranslationBuilder builder)
+    public void generateTranslations(RegistryWrapper.WrapperLookup lookup, TranslationBuilder builder)
     {
         LootBagDataGenerator.CONTENTS.forEach(entry ->
         {

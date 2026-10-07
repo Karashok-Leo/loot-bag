@@ -12,7 +12,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer vertex(double x, double y, double z)
+    public VertexConsumer vertex(float x, float y, float z)
     {
         this.parent.vertex(x, y, z);
         return this;
@@ -51,23 +51,5 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     {
         this.parent.normal(x, y, z);
         return this;
-    }
-
-    @Override
-    public void next()
-    {
-        this.parent.next();
-    }
-
-    @Override
-    public void fixedColor(int red, int green, int blue, int alpha)
-    {
-        this.parent.fixedColor(red, green, blue, alpha);
-    }
-
-    @Override
-    public void unfixColor()
-    {
-        this.parent.unfixColor();
     }
 }
