@@ -107,11 +107,12 @@ class LootBagPortTest
     }
 
     @Test
-    void legacyCountDamageEnchantmentsAndCustomDataSurvive()
+    void nativeComponentsPreserveDamageEnchantmentsAndCustomData()
     {
         ItemStack stack = parseStack("""
-                {"id":"minecraft:diamond_sword","Count":2,"tag":{"Damage":66,
-                "Enchantments":[{"id":"minecraft:looting","lvl":3}],"BagId":"test:bag","Unbreakable":1}}
+                {"id":"minecraft:diamond_sword","count":2,"components":{
+                "minecraft:damage":66,"minecraft:enchantments":{"levels":{"minecraft:looting":3}},
+                "minecraft:custom_data":{"BagId":"test:bag"},"minecraft:unbreakable":{}}}
                 """);
         assertTrue(stack.isOf(Items.DIAMOND_SWORD));
         assertEquals(2, stack.getCount());
@@ -125,25 +126,22 @@ class LootBagPortTest
     }
 
     @Test
-    void legacyEmptyAirAndLargeCountsRemainValid()
+    void componentObjectsFollowVanillaCodecBehavior()
     {
-        assertTrue(parseStack("{\"id\":\"minecraft:diamond\",\"Count\":0}").isEmpty());
-        assertTrue(parseStack("{\"id\":\"minecraft:diamond\",\"Count\":-1}").isEmpty());
-        assertTrue(parseStack("{\"id\":\"minecraft:air\",\"Count\":1}").isEmpty());
-        for (int count : new int[]{100, 127, 256, Integer.MAX_VALUE})
+        for (String json : List.of(
+                "{\"id\":\"minecraft:air\",\"count\":1}",
+                "{\"id\":\"minecraft:diamond\",\"count\":0}",
+                "{\"id\":\"minecraft:diamond\",\"count\":99}",
+                "{\"id\":\"minecraft:diamond\",\"count\":100}"))
         {
-            ItemStack stack = parseStack("{\"id\":\"minecraft:diamond\",\"Count\":" + count + "}");
-            assertEquals(count, stack.getCount());
-            var encoded = CodecUtil.ITEM_STACK_CODEC.encodeStart(registries.getOps(JsonOps.INSTANCE), stack).getOrThrow();
-            assertEquals(count, CodecUtil.ITEM_STACK_CODEC.parse(registries.getOps(JsonOps.INSTANCE), encoded).getOrThrow().getCount());
+            var input = JsonParser.parseString(json);
+            var ops = registries.getOps(JsonOps.INSTANCE);
+            var vanilla = ItemStack.CODEC.parse(ops, input);
+            var actual = CodecUtil.ITEM_STACK_CODEC.parse(ops, input);
+            assertEquals(vanilla.result().isPresent(), actual.result().isPresent());
+            if (vanilla.result().isPresent())
+                assertTrue(ItemStack.areEqual(vanilla.getOrThrow(), actual.getOrThrow()));
         }
-    }
-
-    @Test
-    void emptyStackSerializationRoundTrips()
-    {
-        var encoded = CodecUtil.ITEM_STACK_CODEC.encodeStart(registries.getOps(JsonOps.INSTANCE), ItemStack.EMPTY).getOrThrow();
-        assertTrue(CodecUtil.ITEM_STACK_CODEC.parse(registries.getOps(JsonOps.INSTANCE), encoded).getOrThrow().isEmpty());
     }
 
     @Test
@@ -225,7 +223,7 @@ class LootBagPortTest
     }
 
     @Test
-    void bundledLegacyExamplesDecodeAllTypes() throws Exception
+    void bundledNativeExamplesDecodeAllTypes() throws Exception
     {
         Path root = Path.of("example/data/loot-bag/loot-bag");
         try (var paths = Files.list(root.resolve("content")))

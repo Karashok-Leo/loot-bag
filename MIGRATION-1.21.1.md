@@ -10,7 +10,7 @@ Baseline: `master` commit `4c968beb39ad9be32305f2662d768f8cef1064fb` (Fabric 1.2
 - The mod contains no built-in bag/content definitions. `example/` remains a separate optional pack.
 - Existing textures, item models, language files and license are unchanged. Screen geometry, arrow atlas/UVs, 10-tick scrolling and 40-tick random cycling remain unchanged.
 - The existing `BagId` field is retained inside the vanilla `minecraft:custom_data` component. For example: `/give @s loot-bag:loot_bag[minecraft:custom_data={BagId:"loot-bag:optional"}] 1`.
-- Legacy item JSON with uppercase `Count` and `tag` is decoded using vanilla's 1.20.1-to-1.21.1 item data fixer with NBT operations, including numeric NBT booleans. This preserves legacy damage, enchantments and custom data in the examples. Simple item identifiers are unchanged. New serialized complex items use vanilla 1.21.1 `count`/`components` syntax. A small equivalent component codec retains the original unrestricted integer counts and empty/air stacks, rather than imposing the new vanilla count limit.
+- Per the requested scope, complex item definitions use native Minecraft 1.21.1 `ItemStack.CODEC` and `count`/`components` syntax only. No legacy `Count`/`tag` conversion or compatibility codec is included. Count and empty-stack behavior follow vanilla 1.21.1. The original simple item-identifier shorthand remains supported. Checked-in complex examples have been updated to the native format.
 
 ## Required implementation/API differences
 
@@ -29,7 +29,7 @@ Baseline: `master` commit `4c968beb39ad9be32305f2662d768f8cef1064fb` (Fabric 1.2
 
 With JDK 21: `./gradlew build`. Regression tests live only under `src/test` and are not shipped in the mod JAR. No GitHub Actions workflow has been added.
 
-Optional example generation: first copy `example/pack.mcmeta` to `run/global_packs/required_data/loot_bag/pack.mcmeta`, then run `./gradlew runDatagen`. This external metadata-copy prerequisite already exists in the master build task; it has been retained rather than refactored. Generated complex item definitions use 1.21.1 component syntax, while the checked-in examples retain the original legacy JSON to demonstrate compatibility.
+Optional example generation: first copy `example/pack.mcmeta` to `run/global_packs/required_data/loot_bag/pack.mcmeta`, then run `./gradlew runDatagen`. This external metadata-copy prerequisite already exists in the master build task; it has been retained rather than refactored. Generated and checked-in complex item definitions both use native 1.21.1 component syntax.
 
 Development client: `./gradlew runClient`. Put the separate `example/` pack into the test world's `datapacks` folder to load example bags; install it separately as a resource pack for example translations. Do not copy QA fixtures into `src/main/resources`.
 
@@ -37,10 +37,11 @@ Automated checks and actual-game acceptance are recorded separately; a successfu
 
 ## Verification results (2026-10-07)
 
-- `build`: successful, 16 regression tests, zero failures/errors/skips. Coverage includes all bag choices, weighted/zero-weight behavior, all original example content codecs, legacy enchantments/damage/custom data/numeric booleans, empty/air/large integer counts, component round trips, dynamic rarity with vanilla enchantment promotion, custom loot entry and payload round trips.
-- `runDatagen`: successful; seven content definitions, three bag definitions and example translations generated. Generated component-form examples were checked separately; the committed examples retain their original legacy JSON.
-- Development client launched and exited normally. An independent production client then loaded the remapped distribution JAR with official Minecraft 1.21.1, Fabric Loader 0.16.14 and Fabric API 0.102.1+1.21.1, without project classes on its classpath.
-- Actual gameplay verified: no default bag data; invalid-bag feedback; data reload; single preview, cancel and open; main-hand quick open and off-hand whole-stack opening; optional selection and wrapping; item, effect, command and loot-table rewards; creative non-consumption; custom loot-entry generation; deterministic random opening. Inventory counts were checked in-game.
-- After the final compatibility/rendering changes, production JAR SHA-256 `e8de3b1bdade3052ba62352accee9f29b5e93d8ed3cff5a4fd880eec06eace66` was loaded again. Save/rejoin persistence, original enchanted sword icon and Damage 66 reward, tooltips/rarity, cropped texture animation, scaled item icon, multiline descriptions, survival consumption, creative rewards and live rarity changes after `/reload` passed. The client saved and exited normally.
-- Existing assets, language files and license were byte-compared against the baseline. No bag definitions, test classes or QA fixtures are included in the distribution JAR. No CI is configured or added.
-- Not verified: independent dedicated-server/multiplayer sessions and audio output. Lethal outcomes in the original random example were not deliberately rolled; command/effect/loot-table rewards were exercised with deterministic fixtures, and weighting was unit-tested.
+- Native-format revision: `build` passed with 15 regression tests, zero failures/errors/skips; `runDatagen` generated seven contents, three bags and translations in native 1.21.1 format.
+- Production JAR SHA-256 `8998ac26ddc5b3e84da9511a1dccc05989710a2ebb394a2d1edf5e9a45789c5c` was tested in an independent official Minecraft 1.21.1/Fabric Loader 0.16.14 client with Fabric API 0.102.1+1.21.1, without project classes.
+- Actual native examples passed: optional enchanted sword icon and Damage 66 reward, all three previews, cropped texture cycling, scaled item icon, names and multiline descriptions.
+- Actual gameplay passed: preview cancellation; chosen optional rewards and wrapping; item, status-effect, command and loot-table rewards; normal survival consumption; creative non-consumption; main-hand quick opening and off-hand whole-stack quick opening; deterministic random opening; custom loot-entry generation. Inventory counts were checked in-game.
+- Native data reload updated an existing stack's rarity. Saved-world rejoin retained five bags, and opening a preserved bag yielded four bags plus one beef. The world saved and the client exited normally (exit 0).
+- Bytecode audit confirms the original shorthand plus native `ItemStack.CODEC` only. No legacy `Count`/`tag` conversion, custom count/empty codec or explicit legacy-rejection branch remains. Boundary tests compare the wrapper with vanilla behavior.
+- Existing texture/model/language/license files are unchanged; the complex example is deliberately updated to native components. No bag definitions, tests or QA fixtures are included in the distribution JAR. No CI is configured or added.
+- Not independently verified: dedicated-server/multiplayer sessions and audio output. Lethal outcomes in the original random example were not deliberately rolled; deterministic content fixtures and weighted-algorithm unit tests were used.
