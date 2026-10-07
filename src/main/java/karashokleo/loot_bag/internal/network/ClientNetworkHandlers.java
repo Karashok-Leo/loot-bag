@@ -9,44 +9,28 @@ import karashokleo.loot_bag.internal.data.ConstantTexts;
 import karashokleo.loot_bag.internal.network.packet.OpenBagPacket;
 import karashokleo.loot_bag.internal.network.packet.SetScreenPacket;
 import karashokleo.loot_bag.internal.network.packet.SyncDataPackets;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ClientNetworkHandlers
 {
     public static void sendOpen(int slot, int selectedIndex)
     {
-        ClientPlayNetworking.send(new OpenBagPacket(slot, selectedIndex));
+        ServerNetworkHandlers.CHANNEL.sendToServer(new OpenBagPacket(slot, selectedIndex));
     }
 
-    public static void init()
-    {
-        ClientPlayNetworking.registerGlobalReceiver(SyncDataPackets.SYNC_CONTENT_TYPE, ClientNetworkHandlers::handleSyncContent);
-        ClientPlayNetworking.registerGlobalReceiver(SyncDataPackets.SYNC_BAG_TYPE, ClientNetworkHandlers::handleSyncBag);
-        ClientPlayNetworking.registerGlobalReceiver(SetScreenPacket.TYPE, ClientNetworkHandlers::handleSetScreen);
-    }
-
-    private static void handleSyncContent(SyncDataPackets.SyncContentPacket packet, ClientPlayerEntity player, PacketSender responseSender)
+    public static void handleSyncContent(SyncDataPackets.SyncContentPacket packet)
     {
         LootBagManager manager = LootBagManager.getInstance();
         manager.clearAllContentEntries();
         for (ContentEntry entry : packet.entries())
             manager.putContent(entry.id(), entry.content());
-        responseSender.sendPacket(
-                SyncDataPackets.ACK_ID,
-                PacketByteBufs
-                        .create()
-                        .writeVarInt(manager.getAllContentEntries().size())
-        );
+        ServerNetworkHandlers.CHANNEL.sendToServer(new SyncDataPackets.AckPacket(manager.getAllContentEntries().size()));
     }
 
-    private static void handleSyncBag(SyncDataPackets.SyncBagPacket packet, ClientPlayerEntity player, PacketSender responseSender)
+    public static void handleSyncBag(SyncDataPackets.SyncBagPacket packet)
     {
         LootBagManager manager = LootBagManager.getInstance();
         manager.clearAllBagEntries();
@@ -54,7 +38,7 @@ public class ClientNetworkHandlers
             manager.putBag(entry.id(), entry.bag());
     }
 
-    private static void handleSetScreen(SetScreenPacket packet, ClientPlayerEntity player, PacketSender responseSender)
+    public static void handleSetScreen(SetScreenPacket packet)
     {
         BagEntry entry = LootBagManager.getInstance().getBagEntry(packet.bagId());
         if (entry == null) throw new IllegalStateException(ConstantTexts.unknownBagMessage(packet.bagId()));

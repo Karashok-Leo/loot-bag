@@ -5,8 +5,13 @@ import karashokleo.loot_bag.api.common.content.*;
 import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataOutput;
+import net.minecraft.data.MetadataProvider;
+import net.minecraft.text.Text;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
@@ -17,19 +22,22 @@ import net.minecraft.util.Rarity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LootBagDataGenerator implements DataGeneratorEntrypoint
+@Mod.EventBusSubscriber(modid = LootBagMod.FORGE_MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class LootBagDataGenerator
 {
     public static final List<ContentEntry> CONTENTS = new ArrayList<>();
     public static final List<BagEntry> BAGS = new ArrayList<>();
 
-    @Override
-    public void onInitializeDataGenerator(FabricDataGenerator generator)
+    @SubscribeEvent
+    public static void onInitializeDataGenerator(GatherDataEvent event)
     {
         bootstrap();
-        FabricDataGenerator.Pack pack = generator.createPack();
-        pack.addProvider(LanguageProvider::new);
-        pack.addProvider(ContentProvider::new);
-        pack.addProvider(BagProvider::new);
+        DataGenerator generator = event.getGenerator();
+        DataOutput output = generator.getPackOutput();
+        generator.addProvider(true, MetadataProvider.create(output, Text.literal("Loot Bag Example")));
+        generator.addProvider(event.includeClient(), new LanguageProvider(output));
+        generator.addProvider(event.includeServer(), new ContentProvider(output));
+        generator.addProvider(event.includeServer(), new BagProvider(output));
     }
 
     private static void bootstrap()

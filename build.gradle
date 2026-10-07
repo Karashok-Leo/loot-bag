@@ -1,84 +1,81 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'dev.architectury.loom' version '1.10.455'
     id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
+base { archivesName = project.archives_base_name }
 
-base {
-    archivesName = project.archives_base_name
-}
-
-sourceSets {
-
-}
-
-fabricApi {
-    configureDataGeneration(setting -> {
-        setting.setOutputDirectory(project.file("example"))
-        setting.setAddToResources(false)
-    })
-}
-
-runDatagen.doLast {
-    copy {
-        from("example/data")
-        into("run/global_packs/required_data/loot_bag/data")
-    }
-    copy {
-        from("example/assets")
-        into("run/global_packs/required_resources/loot_bag/assets")
-    }
-    copy {
-        from("run/global_packs/required_data/loot_bag/pack.mcmeta")
-        into("example")
+loom {
+    forge { }
+    runs {
+        data {
+            data()
+            programArgs '--mod', 'loot_bag', '--all', '--output', file('example').absolutePath,
+                    '--existing', file('src/main/resources').absolutePath
+        }
     }
 }
 
-repositories {
-    mavenLocal()
-}
+repositories { mavenLocal() }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 }
 
 processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
+    inputs.property 'version', project.version
+    filesMatching('META-INF/mods.toml') { expand version: project.version }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
-}
-
+tasks.withType(JavaCompile).configureEach { options.release = 17 }
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
-    }
+tasks.withType(JavaExec).configureEach {
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
 }
+jar { from('LICENSE') { rename { "${it}_${project.base.archivesName.get()}" } } }
+tasks.withType(Jar).configureEach { exclude '.cache/**' }
+tasks.named('runData') { dependsOn tasks.named('downloadAssets') }
+tasks.named('sourcesJar') { mustRunAfter tasks.named('runData') }
+
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
+        mavenJava(MavenPublication) { from components.java }
     }
+    repositories { mavenLocal() }
+}
 
-    repositories {
-        mavenLocal()
+// Runtime-only regression checks. This source set is not included in published jars.
+sourceSets {
+    validation {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
     }
 }
+loom.mods {
+    main {
+        sourceSet sourceSets.main
+        sourceSet sourceSets.validation
+    }
+}
+tasks.named('runData') {
+    dependsOn tasks.named('validationClasses')
+    def report = layout.buildDirectory.file('reports/forge-validation.json')
+    systemProperty 'loot_bag.validation.report', report.get().asFile.absolutePath
+    systemProperty 'loot_bag.validation.examples', file('example').absolutePath
+    doFirst { delete report }
+    doLast {
+        if (!report.get().asFile.exists() || new groovy.json.JsonSlurper().parse(report.get().asFile).passed != 15)
+            throw new GradleException('Loot Bag Forge runtime regression checks did not complete.')
+    }
+}
+tasks.named('check') { dependsOn tasks.named('runData') }

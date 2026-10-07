@@ -1,22 +1,22 @@
 package karashokleo.loot_bag.internal.data;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.data.DataOutput;
+import karashokleo.loot_bag.internal.fabric.LootBagMod;
 
-public class LanguageProvider extends FabricLanguageProvider
+public class LanguageProvider extends net.minecraftforge.common.data.LanguageProvider
 {
-    public LanguageProvider(FabricDataOutput dataOutput)
+    public LanguageProvider(DataOutput dataOutput)
     {
-        super(dataOutput);
+        super(dataOutput, LootBagMod.MOD_ID, "en_us");
     }
 
     @Override
-    public void generateTranslations(TranslationBuilder builder)
+    protected void addTranslations()
     {
         LootBagDataGenerator.CONTENTS.forEach(entry ->
         {
-            builder.add(entry.nameKey(), "Content Name - " + entry.id());
-            builder.add(entry.descKey(), "Content Description - " + entry.id() + " - " +
+            add(entry.nameKey(), "Content Name - " + entry.id());
+            add(entry.descKey(), "Content Description - " + entry.id() + " - " +
                     "\n......" +
                     "\n............" +
                     "\n.................." +
@@ -32,6 +32,6 @@ public class LanguageProvider extends FabricLanguageProvider
                     "\nloooooooooooooooong enough to display multi-line text effects");
         });
         LootBagDataGenerator.BAGS.forEach(entry ->
-                builder.add(entry.nameKey(), "Bag Name - " + entry.id()));
+                add(entry.nameKey(), "Bag Name - " + entry.id()));
     }
 }

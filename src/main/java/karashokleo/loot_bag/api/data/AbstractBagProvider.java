@@ -2,14 +2,13 @@ package karashokleo.loot_bag.api.data;
 
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.internal.data.ConstantTexts;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
+import karashokleo.loot_bag.internal.data.CodecDataProvider;
 import net.minecraft.data.DataOutput;
 
-public abstract class AbstractBagProvider extends FabricCodecDataProvider<Bag>
+public abstract class AbstractBagProvider extends CodecDataProvider<Bag>
 {
-    public AbstractBagProvider(FabricDataOutput dataOutput)
+    public AbstractBagProvider(DataOutput dataOutput)
     {
-        super(dataOutput, DataOutput.OutputType.DATA_PACK, ConstantTexts.BAG_DIR, Bag.CODEC);
+        super(dataOutput, ConstantTexts.BAG_DIR, Bag.CODEC);
     }
 }

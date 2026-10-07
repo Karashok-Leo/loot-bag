@@ -10,10 +10,10 @@ import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,19 +87,11 @@ public final class LootBagManagerImpl implements LootBagManager
 
     public static void registerLoader()
     {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new Loader());
+        MinecraftForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(new Loader()));
     }
 
-    private static class Loader implements SimpleSynchronousResourceReloadListener
+    private static class Loader implements SynchronousResourceReloader
     {
-        private final Identifier LOADER_ID = LootBagMod.id("loader");
-
-        @Override
-        public Identifier getFabricId()
-        {
-            return LOADER_ID;
-        }
-
         @Override
         public void reload(ResourceManager manager)
         {

@@ -8,21 +8,26 @@ import karashokleo.loot_bag.api.common.bag.OptionalBag;
 import karashokleo.loot_bag.api.common.bag.RandomBag;
 import karashokleo.loot_bag.api.common.bag.SingleBag;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
-import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-public class LootBagClient implements ClientModInitializer
+@Mod.EventBusSubscriber(modid = LootBagMod.FORGE_MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class LootBagClient
 {
-    @Override
-    public void onInitializeClient()
+    @SubscribeEvent
+    public static void onInitializeClient(FMLClientSetupEvent event)
     {
         LootBagScreenRegistry.register(SingleBag.TYPE, SingleLootBagScreen::new);
         LootBagScreenRegistry.register(OptionalBag.TYPE, OptionalLootBagScreen::new);
         LootBagScreenRegistry.register(RandomBag.TYPE, RandomLootBagScreen::new);
+    }
 
-        ClientNetworkHandlers.init();
-
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
+    @SubscribeEvent
+    public static void registerColors(RegisterColorHandlersEvent.Item event)
+    {
+        event.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
     }
 }

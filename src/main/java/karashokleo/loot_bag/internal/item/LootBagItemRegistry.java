@@ -2,8 +2,8 @@ package karashokleo.loot_bag.internal.item;
 
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.item.Item;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -15,16 +15,18 @@ import net.minecraft.text.Text;
 public class LootBagItemRegistry
 {
     public static final RegistryKey<ItemGroup> ITEM_GROUP_KEY = RegistryKey.of(RegistryKeys.ITEM_GROUP, LootBagMod.id("loot_bag"));
-    public static LootBagItem LOOT_BAG = new LootBagItem(new FabricItemSettings().maxCount(16));
+    public static LootBagItem LOOT_BAG = new LootBagItem(new Item.Settings().maxCount(16));
 
-    public static void init()
+    public static void init(RegisterEvent event)
     {
-        LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), LOOT_BAG);
+        if (event.getRegistryKey().equals(RegistryKeys.ITEM))
+            LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), LOOT_BAG);
+        if (!event.getRegistryKey().equals(RegistryKeys.ITEM_GROUP)) return;
 
         Registry.register(
                 Registries.ITEM_GROUP,
                 LootBagMod.id("loot_bag"),
-                FabricItemGroup
+                ItemGroup
                         .builder()
                         .icon(() -> LootBagManager
                                 .getInstance()

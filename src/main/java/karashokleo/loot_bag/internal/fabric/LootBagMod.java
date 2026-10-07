@@ -14,37 +14,56 @@ import karashokleo.loot_bag.api.common.loot.LootBagEntry;
 import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.fabricmc.api.ModInitializer;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LootBagMod implements ModInitializer
+@Mod(LootBagMod.FORGE_MOD_ID)
+public class LootBagMod
 {
+    public static final String FORGE_MOD_ID = "loot_bag";
+    // Keep the original resource namespace and datapack directories.
     public static final String MOD_ID = "loot-bag";
     public static final Logger LOGGER = LoggerFactory.getLogger("loot-bag");
 
-    @Override
-    public void onInitialize()
+    public LootBagMod()
     {
-        initStaticRegistries();
-        LootBagItemRegistry.init();
-        LootBagEntry.init();
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(LootBagRegistry::createRegistries);
+        bus.addListener(LootBagMod::initStaticRegistries);
+        bus.addListener(LootBagItemRegistry::init);
+        bus.addListener((RegisterEvent event) -> {
+            if (event.getRegistryKey().equals(RegistryKeys.LOOT_POOL_ENTRY_TYPE)) LootBagEntry.init();
+        });
         ServerNetworkHandlers.init();
         LootBagManagerImpl.registerLoader();
     }
 
-    private static void initStaticRegistries()
+    private static void initStaticRegistries(RegisterEvent event)
     {
-        LootBagRegistry.registerContentType(id("item"), ItemContent.TYPE);
-        LootBagRegistry.registerContentType(id("loot_table"), LootTableContent.TYPE);
-        LootBagRegistry.registerContentType(id("command"), CommandContent.TYPE);
-        LootBagRegistry.registerContentType(id("effect"), EffectContent.TYPE);
-        LootBagRegistry.registerBagType(id("single"), SingleBag.TYPE);
-        LootBagRegistry.registerBagType(id("optional"), OptionalBag.TYPE);
-        LootBagRegistry.registerBagType(id("random"), RandomBag.TYPE);
-        LootBagRegistry.registerIconType(id("item"), ItemIcon.TYPE);
-        LootBagRegistry.registerIconType(id("texture"), TextureIcon.TYPE);
+        if (event.getRegistryKey().equals(LootBagRegistry.CONTENT_TYPE_KEY))
+        {
+            LootBagRegistry.registerContentType(id("item"), ItemContent.TYPE);
+            LootBagRegistry.registerContentType(id("loot_table"), LootTableContent.TYPE);
+            LootBagRegistry.registerContentType(id("command"), CommandContent.TYPE);
+            LootBagRegistry.registerContentType(id("effect"), EffectContent.TYPE);
+        }
+        if (event.getRegistryKey().equals(LootBagRegistry.BAG_TYPE_KEY))
+        {
+            LootBagRegistry.registerBagType(id("single"), SingleBag.TYPE);
+            LootBagRegistry.registerBagType(id("optional"), OptionalBag.TYPE);
+            LootBagRegistry.registerBagType(id("random"), RandomBag.TYPE);
+        }
+        if (event.getRegistryKey().equals(LootBagRegistry.ICON_TYPE_KEY))
+        {
+            LootBagRegistry.registerIconType(id("item"), ItemIcon.TYPE);
+            LootBagRegistry.registerIconType(id("texture"), TextureIcon.TYPE);
+        }
     }
 
     public static Identifier id(String path)

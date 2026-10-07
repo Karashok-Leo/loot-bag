@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL="https://github.com/Karashok-Leo/loot-bag/issues"
+
+[[mods]]
+modId="loot_bag"
+version="${version}"
+displayName="Loot Bag"
+displayURL="https://github.com/Karashok-Leo/loot-bag"
+logoFile="assets/loot-bag/icon.png"
+authors="Karashok-Leo"
+description="Loot Bag"
+
+[[dependencies.loot_bag]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.22,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.loot_bag]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"

@@ -3,61 +3,81 @@ package karashokleo.loot_bag.internal.network;
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
+import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItem;
 import karashokleo.loot_bag.internal.network.packet.OpenBagPacket;
 import karashokleo.loot_bag.internal.network.packet.SetScreenPacket;
 import karashokleo.loot_bag.internal.network.packet.SyncDataPackets;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.Collection;
 
 public class ServerNetworkHandlers
 {
+    private static final String PROTOCOL = "1";
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            LootBagMod.id("main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
+
     public static void sendScreen(ServerPlayerEntity player, int slot, Identifier bagId)
     {
-        ServerPlayNetworking.send(player, new SetScreenPacket(slot, bagId));
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SetScreenPacket(slot, bagId));
     }
 
     public static void init()
     {
-        ServerPlayNetworking.registerGlobalReceiver(SyncDataPackets.ACK_ID, ServerNetworkHandlers::handleAck);
-        ServerPlayNetworking.registerGlobalReceiver(OpenBagPacket.TYPE, ServerNetworkHandlers::handleOpenBag);
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(ServerNetworkHandlers::sendSyncData);
+        CHANNEL.messageBuilder(OpenBagPacket.class, 0, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenBagPacket::write).decoder(OpenBagPacket::read)
+                .consumerMainThread((packet, context) -> {
+                    ServerPlayerEntity player = context.get().getSender();
+                    if (player != null) LootBagItem.open(player, packet.slot(), packet.selectedIndex());
+                }).add();
+        CHANNEL.messageBuilder(SyncDataPackets.AckPacket.class, 1, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(SyncDataPackets.AckPacket::write).decoder(SyncDataPackets.AckPacket::read)
+                .consumerMainThread((packet, context) -> {
+                    ServerPlayerEntity player = context.get().getSender();
+                    if (player == null) return;
+                    if (packet.count() == LootBagManager.getInstance().getAllContentEntries().size()) sendSyncBag(player);
+                    else sendSyncContent(player);
+                }).add();
+        CHANNEL.messageBuilder(SyncDataPackets.SyncContentPacket.class, 2, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncDataPackets.SyncContentPacket::write).decoder(SyncDataPackets::readContent)
+                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientNetworkHandlers.handleSyncContent(packet))).add();
+        CHANNEL.messageBuilder(SyncDataPackets.SyncBagPacket.class, 3, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncDataPackets.SyncBagPacket::write).decoder(SyncDataPackets::readBag)
+                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientNetworkHandlers.handleSyncBag(packet))).add();
+        CHANNEL.messageBuilder(SetScreenPacket.class, 4, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SetScreenPacket::write).decoder(SetScreenPacket::read)
+                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientNetworkHandlers.handleSetScreen(packet))).add();
+        MinecraftForge.EVENT_BUS.addListener(ServerNetworkHandlers::sendSyncData);
     }
 
-    private static void sendSyncData(ServerPlayerEntity player, boolean joined)
+    private static void sendSyncData(OnDatapackSyncEvent event)
     {
-        sendSyncContent(player);
+        if (event.getPlayer() != null) sendSyncContent(event.getPlayer());
+        else event.getPlayerList().getPlayerList().forEach(ServerNetworkHandlers::sendSyncContent);
     }
 
     private static void sendSyncContent(ServerPlayerEntity player)
     {
         Collection<ContentEntry> contentEntries = LootBagManager.getInstance().getAllContentEntries();
-        ServerPlayNetworking.send(player, new SyncDataPackets.SyncContentPacket(contentEntries));
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncDataPackets.SyncContentPacket(contentEntries));
     }
 
     private static void sendSyncBag(ServerPlayerEntity player)
     {
         Collection<BagEntry> bagEntries = LootBagManager.getInstance().getAllBagEntries();
-        ServerPlayNetworking.send(player, new SyncDataPackets.SyncBagPacket(bagEntries));
-    }
-
-    private static void handleAck(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender)
-    {
-        if (buf.readVarInt() == LootBagManager.getInstance().getAllContentEntries().size())
-            sendSyncBag(player);
-        else sendSyncContent(player);
-    }
-
-    private static void handleOpenBag(OpenBagPacket packet, ServerPlayerEntity player, PacketSender responseSender)
-    {
-        LootBagItem.open(player, packet.slot(), packet.selectedIndex());
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncDataPackets.SyncBagPacket(bagEntries));
     }
 }
