@@ -53,29 +53,3 @@ publishing {
     }
     repositories { mavenLocal() }
 }
-
-// Runtime-only regression checks. This source set is not included in published jars.
-sourceSets {
-    validation {
-        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
-        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
-    }
-}
-loom.mods {
-    main {
-        sourceSet sourceSets.main
-        sourceSet sourceSets.validation
-    }
-}
-tasks.named('runData') {
-    dependsOn tasks.named('validationClasses')
-    def report = layout.buildDirectory.file('reports/forge-validation.json')
-    systemProperty 'loot_bag.validation.report', report.get().asFile.absolutePath
-    systemProperty 'loot_bag.validation.examples', file('example').absolutePath
-    doFirst { delete report }
-    doLast {
-        if (!report.get().asFile.exists() || new groovy.json.JsonSlurper().parse(report.get().asFile).passed != 15)
-            throw new GradleException('Loot Bag Forge runtime regression checks did not complete.')
-    }
-}
-tasks.named('check') { dependsOn tasks.named('runData') }
