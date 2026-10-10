@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
@@ -20,7 +22,7 @@ public class EffectContent extends Content
             ).and(contentFields(ins).t1()).apply(ins, EffectContent::new)
     );
 
-    public static final ContentType<EffectContent> TYPE = new ContentType<>(CODEC);
+    public static final DeferredHolder<ContentType<?>, ContentType<EffectContent>> TYPE = LootBagRegistry.EFFECT_CONTENT;
 
     protected final List<Effect> effects;
 
@@ -38,7 +40,7 @@ public class EffectContent extends Content
     @Override
     protected ContentType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @Override

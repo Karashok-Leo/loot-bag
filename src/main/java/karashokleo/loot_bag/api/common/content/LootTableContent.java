@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
@@ -27,7 +29,7 @@ public class LootTableContent extends StacksContent
             ).and(contentFields(ins).t1()).apply(ins, LootTableContent::new)
     );
 
-    public static final ContentType<LootTableContent> TYPE = new ContentType<>(CODEC);
+    public static final DeferredHolder<ContentType<?>, ContentType<LootTableContent>> TYPE = LootBagRegistry.LOOT_TABLE_CONTENT;
 
     protected final ResourceLocation id;
 
@@ -45,7 +47,7 @@ public class LootTableContent extends StacksContent
     @Override
     protected ContentType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @Override

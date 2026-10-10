@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
@@ -22,7 +24,7 @@ public class RandomBag extends Bag implements ContentView
             ).and(bagFields(ins)).apply(ins, RandomBag::new)
     );
 
-    public static final BagType<RandomBag> TYPE = new BagType<>(CODEC, true);
+    public static final DeferredHolder<BagType<?>, BagType<RandomBag>> TYPE = LootBagRegistry.RANDOM_BAG;
 
     protected final List<Entry> pool;
 
@@ -35,7 +37,7 @@ public class RandomBag extends Bag implements ContentView
     @Override
     public BagType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     public List<Entry> getPool()

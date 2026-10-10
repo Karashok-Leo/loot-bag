@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
@@ -19,7 +21,7 @@ public class ItemIcon extends Icon
             ).and(iconFields()).apply(ins, ItemIcon::new)
     );
 
-    public static final IconType<ItemIcon> TYPE = new IconType<>(CODEC);
+    public static final DeferredHolder<IconType<?>, IconType<ItemIcon>> TYPE = LootBagRegistry.ITEM_ICON;
 
     protected final ItemStack stack;
 
@@ -48,7 +50,7 @@ public class ItemIcon extends Icon
     @Override
     public IconType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @OnlyIn(Dist.CLIENT)

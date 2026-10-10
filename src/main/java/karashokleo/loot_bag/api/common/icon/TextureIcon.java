@@ -2,6 +2,8 @@ package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.neoforged.api.distmarker.Dist;
@@ -25,7 +27,7 @@ public class TextureIcon extends Icon
             ).and(iconFields()).apply(ins, TextureIcon::new)
     );
 
-    public static final IconType<TextureIcon> TYPE = new IconType<>(CODEC);
+    public static final DeferredHolder<IconType<?>, IconType<TextureIcon>> TYPE = LootBagRegistry.TEXTURE_ICON;
 
     protected final ResourceLocation texture;
     protected final float u0, v0, u1, v1;
@@ -83,7 +85,7 @@ public class TextureIcon extends Icon
     @Override
     public IconType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @OnlyIn(Dist.CLIENT)

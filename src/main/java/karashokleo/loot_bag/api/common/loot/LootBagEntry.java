@@ -11,8 +11,10 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class LootBagEntry extends LootPoolSingletonContainer
     public static final MapCodec<LootBagEntry> CODEC = RecordCodecBuilder.mapCodec(ins -> singletonFields(ins)
             .and(ResourceLocation.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId))
             .apply(ins, LootBagEntry::new));
-    public static final LootPoolEntryType TYPE = new LootPoolEntryType(CODEC);
+    private static final DeferredRegister<LootPoolEntryType> TYPES = DeferredRegister.create(Registries.LOOT_POOL_ENTRY_TYPE, LootBagMod.MOD_ID);
+    public static final DeferredHolder<LootPoolEntryType, LootPoolEntryType> TYPE = TYPES.register("loot_bag", () -> new LootPoolEntryType(CODEC));
 
     private final ResourceLocation bagId;
 
@@ -36,18 +39,18 @@ public class LootBagEntry extends LootPoolSingletonContainer
     @Override
     protected void createItemStack(Consumer<ItemStack> lootConsumer, LootContext context)
     {
-        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.getStack(bagId));
+        lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.get().getStack(bagId));
     }
 
     @Override
     public LootPoolEntryType getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
-    public static void init()
+    public static void init(IEventBus bus)
     {
-        Registry.register(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE, LootBagMod.id("loot_bag"), TYPE);
+        TYPES.register(bus);
     }
 
     public static LootPoolSingletonContainer.Builder<?> builder(BagEntry bag)
