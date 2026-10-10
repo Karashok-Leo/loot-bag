@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.item.ItemStack;
@@ -24,7 +26,7 @@ public class LootTableContent extends StacksContent
             ).and(contentFields(ins).t1()).apply(ins, LootTableContent::new)
     );
 
-    public static final ContentType<LootTableContent> TYPE = new ContentType<>(CODEC);
+    public static final RegistryObject<ContentType<LootTableContent>> TYPE = LootBagRegistry.LOOT_TABLE_CONTENT;
 
     protected final Identifier id;
 
@@ -42,7 +44,7 @@ public class LootTableContent extends StacksContent
     @Override
     protected ContentType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @Override

@@ -20,14 +20,14 @@ public class LootBagClient
     @SubscribeEvent
     public static void onInitializeClient(FMLClientSetupEvent event)
     {
-        LootBagScreenRegistry.register(SingleBag.TYPE, SingleLootBagScreen::new);
-        LootBagScreenRegistry.register(OptionalBag.TYPE, OptionalLootBagScreen::new);
-        LootBagScreenRegistry.register(RandomBag.TYPE, RandomLootBagScreen::new);
+        LootBagScreenRegistry.register(SingleBag.TYPE.get(), SingleLootBagScreen::new);
+        LootBagScreenRegistry.register(OptionalBag.TYPE.get(), OptionalLootBagScreen::new);
+        LootBagScreenRegistry.register(RandomBag.TYPE.get(), RandomLootBagScreen::new);
     }
 
     @SubscribeEvent
     public static void registerColors(RegisterColorHandlersEvent.Item event)
     {
-        event.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
+        event.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.get().getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG.get());
     }
 }

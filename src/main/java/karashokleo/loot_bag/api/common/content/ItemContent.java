@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.api.common.icon.ItemIcon;
@@ -20,7 +22,7 @@ public class ItemContent extends StacksContent
             ).and(contentFields(ins).t1()).apply(ins, ItemContent::new)
     );
 
-    public static final ContentType<ItemContent> TYPE = new ContentType<>(CODEC);
+    public static final RegistryObject<ContentType<ItemContent>> TYPE = LootBagRegistry.ITEM_CONTENT;
 
     protected final ItemStack stack;
 
@@ -50,7 +52,7 @@ public class ItemContent extends StacksContent
     @Override
     protected ContentType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @Override

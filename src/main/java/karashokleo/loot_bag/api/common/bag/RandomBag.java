@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -21,7 +23,7 @@ public class RandomBag extends Bag implements ContentView
             ).and(bagFields(ins)).apply(ins, RandomBag::new)
     );
 
-    public static final BagType<RandomBag> TYPE = new BagType<>(CODEC, true);
+    public static final RegistryObject<BagType<RandomBag>> TYPE = LootBagRegistry.RANDOM_BAG;
 
     protected final List<Entry> pool;
 
@@ -34,7 +36,7 @@ public class RandomBag extends Bag implements ContentView
     @Override
     public BagType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     public List<Entry> getPool()

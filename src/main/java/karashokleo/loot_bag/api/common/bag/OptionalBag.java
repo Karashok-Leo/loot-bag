@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -20,7 +22,7 @@ public class OptionalBag extends Bag implements ContentView
             ).and(bagFields(ins)).apply(ins, OptionalBag::new)
     );
 
-    public static final BagType<OptionalBag> TYPE = new BagType<>(CODEC, false);
+    public static final RegistryObject<BagType<OptionalBag>> TYPE = LootBagRegistry.OPTIONAL_BAG;
 
     protected final List<ContentEntry> options;
 
@@ -33,7 +35,7 @@ public class OptionalBag extends Bag implements ContentView
     @Override
     public BagType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     public List<ContentEntry> getOptions()

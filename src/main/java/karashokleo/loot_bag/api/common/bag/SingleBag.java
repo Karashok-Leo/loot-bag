@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.bag;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
@@ -17,7 +19,7 @@ public class SingleBag extends Bag
             ).and(bagFields(ins)).apply(ins, SingleBag::new)
     );
 
-    public static final BagType<SingleBag> TYPE = new BagType<>(CODEC, true);
+    public static final RegistryObject<BagType<SingleBag>> TYPE = LootBagRegistry.SINGLE_BAG;
 
     protected final ContentEntry content;
 
@@ -30,7 +32,7 @@ public class SingleBag extends Bag
     @Override
     public BagType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     public ContentEntry getContent()

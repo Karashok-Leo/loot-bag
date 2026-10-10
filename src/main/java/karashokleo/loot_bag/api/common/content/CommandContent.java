@@ -1,6 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -13,7 +15,7 @@ public class CommandContent extends Content
             ).and(contentFields(ins).t1()).apply(ins, CommandContent::new)
     );
 
-    public static final ContentType<CommandContent> TYPE = new ContentType<>(CODEC);
+    public static final RegistryObject<ContentType<CommandContent>> TYPE = LootBagRegistry.COMMAND_CONTENT;
 
     protected final String command;
 
@@ -31,7 +33,7 @@ public class CommandContent extends Content
     @Override
     protected ContentType<?> getType()
     {
-        return TYPE;
+        return TYPE.get();
     }
 
     @Override
