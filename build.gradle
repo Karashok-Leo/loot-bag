@@ -1,4 +1,7 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 plugins {
+    id 'net.darkhax.curseforgegradle' version '1.3.33'
     id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
 }
@@ -80,5 +83,64 @@ publishing {
 
     repositories {
         mavenLocal()
+    }
+}
+
+// CurseForge publishing
+def tokenFile = rootProject.file('curseforge-token')
+// Use release notes when present; no generated changelog is committed.
+def changelogFile = rootProject.file('CHANGELOG.md')
+def changelog = providers.provider {
+    changelogFile.isFile() ? changelogFile.getText('UTF-8')
+            : "Loot Bag ${project.version} for Minecraft ${project.minecraft_version} (Fabric)."
+}
+def releaseType = providers.gradleProperty('curseforge_release_type')
+def cfProjectId = providers.gradleProperty('curseforge_project_id')
+
+def readToken = {
+    if (!tokenFile.isFile()) {
+        throw new GradleException('Create curseforge-token in the repository root and put your CurseForge upload token on one line.')
+    }
+    def token = tokenFile.getText('UTF-8').replaceFirst('^\uFEFF', '').trim()
+    if (token.isEmpty()|| token.contains('\n') || token.contains('\r')) {
+        throw new GradleException('curseforge-token must contain one non-empty CurseForge upload token, without quotes or a property name.')
+    }
+    return token
+}
+
+['publishCurseForge': false, 'previewCurseForge': true].each { taskName, preview ->
+    tasks.register(taskName, TaskPublishCurseForge) {
+        group = 'publishing'
+        description = preview
+                ? 'Builds the release JAR and previews CurseForge metadata without uploading or reading the token.'
+                : 'Builds and publishes the release JAR to CurseForge.'
+        dependsOn tasks.named('build')
+        // This plugin accesses project state while executing its task.
+        notCompatibleWithConfigurationCache('CurseForgeGradle uses project state during publication.')
+        debugMode = preview
+        // Resolve credentials only during actual publication, never during configuration.
+        apiToken = preview ? 'preview-no-token-required' : readToken
+        disableVersionDetection()
+
+        def artifact = upload(cfProjectId.get(), tasks.named('remapJar').flatMap { it.archiveFile })
+        artifact.releaseType = releaseType
+        artifact.changelog = changelog
+        artifact.changelogType = 'markdown'
+        artifact.addGameVersion(project.minecraft_version)
+        artifact.addModLoader('Fabric')
+        artifact.addEnvironment('Client', 'Server')
+        artifact.addRequirement('fabric-api')
+
+        doFirst {
+            if (!(releaseType.get() in ['alpha', 'beta', 'release'])) {
+                throw new GradleException('curseforge_release_type must be alpha, beta or release.')
+            }
+            if (changelog.get().trim().isEmpty()) {
+                throw new GradleException("Write the release notes in ${changelogFile.name} before publishing or previewing.")
+            }
+            if (!preview) {
+                readToken()
+            }
+        }
     }
 }
