@@ -42,5 +42,6 @@ replay_*.log
 # datagen
 example/.cache
 
-# Local CurseForge upload credential
+# Local publishing tokens
 /curseforge-token
+/modrinth-token
