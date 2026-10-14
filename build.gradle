@@ -1,8 +1,6 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-
 plugins {
-    id 'net.darkhax.curseforgegradle' version '1.3.33'
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
+    id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -86,61 +84,60 @@ publishing {
     }
 }
 
-// CurseForge publishing
-def tokenFile = rootProject.file('curseforge-token')
-// Use release notes when present; no generated changelog is committed.
-def changelogFile = rootProject.file('CHANGELOG.md')
-def changelog = providers.provider {
-    changelogFile.isFile() ? changelogFile.getText('UTF-8')
-            : "Loot Bag ${project.version} for Minecraft ${project.minecraft_version} (Fabric)."
-}
-def releaseType = providers.gradleProperty('curseforge_release_type')
-def cfProjectId = providers.gradleProperty('curseforge_project_id')
-
-def readToken = {
-    if (!tokenFile.isFile()) {
-        throw new GradleException('Create curseforge-token in the repository root and put your CurseForge upload token on one line.')
+def changelogText = providers.provider {
+    def changelogFile = rootProject.file('CHANGELOG.md')
+    if (!changelogFile.isFile() || changelogFile.getText('UTF-8').trim().isEmpty()) {
+        throw new GradleException("Write the release notes in ${changelogFile.name} before publishing or previewing.")
     }
-    def token = tokenFile.getText('UTF-8').replaceFirst('^\uFEFF', '').trim()
-    if (token.isEmpty()|| token.contains('\n') || token.contains('\r')) {
-        throw new GradleException('curseforge-token must contain one non-empty CurseForge upload token, without quotes or a property name.')
-    }
-    return token
+    changelogFile.getText('UTF-8')
 }
 
-['publishCurseForge': false, 'previewCurseForge': true].each { taskName, preview ->
-    tasks.register(taskName, TaskPublishCurseForge) {
-        group = 'publishing'
-        description = preview
-                ? 'Builds the release JAR and previews CurseForge metadata without uploading or reading the token.'
-                : 'Builds and publishes the release JAR to CurseForge.'
-        dependsOn tasks.named('build')
-        // This plugin accesses project state while executing its task.
-        notCompatibleWithConfigurationCache('CurseForgeGradle uses project state during publication.')
-        debugMode = preview
-        // Resolve credentials only during actual publication, never during configuration.
-        apiToken = preview ? 'preview-no-token-required' : readToken
-        disableVersionDetection()
-
-        def artifact = upload(cfProjectId.get(), tasks.named('remapJar').flatMap { it.archiveFile })
-        artifact.releaseType = releaseType
-        artifact.changelog = changelog
-        artifact.changelogType = 'markdown'
-        artifact.addGameVersion(project.minecraft_version)
-        artifact.addModLoader('Fabric')
-        artifact.addEnvironment('Client', 'Server')
-        artifact.addRequirement('fabric-api')
-
-        doFirst {
-            if (!(releaseType.get() in ['alpha', 'beta', 'release'])) {
-                throw new GradleException('curseforge_release_type must be alpha, beta or release.')
-            }
-            if (changelog.get().trim().isEmpty()) {
-                throw new GradleException("Write the release notes in ${changelogFile.name} before publishing or previewing.")
-            }
-            if (!preview) {
-                readToken()
-            }
+def localToken = { String filename ->
+    def tokenFile = rootProject.file(filename)
+    providers.provider {
+        if (!tokenFile.isFile()) {
+            throw new GradleException("Create ${filename} in the repository root and put the upload token on one line.")
         }
+        def token = tokenFile.getText('UTF-8').replaceFirst('^\uFEFF', '').trim()
+        if (token.isEmpty() || token.contains('\n') || token.contains('\r')) {
+            throw new GradleException("${filename} must contain one non-empty upload token, without quotes or a property name.")
+        }
+        token
     }
+}
+
+def publishDryRun = gradle.startParameter.taskNames.any {
+    it.tokenize(':').last() == 'publishModsDryRun'
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    displayName = file.map { it.asFile.name }
+    changelog = changelogText
+    type = STABLE
+    modLoaders.add('fabric')
+    dryRun = publishDryRun
+
+    curseforge {
+        projectId = providers.gradleProperty('curseforge_project_id')
+        accessToken = localToken('curseforge-token')
+        minecraftVersions.add(project.minecraft_version)
+        requires('fabric-api')
+        javaVersions.add(JavaVersion.VERSION_17)
+        client = true
+        server = true
+    }
+    modrinth {
+        projectId = providers.gradleProperty('modrinth_project_id')
+        accessToken = localToken('modrinth-token')
+        minecraftVersions.add(project.minecraft_version)
+        requires('fabric-api')
+        environment = CLIENT_AND_SERVER
+    }
+}
+
+tasks.register('publishModsDryRun') {
+    group = 'publishing'
+    description = 'Preview mod publishing without uploading.'
+    dependsOn tasks.named('publishMods')
 }
