@@ -7,6 +7,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 public class OptionalLootBagScreen extends ScrollableLootBagScreen<OptionalBag>
 {
@@ -81,8 +83,8 @@ public class OptionalLootBagScreen extends ScrollableLootBagScreen<OptionalBag>
         {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
-            RenderSystem.blendEquation(org.lwjgl.opengl.GL14.GL_FUNC_ADD);
-            RenderSystem.blendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+            RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
+            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             context.blit(texture, getX(), getY(), u + (isStateTriggered ? triggeredOffset : 0),
                     v + (isHoveredOrFocused() ? hoveredOffset : 0), width, height);
             RenderSystem.enableDepthTest();

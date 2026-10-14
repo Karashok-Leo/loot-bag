@@ -14,6 +14,8 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 public class TextureIcon extends Icon
 {
@@ -101,8 +103,8 @@ public class TextureIcon extends Icon
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
         // Match the blend state formerly supplied by the 1.20 position_color_tex shader.
-        RenderSystem.blendEquation(org.lwjgl.opengl.GL14.GL_FUNC_ADD);
-        RenderSystem.blendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         Matrix4f matrix4f = matrices.last().pose();
         BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferBuilder.addVertex(matrix4f, -0.5F, -0.5F, 0)

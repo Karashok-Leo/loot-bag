@@ -45,5 +45,6 @@ example/.cache
 # Local Gradle cache
 .gradle-user/
 
-# Local CurseForge upload credential
+# Local publishing tokens
 /curseforge-token
+/modrinth-token

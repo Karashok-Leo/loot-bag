@@ -8,6 +8,7 @@ import karashokleo.loot_bag.internal.neoforge.LootBagMod;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.Rarity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class LootBagDataGenerator
 {
@@ -43,7 +45,7 @@ public class LootBagDataGenerator
         generator.addProvider(event.includeClient(), new LanguageProvider(output)
         {
             @Override
-            public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput cache)
+            public CompletableFuture<?> run(CachedOutput cache)
             {
                 return ready.thenCompose(registries -> super.run(cache));
             }
