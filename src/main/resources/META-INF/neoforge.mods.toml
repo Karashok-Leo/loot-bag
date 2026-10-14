@@ -9,8 +9,6 @@ displayURL="https://github.com/Karashok-Leo/loot-bag"
 logoFile="assets/loot-bag/icon.png"
 authors="Karashok-Leo"
 description='''Loot Bag'''
-[[mixins]]
-config="loot-bag.mixins.json"
 [[dependencies.loot_bag]]
 modId="neoforge"
 type="required"

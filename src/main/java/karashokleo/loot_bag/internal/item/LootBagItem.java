@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.internal.item;
 
 import com.mojang.datafixers.util.Pair;
+import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
@@ -25,7 +25,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,11 +54,6 @@ public class LootBagItem extends Item
                 .map(Pair::getFirst);
     }
 
-    private static void setBagData(ItemStack stack, String key, Tag value)
-    {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.put(key, value));
-    }
-
     public Optional<Bag> getBag(ItemStack stack)
     {
         return this.getBagEntry(stack).map(BagEntry::bag);
@@ -67,24 +61,20 @@ public class LootBagItem extends Item
 
     public ItemStack getStack(ResourceLocation bagId)
     {
-        ItemStack stack = this.getDefaultInstance();
-        setBagData(stack,
-                KEY,
-                StringTag.valueOf(bagId.toString())
-        );
-        return stack;
+        BagEntry entry = LootBagManager.getInstance().getBagEntry(bagId);
+        return this.getStack(bagId, entry == null ? Rarity.COMMON : entry.bag().getRarity());
     }
 
     public ItemStack getStack(BagEntry entry)
     {
+        return this.getStack(entry.id(), entry.bag().getRarity());
+    }
+
+    private ItemStack getStack(ResourceLocation bagId, Rarity rarity)
+    {
         ItemStack stack = this.getDefaultInstance();
-        setBagData(stack,
-                KEY,
-                BagEntry.CODEC
-                        .encodeStart(NbtOps.INSTANCE, entry)
-                        .result()
-                        .orElseThrow()
-        );
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(KEY, bagId.toString()));
+        stack.set(DataComponents.RARITY, rarity);
         return stack;
     }
 
@@ -94,11 +84,6 @@ public class LootBagItem extends Item
         return this.getBagEntry(stack)
                 .map(BagEntry::getName)
                 .orElseGet(() -> super.getName(stack));
-    }
-
-    public Rarity getRarity(ItemStack stack)
-    {
-        return this.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON);
     }
 
     @Override
