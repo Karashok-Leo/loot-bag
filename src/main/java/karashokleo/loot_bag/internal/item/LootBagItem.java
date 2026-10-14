@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.internal.item;
 
 import com.mojang.datafixers.util.Pair;
+import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
@@ -14,13 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,16 +55,20 @@ public class LootBagItem extends Item
 
     public ItemStack getStack(Identifier bagId)
     {
-        ItemStack stack = this.getDefaultStack();
-        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.putString(KEY, bagId.toString()));
-        return stack;
+        BagEntry entry = LootBagManager.getInstance().getBagEntry(bagId);
+        return this.getStack(bagId, entry == null ? Rarity.COMMON : entry.bag().getRarity());
     }
 
     public ItemStack getStack(BagEntry entry)
     {
+        return this.getStack(entry.id(), entry.bag().getRarity());
+    }
+
+    private ItemStack getStack(Identifier bagId, Rarity rarity)
+    {
         ItemStack stack = this.getDefaultStack();
-        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.put(
-                KEY, BagEntry.CODEC.encodeStart(NbtOps.INSTANCE, entry).result().orElseThrow()));
+        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.putString(KEY, bagId.toString()));
+        stack.set(DataComponentTypes.RARITY, rarity);
         return stack;
     }
 
@@ -75,11 +78,6 @@ public class LootBagItem extends Item
         return this.getBagEntry(stack)
                 .map(BagEntry::getName)
                 .orElseGet(this::getName);
-    }
-
-    public Rarity getRarity(ItemStack stack)
-    {
-        return this.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON);
     }
 
     @Override
