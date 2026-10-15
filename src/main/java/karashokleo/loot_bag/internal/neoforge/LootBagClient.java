@@ -14,7 +14,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = LootBagMod.LOADER_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = LootBagMod.LOADER_ID, value = Dist.CLIENT)
 public class LootBagClient
 {
     @SubscribeEvent
@@ -29,7 +29,7 @@ public class LootBagClient
     public static void registerColors(RegisterColorHandlersEvent.Item event)
     {
         event.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.get().getBag(stack)
-                .map(bag -> 0xff000000 | bag.getColor().byTintIndex(tintIndex))
-                .orElse(0xff000000 | tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG.get());
+            .map(bag -> 0xff000000 | bag.getColor().byTintIndex(tintIndex))
+            .orElse(0xff000000 | tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG.get());
     }
 }

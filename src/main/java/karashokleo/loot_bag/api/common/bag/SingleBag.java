@@ -1,23 +1,22 @@
 package karashokleo.loot_bag.api.common.bag;
 
-import com.mojang.serialization.Codec;
-import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import net.minecraft.world.item.Rarity;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Optional;
 
 public class SingleBag extends Bag
 {
     public static final MapCodec<SingleBag> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    ContentEntry.CODEC.fieldOf("content").forGetter(SingleBag::getContent)
-            ).and(bagFields(ins)).apply(ins, SingleBag::new)
+        ins -> ins.group(
+            ContentEntry.CODEC.fieldOf("content").forGetter(SingleBag::getContent)
+        ).and(bagFields(ins)).apply(ins, SingleBag::new)
     );
 
     public static final DeferredHolder<BagType<?>, BagType<SingleBag>> TYPE = LootBagRegistry.SINGLE_BAG;

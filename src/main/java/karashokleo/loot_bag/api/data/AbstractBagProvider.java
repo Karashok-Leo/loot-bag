@@ -7,6 +7,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,9 @@ public abstract class AbstractBagProvider implements DataProvider
 
     protected abstract void configure(BiConsumer<ResourceLocation, Bag> provider);
 
+    @NotNull
     @Override
-    public CompletableFuture<?> run(CachedOutput output)
+    public CompletableFuture<?> run(@NotNull CachedOutput output)
     {
         return registries.thenCompose(provider ->
         {

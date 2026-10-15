@@ -1,10 +1,10 @@
 package karashokleo.loot_bag.api.client.screen;
 
-import karashokleo.loot_bag.internal.neoforge.LootBagMod;
-import karashokleo.loot_bag.api.common.bag.OptionalBag;
-import net.minecraft.client.gui.components.StateSwitchingButton;
-import net.minecraft.client.gui.GuiGraphics;
 import com.mojang.blaze3d.systems.RenderSystem;
+import karashokleo.loot_bag.api.common.bag.OptionalBag;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.StateSwitchingButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -86,7 +86,7 @@ public class OptionalLootBagScreen extends ScrollableLootBagScreen<OptionalBag>
             RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             context.blit(texture, getX(), getY(), u + (isStateTriggered ? triggeredOffset : 0),
-                    v + (isHoveredOrFocused() ? hoveredOffset : 0), width, height);
+                v + (isHoveredOrFocused() ? hoveredOffset : 0), width, height);
             RenderSystem.enableDepthTest();
         }
     }

@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.api.client.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class VertexConsumerWrapper implements VertexConsumer
 {
@@ -11,6 +12,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         this.parent = parent;
     }
 
+    @NotNull
     @Override
     public VertexConsumer addVertex(float x, float y, float z)
     {
@@ -18,6 +20,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         return this;
     }
 
+    @NotNull
     @Override
     public VertexConsumer setColor(int red, int green, int blue, int alpha)
     {
@@ -25,6 +28,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         return this;
     }
 
+    @NotNull
     @Override
     public VertexConsumer setUv(float u, float v)
     {
@@ -32,6 +36,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         return this;
     }
 
+    @NotNull
     @Override
     public VertexConsumer setUv1(int u, int v)
     {
@@ -39,6 +44,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         return this;
     }
 
+    @NotNull
     @Override
     public VertexConsumer setUv2(int u, int v)
     {
@@ -46,6 +52,7 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
         return this;
     }
 
+    @NotNull
     @Override
     public VertexConsumer setNormal(float x, float y, float z)
     {

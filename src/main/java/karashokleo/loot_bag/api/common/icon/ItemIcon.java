@@ -1,24 +1,23 @@
 package karashokleo.loot_bag.api.common.icon;
 
-import com.mojang.serialization.Codec;
-import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraft.client.gui.GuiGraphics;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ItemIcon extends Icon
 {
     public static final MapCodec<ItemIcon> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
-            ).and(iconFields()).apply(ins, ItemIcon::new)
+        ins -> ins.group(
+            CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
+        ).and(iconFields()).apply(ins, ItemIcon::new)
     );
 
     public static final DeferredHolder<IconType<?>, IconType<ItemIcon>> TYPE = LootBagRegistry.ITEM_ICON;
@@ -57,7 +56,10 @@ public class ItemIcon extends Icon
     @Override
     public void render(GuiGraphics context, PoseStack matrices, float alpha, float delta)
     {
-        if (stack.isEmpty()) return;
+        if (stack.isEmpty())
+        {
+            return;
+        }
 
         matrices.pushPose();
 //        matrices.multiplyPositionMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));

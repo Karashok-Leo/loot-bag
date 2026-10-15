@@ -11,7 +11,7 @@ import karashokleo.loot_bag.internal.neoforge.LootBagMod;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,7 +20,7 @@ public class SyncDataPackets
 {
     public static final CustomPacketPayload.Type<SyncContentPacket> SYNC_CONTENT_TYPE = new CustomPacketPayload.Type<>(LootBagMod.id("sync_content"));
     public static final CustomPacketPayload.Type<SyncBagPacket> SYNC_BAG_TYPE = new CustomPacketPayload.Type<>(LootBagMod.id("sync_bag"));
-    public static final ResourceLocation ACK_ID = LootBagMod.id("sync_ack");
+    public static final CustomPacketPayload.Type<AckPacket> ACK_TYPE = new CustomPacketPayload.Type<>(LootBagMod.id("sync_ack"));
 
     private static <T> T readJson(RegistryFriendlyByteBuf buf, Codec<T> codec)
     {
@@ -38,7 +38,10 @@ public class SyncDataPackets
         {
             int size = buf.readVarInt();
             HashSet<ContentEntry> entries = new HashSet<>();
-            for (int i = 0; i < size; i++) entries.add(new ContentEntry(buf.readResourceLocation(), readJson(buf, Content.CODEC)));
+            for (int i = 0; i < size; i++)
+            {
+                entries.add(new ContentEntry(buf.readResourceLocation(), readJson(buf, Content.CODEC)));
+            }
             return new SyncContentPacket(entries);
         });
 
@@ -52,8 +55,12 @@ public class SyncDataPackets
             }
         }
 
+        @NotNull
         @Override
-        public Type<SyncContentPacket> type() { return SYNC_CONTENT_TYPE; }
+        public Type<SyncContentPacket> type()
+        {
+            return SYNC_CONTENT_TYPE;
+        }
     }
 
     public record SyncBagPacket(Collection<BagEntry> entries) implements CustomPacketPayload
@@ -62,7 +69,10 @@ public class SyncDataPackets
         {
             int size = buf.readVarInt();
             HashSet<BagEntry> entries = new HashSet<>();
-            for (int i = 0; i < size; i++) entries.add(new BagEntry(buf.readResourceLocation(), readJson(buf, Bag.CODEC)));
+            for (int i = 0; i < size; i++)
+            {
+                entries.add(new BagEntry(buf.readResourceLocation(), readJson(buf, Bag.CODEC)));
+            }
             return new SyncBagPacket(entries);
         });
 
@@ -76,15 +86,23 @@ public class SyncDataPackets
             }
         }
 
+        @NotNull
         @Override
-        public Type<SyncBagPacket> type() { return SYNC_BAG_TYPE; }
+        public Type<SyncBagPacket> type()
+        {
+            return SYNC_BAG_TYPE;
+        }
     }
 
     public record AckPacket(int count) implements CustomPacketPayload
     {
-        public static final Type<AckPacket> TYPE = new Type<>(ACK_ID);
         public static final StreamCodec<RegistryFriendlyByteBuf, AckPacket> STREAM_CODEC = StreamCodec.of((buf, packet) -> buf.writeVarInt(packet.count()), buf -> new AckPacket(buf.readVarInt()));
+
+        @NotNull
         @Override
-        public Type<AckPacket> type() { return TYPE; }
+        public Type<AckPacket> type()
+        {
+            return ACK_TYPE;
+        }
     }
 }

@@ -2,15 +2,15 @@ package karashokleo.loot_bag.internal.neoforge;
 
 import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.loot.LootBagEntry;
+import karashokleo.loot_bag.internal.data.LootBagDataGenerator;
 import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
 import karashokleo.loot_bag.internal.item.LootBagComponentRegistry;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.NeoForge;
-import karashokleo.loot_bag.internal.data.LootBagDataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

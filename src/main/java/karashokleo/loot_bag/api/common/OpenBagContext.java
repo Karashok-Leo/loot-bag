@@ -7,6 +7,8 @@ public record OpenBagContext(RandomSource random, int selectedIndex)
     public OpenBagContext
     {
         if (selectedIndex < 0)
+        {
             throw new IllegalArgumentException("selectedIndex must be positive");
+        }
     }
 }

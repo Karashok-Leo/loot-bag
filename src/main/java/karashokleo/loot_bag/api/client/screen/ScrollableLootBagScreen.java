@@ -39,24 +39,29 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected void updateDrawableIcon(GuiGraphics context, int mouseX, int mouseY, float delta)
     {
         updateDrawableIconInternal(
-                this.previousIcon,
-                (offset - MAX_OFFSET * getDirection()) * OFFSET_MUL,
-                getPercent(),
-                getPercent()
+            this.previousIcon,
+            (offset - MAX_OFFSET * getDirection()) * OFFSET_MUL,
+            getPercent(),
+            getPercent()
         );
         updateDrawableIconInternal(
-                this.currentIcon,
-                offset * OFFSET_MUL,
-                1F - getPercent(),
-                1F - getPercent()
+            this.currentIcon,
+            offset * OFFSET_MUL,
+            1F - getPercent(),
+            1F - getPercent()
         );
     }
 
     @Override
     public void tick()
     {
-        if (offset > 0) offset--;
-        else if (offset < 0) offset++;
+        if (offset > 0)
+        {
+            offset--;
+        } else if (offset < 0)
+        {
+            offset++;
+        }
     }
 
     protected void prev()
@@ -81,9 +86,13 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     {
         int length = getContents().size();
         if (index > length - 1)
+        {
             return 0;
+        }
         if (index < 0)
+        {
             return length - 1;
+        }
         return index;
     }
 
@@ -111,7 +120,9 @@ public abstract class ScrollableLootBagScreen<B extends Bag & ContentView> exten
     protected List<ContentEntry> getContents()
     {
         if (this.contents == null)
+        {
             this.contents = this.fetchContents();
+        }
         return this.contents;
     }
 

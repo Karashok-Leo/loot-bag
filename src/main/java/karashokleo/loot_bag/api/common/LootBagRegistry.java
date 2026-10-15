@@ -1,28 +1,19 @@
 package karashokleo.loot_bag.api.common;
 
-import karashokleo.loot_bag.api.common.bag.SingleBag;
-import karashokleo.loot_bag.api.common.bag.OptionalBag;
-import karashokleo.loot_bag.api.common.bag.RandomBag;
-import karashokleo.loot_bag.api.common.bag.Bag;
-import karashokleo.loot_bag.api.common.bag.BagType;
-import karashokleo.loot_bag.api.common.content.ItemContent;
-import karashokleo.loot_bag.api.common.content.LootTableContent;
-import karashokleo.loot_bag.api.common.content.CommandContent;
-import karashokleo.loot_bag.api.common.content.EffectContent;
-import karashokleo.loot_bag.api.common.content.Content;
-import karashokleo.loot_bag.api.common.content.ContentType;
-import karashokleo.loot_bag.api.common.icon.ItemIcon;
-import karashokleo.loot_bag.api.common.icon.TextureIcon;
+import karashokleo.loot_bag.api.common.bag.*;
+import karashokleo.loot_bag.api.common.content.*;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.api.common.icon.IconType;
+import karashokleo.loot_bag.api.common.icon.ItemIcon;
+import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.internal.neoforge.LootBagMod;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Supplier;
 

@@ -5,6 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public record SetScreenPacket(int slot, ResourceLocation bagId) implements CustomPacketPayload
 {
@@ -17,6 +18,7 @@ public record SetScreenPacket(int slot, ResourceLocation bagId) implements Custo
         buf.writeResourceLocation(bagId);
     }
 
+    @NotNull
     @Override
     public Type<SetScreenPacket> type()
     {

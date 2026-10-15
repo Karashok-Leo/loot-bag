@@ -3,19 +3,20 @@ package karashokleo.loot_bag.api.common.loot;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
-import karashokleo.loot_bag.internal.neoforge.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import karashokleo.loot_bag.internal.neoforge.LootBagMod;
 import net.minecraft.core.registries.Registries;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,8 +24,8 @@ import java.util.function.Consumer;
 public class LootBagEntry extends LootPoolSingletonContainer
 {
     public static final MapCodec<LootBagEntry> CODEC = RecordCodecBuilder.mapCodec(ins -> singletonFields(ins)
-            .and(ResourceLocation.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId))
-            .apply(ins, LootBagEntry::new));
+        .and(ResourceLocation.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId))
+        .apply(ins, LootBagEntry::new));
     private static final DeferredRegister<LootPoolEntryType> TYPES = DeferredRegister.create(Registries.LOOT_POOL_ENTRY_TYPE, LootBagMod.MOD_ID);
     public static final DeferredHolder<LootPoolEntryType, LootPoolEntryType> TYPE = TYPES.register("loot_bag", () -> new LootPoolEntryType(CODEC));
 
@@ -37,11 +38,12 @@ public class LootBagEntry extends LootPoolSingletonContainer
     }
 
     @Override
-    protected void createItemStack(Consumer<ItemStack> lootConsumer, LootContext context)
+    protected void createItemStack(Consumer<ItemStack> lootConsumer, @NotNull LootContext context)
     {
         lootConsumer.accept(LootBagItemRegistry.LOOT_BAG.get().getStack(bagId));
     }
 
+    @NotNull
     @Override
     public LootPoolEntryType getType()
     {

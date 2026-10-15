@@ -10,13 +10,12 @@ import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.neoforge.LootBagMod;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -92,17 +91,10 @@ public final class LootBagManagerImpl implements LootBagManager
         event.addListener(new Loader(event.getRegistryAccess()));
     }
 
-    private static class Loader implements ResourceManagerReloadListener
+    private record Loader(HolderLookup.Provider registries) implements ResourceManagerReloadListener
     {
-        private final HolderLookup.Provider registries;
-
-        public Loader(HolderLookup.Provider registries)
-        {
-            this.registries = registries;
-        }
-
         @Override
-        public void onResourceManagerReload(ResourceManager manager)
+        public void onResourceManagerReload(@NotNull ResourceManager manager)
         {
             INSTANCE.clearAllContentEntries();
             this.tryLoad(manager, ConstantTexts.CONTENT_DIR, Content.CODEC, INSTANCE::putContent);
@@ -119,10 +111,10 @@ public final class LootBagManagerImpl implements LootBagManager
                     InputStream stream = resourceRef.open();
                     JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
                     consumer.accept(
-                            id.withPath(s -> s
-                                    .replaceFirst(path + "/", "")
-                                    .replaceFirst(".json", "")),
-                            codec.decode(registries.createSerializationContext(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
+                        id.withPath(s -> s
+                            .replaceFirst(path + "/", "")
+                            .replaceFirst(".json", "")),
+                        codec.decode(registries.createSerializationContext(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
                     );
                 } catch (Exception e)
                 {

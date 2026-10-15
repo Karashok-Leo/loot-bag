@@ -5,12 +5,13 @@ import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.internal.network.ClientNetworkHandlers;
-import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class LootBagScreen<B extends Bag> extends Screen
 {
@@ -40,9 +41,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void init()
     {
         this.openButton = Button
-                .builder(TEXT_OPEN, button -> open())
-                .bounds((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
-                .build();
+            .builder(TEXT_OPEN, button -> open())
+            .bounds((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
+            .build();
         addRenderableWidget(openButton);
         updateContentText();
     }
@@ -74,7 +75,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta)
+    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta)
     {
         this.renderTransparentBackground(context);
         this.setFocused(null);
@@ -86,7 +87,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     }
 
     @Override
-    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta)
+    public void renderBackground(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta)
     {
         // The original gradient is drawn before the labels; 1.21 Screen.render calls this again.
     }
@@ -136,7 +137,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void open(int selectedIndex)
     {
         if (minecraft != null && minecraft.player != null)
+        {
             ClientNetworkHandlers.sendOpen(slot, selectedIndex);
+        }
         onClose();
     }
 
@@ -150,7 +153,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         {
             return true;
         } else if (this.minecraft != null &&
-                   this.minecraft.options.keyInventory.matches(keyCode, scanCode))
+            this.minecraft.options.keyInventory.matches(keyCode, scanCode))
         {
             this.onClose();
             return true;

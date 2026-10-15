@@ -12,9 +12,9 @@ public class LootBagComponentRegistry
 {
     private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, LootBagMod.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> BAG_ID = COMPONENTS.registerComponentType(
-            "bag_id", builder -> builder
-                    .persistent(ResourceLocation.CODEC)
-                    .networkSynchronized(ResourceLocation.STREAM_CODEC)
+        "bag_id", builder -> builder
+            .persistent(ResourceLocation.CODEC)
+            .networkSynchronized(ResourceLocation.STREAM_CODEC)
     );
 
     public static void init(IEventBus bus)

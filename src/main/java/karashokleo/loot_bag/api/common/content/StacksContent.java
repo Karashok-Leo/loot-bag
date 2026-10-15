@@ -1,10 +1,10 @@
 package karashokleo.loot_bag.api.common.content;
 
 import karashokleo.loot_bag.api.common.icon.Icon;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerLevel;
 
 import java.util.List;
 

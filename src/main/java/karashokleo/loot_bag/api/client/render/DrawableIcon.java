@@ -1,9 +1,9 @@
 package karashokleo.loot_bag.api.client.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 public class DrawableIcon implements Renderable
 {

@@ -5,19 +5,19 @@ import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class LootBagItem extends Item
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
         return Optional.ofNullable(stack.get(LootBagComponentRegistry.BAG_ID.get()))
-                .map(LootBagManager.getInstance()::getBagEntry);
+            .map(LootBagManager.getInstance()::getBagEntry);
     }
 
     public Optional<Bag> getBag(ItemStack stack)
@@ -57,16 +57,18 @@ public class LootBagItem extends Item
         return this.getStack(entry.id());
     }
 
+    @NotNull
     @Override
-    public Component getName(ItemStack stack)
+    public Component getName(@NotNull ItemStack stack)
     {
         return this.getBagEntry(stack)
-                .map(BagEntry::getName)
-                .orElseGet(() -> super.getName(stack));
+            .map(BagEntry::getName)
+            .orElseGet(() -> super.getName(stack));
     }
 
+    @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand)
+    public InteractionResultHolder<ItemStack> use(@NotNull Level world, Player user, @NotNull InteractionHand hand)
     {
         ItemStack stack = user.getItemInHand(hand);
         if (user instanceof ServerPlayer player)
@@ -91,7 +93,10 @@ public class LootBagItem extends Item
                     }
                 }
                 // Open Through Screen
-                else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                else
+                {
+                    ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                }
             }, () -> player.displayClientMessage(INVALID, true));
         }
         return InteractionResultHolder.sidedSuccess(stack, world.isClientSide());
@@ -103,7 +108,9 @@ public class LootBagItem extends Item
         {
             content.reward(player);
             if (!player.isCreative())
+            {
                 stack.shrink(1);
+            }
         });
     }
 
@@ -111,14 +118,16 @@ public class LootBagItem extends Item
     {
         ItemStack stack = player.getInventory().getItem(slot);
         if (stack.getItem() instanceof LootBagItem item)
+        {
             item.getBag(stack).ifPresentOrElse(
-                    bag -> open(player, stack, bag, selectedIndex),
-                    () -> player.displayClientMessage(INVALID, true)
+                bag -> open(player, stack, bag, selectedIndex),
+                () -> player.displayClientMessage(INVALID, true)
             );
+        }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag)
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag)
     {
         Optional<Bag> optional = this.getBag(stack);
         if (optional.isEmpty())
@@ -127,7 +136,10 @@ public class LootBagItem extends Item
             return;
         }
         tooltip.add(OPEN_PREVIEW_SCREEN);
-        if (!optional.get().getType().quick()) return;
+        if (!optional.get().getType().quick())
+        {
+            return;
+        }
         tooltip.add(QUICK_OPEN);
         tooltip.add(QUICK_OPEN_STACK);
     }

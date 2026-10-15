@@ -14,7 +14,7 @@ public abstract class Content
     protected static <T extends Content> Products.P1<RecordCodecBuilder.Mu<T>, Icon> contentFields(RecordCodecBuilder.Instance<T> instance)
     {
         return instance.group(
-                Icon.CODEC.fieldOf("icon").forGetter(Content::getIcon)
+            Icon.CODEC.fieldOf("icon").forGetter(Content::getIcon)
         );
     }
 

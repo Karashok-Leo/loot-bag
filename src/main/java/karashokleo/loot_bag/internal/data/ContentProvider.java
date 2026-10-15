@@ -2,11 +2,12 @@ package karashokleo.loot_bag.internal.data;
 
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.data.AbstractContentProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.core.HolderLookup;
-import java.util.concurrent.CompletableFuture;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class ContentProvider extends AbstractContentProvider
@@ -22,6 +23,7 @@ public class ContentProvider extends AbstractContentProvider
         LootBagDataGenerator.CONTENTS.forEach(entry -> provider.accept(entry.id(), entry.content()));
     }
 
+    @NotNull
     @Override
     public String getName()
     {
