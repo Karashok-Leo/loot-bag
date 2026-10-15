@@ -1,20 +1,14 @@
 package karashokleo.loot_bag.internal.item;
 
-import com.mojang.datafixers.util.Pair;
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -30,7 +24,6 @@ public class LootBagItem extends Item
     protected static final MutableText OPEN_PREVIEW_SCREEN = Text.translatable("tooltip.loot-bag.open_screen").formatted(Formatting.GRAY);
     protected static final MutableText QUICK_OPEN = Text.translatable("tooltip.loot-bag.quick_open").formatted(Formatting.GRAY);
     protected static final MutableText QUICK_OPEN_STACK = Text.translatable("tooltip.loot-bag.quick_open_stack").formatted(Formatting.GRAY);
-    protected static final String KEY = "BagId";
 
     public LootBagItem(Settings settings)
     {
@@ -39,13 +32,8 @@ public class LootBagItem extends Item
 
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
-        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtElement element = nbt.get(KEY);
-        if (element == null) return Optional.empty();
-        return BagEntry.CODEC
-                .decode(NbtOps.INSTANCE, element)
-                .result()
-                .map(Pair::getFirst);
+        return Optional.ofNullable(stack.get(LootBagComponentRegistry.BAG_ID))
+                .map(LootBagManager.getInstance()::getBagEntry);
     }
 
     public Optional<Bag> getBag(ItemStack stack)
@@ -55,21 +43,14 @@ public class LootBagItem extends Item
 
     public ItemStack getStack(Identifier bagId)
     {
-        BagEntry entry = LootBagManager.getInstance().getBagEntry(bagId);
-        return this.getStack(bagId, entry == null ? Rarity.COMMON : entry.bag().getRarity());
+        ItemStack stack = this.getDefaultStack();
+        stack.set(LootBagComponentRegistry.BAG_ID, bagId);
+        return stack;
     }
 
     public ItemStack getStack(BagEntry entry)
     {
-        return this.getStack(entry.id(), entry.bag().getRarity());
-    }
-
-    private ItemStack getStack(Identifier bagId, Rarity rarity)
-    {
-        ItemStack stack = this.getDefaultStack();
-        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt -> nbt.putString(KEY, bagId.toString()));
-        stack.set(DataComponentTypes.RARITY, rarity);
-        return stack;
+        return this.getStack(entry.id());
     }
 
     @Override

@@ -12,6 +12,7 @@ import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.api.common.loot.LootBagEntry;
 import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
+import karashokleo.loot_bag.internal.item.LootBagComponentRegistry;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +29,7 @@ public class LootBagMod implements ModInitializer
     public void onInitialize()
     {
         initStaticRegistries();
+        LootBagComponentRegistry.init();
         LootBagItemRegistry.init();
         LootBagEntry.init();
         ServerNetworkHandlers.init();
