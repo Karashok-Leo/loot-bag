@@ -1,6 +1,5 @@
 package karashokleo.loot_bag.internal.item;
 
-import com.mojang.datafixers.util.Pair;
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
@@ -10,9 +9,6 @@ import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
@@ -20,10 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ChatFormatting;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -35,7 +28,6 @@ public class LootBagItem extends Item
     protected static final MutableComponent OPEN_PREVIEW_SCREEN = Component.translatable("tooltip.loot-bag.open_screen").withStyle(ChatFormatting.GRAY);
     protected static final MutableComponent QUICK_OPEN = Component.translatable("tooltip.loot-bag.quick_open").withStyle(ChatFormatting.GRAY);
     protected static final MutableComponent QUICK_OPEN_STACK = Component.translatable("tooltip.loot-bag.quick_open_stack").withStyle(ChatFormatting.GRAY);
-    protected static final String KEY = "BagId";
 
     public LootBagItem(Properties settings)
     {
@@ -44,14 +36,8 @@ public class LootBagItem extends Item
 
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
-        CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (nbt == null) return Optional.empty();
-        Tag element = nbt.get(KEY);
-        if (element == null) return Optional.empty();
-        return BagEntry.CODEC
-                .decode(NbtOps.INSTANCE, element)
-                .result()
-                .map(Pair::getFirst);
+        return Optional.ofNullable(stack.get(LootBagComponentRegistry.BAG_ID.get()))
+                .map(LootBagManager.getInstance()::getBagEntry);
     }
 
     public Optional<Bag> getBag(ItemStack stack)
@@ -61,21 +47,14 @@ public class LootBagItem extends Item
 
     public ItemStack getStack(ResourceLocation bagId)
     {
-        BagEntry entry = LootBagManager.getInstance().getBagEntry(bagId);
-        return this.getStack(bagId, entry == null ? Rarity.COMMON : entry.bag().getRarity());
+        ItemStack stack = this.getDefaultInstance();
+        stack.set(LootBagComponentRegistry.BAG_ID.get(), bagId);
+        return stack;
     }
 
     public ItemStack getStack(BagEntry entry)
     {
-        return this.getStack(entry.id(), entry.bag().getRarity());
-    }
-
-    private ItemStack getStack(ResourceLocation bagId, Rarity rarity)
-    {
-        ItemStack stack = this.getDefaultInstance();
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(KEY, bagId.toString()));
-        stack.set(DataComponents.RARITY, rarity);
-        return stack;
+        return this.getStack(entry.id());
     }
 
     @Override

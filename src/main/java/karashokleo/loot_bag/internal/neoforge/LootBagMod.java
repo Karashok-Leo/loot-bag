@@ -3,6 +3,7 @@ package karashokleo.loot_bag.internal.neoforge;
 import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.loot.LootBagEntry;
 import karashokleo.loot_bag.internal.data.LootBagManagerImpl;
+import karashokleo.loot_bag.internal.item.LootBagComponentRegistry;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
 import net.neoforged.fml.common.Mod;
@@ -23,6 +24,7 @@ public class LootBagMod
     public LootBagMod(IEventBus modBus)
     {
         LootBagRegistry.init(modBus);
+        LootBagComponentRegistry.init(modBus);
         LootBagItemRegistry.init(modBus);
         LootBagEntry.init(modBus);
         modBus.addListener(ServerNetworkHandlers::register);
