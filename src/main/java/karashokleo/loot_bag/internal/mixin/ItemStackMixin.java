@@ -12,20 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin
 {
-    @Inject(method = "getRarity", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getRarity", at = @At("HEAD"), cancellable = true)
     private void lootBag$getConfiguredRarity(CallbackInfoReturnable<Rarity> cir)
     {
         ItemStack stack = (ItemStack) (Object) this;
         if (stack.getItem() instanceof LootBagItem item)
         {
-            Rarity rarity = item.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON);
-            // Apply vanilla's enchantment promotion to the current bag definition.
-            cir.setReturnValue(stack.hasEnchantments() ? switch (rarity)
-            {
-                case COMMON, UNCOMMON -> Rarity.RARE;
-                case RARE -> Rarity.EPIC;
-                default -> rarity;
-            } : rarity);
+            cir.setReturnValue(item.getBag(stack).map(Bag::getRarity).orElse(Rarity.COMMON));
         }
     }
 }
