@@ -125,10 +125,10 @@ public final class LootBagManagerImpl implements LootBagManager
                     InputStream stream = resourceRef.getInputStream();
                     JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
                     consumer.accept(
-                            id.withPath(s -> s
-                                    .replaceFirst(path + "/", "")
-                                    .replaceFirst(".json", "")),
-                            codec.decode(registries.getOps(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
+                        id.withPath(s -> s
+                            .replaceFirst(path + "/", "")
+                            .replaceFirst(".json", "")),
+                        codec.decode(registries.getOps(JsonOps.INSTANCE), data).result().orElseThrow().getFirst()
                     );
                 } catch (Exception e)
                 {

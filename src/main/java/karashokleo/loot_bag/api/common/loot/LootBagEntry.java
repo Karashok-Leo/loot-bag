@@ -2,7 +2,6 @@ package karashokleo.loot_bag.api.common.loot;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.List;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.internal.item.LootBagItemRegistry;
@@ -16,14 +15,15 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class LootBagEntry extends LeafEntry
 {
     public static final MapCodec<LootBagEntry> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> addLeafFields(instance).and(
-                    Identifier.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId)
-            ).apply(instance, LootBagEntry::new)
+        instance -> addLeafFields(instance).and(
+            Identifier.CODEC.fieldOf("bag").forGetter(entry -> entry.bagId)
+        ).apply(instance, LootBagEntry::new)
     );
     public static final LootPoolEntryType TYPE = new LootPoolEntryType(CODEC);
 

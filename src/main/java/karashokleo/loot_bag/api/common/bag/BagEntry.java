@@ -15,12 +15,12 @@ public record BagEntry(Identifier id, Bag bag, String nameKey)
     }
 
     public static final Codec<BagEntry> CODEC = Identifier.CODEC.comapFlatMap(
-            id ->
-            {
-                BagEntry entry = LootBagManager.getInstance().getBagEntry(id);
-                return entry == null ? DataResult.error(() -> ConstantTexts.unknownBagMessage(id)) : DataResult.success(entry);
-            },
-            BagEntry::id
+        id ->
+        {
+            BagEntry entry = LootBagManager.getInstance().getBagEntry(id);
+            return entry == null ? DataResult.error(() -> ConstantTexts.unknownBagMessage(id)) : DataResult.success(entry);
+        },
+        BagEntry::id
     );
 
     public Text getName()

@@ -21,17 +21,17 @@ public class LootBagRegistry
     public static final RegistryKey<Registry<IconType<?>>> ICON_TYPE_KEY = RegistryKey.ofRegistry(LootBagMod.id("icon_type"));
 
     public static final Registry<ContentType<?>> CONTENT_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.CONTENT_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
+        .createSimple(LootBagRegistry.CONTENT_TYPE_KEY)
+        .attribute(RegistryAttribute.SYNCED)
+        .buildAndRegister();
     public static final Registry<BagType<?>> BAG_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.BAG_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
+        .createSimple(LootBagRegistry.BAG_TYPE_KEY)
+        .attribute(RegistryAttribute.SYNCED)
+        .buildAndRegister();
     public static final Registry<IconType<?>> ICON_TYPE_REGISTRY = FabricRegistryBuilder
-            .createSimple(LootBagRegistry.ICON_TYPE_KEY)
-            .attribute(RegistryAttribute.SYNCED)
-            .buildAndRegister();
+        .createSimple(LootBagRegistry.ICON_TYPE_KEY)
+        .attribute(RegistryAttribute.SYNCED)
+        .buildAndRegister();
 
     public static <T extends Content> ContentType<T> registerContentType(Identifier id, ContentType<T> type)
     {

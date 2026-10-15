@@ -2,8 +2,8 @@ package karashokleo.loot_bag.api.client.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.api.common.bag.OptionalBag;
+import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.text.Text;

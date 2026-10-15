@@ -15,9 +15,9 @@ import java.util.List;
 public class EffectContent extends Content
 {
     public static final MapCodec<EffectContent> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    Effect.CODEC.listOf().fieldOf("effects").forGetter(EffectContent::getEffects)
-            ).and(contentFields(ins).t1()).apply(ins, EffectContent::new)
+        ins -> ins.group(
+            Effect.CODEC.listOf().fieldOf("effects").forGetter(EffectContent::getEffects)
+        ).and(contentFields(ins).t1()).apply(ins, EffectContent::new)
     );
 
     public static final ContentType<EffectContent> TYPE = new ContentType<>(CODEC);
@@ -45,27 +45,29 @@ public class EffectContent extends Content
     public void reward(ServerPlayerEntity player)
     {
         for (Effect effect : this.effects)
+        {
             player.addStatusEffect(effect.getInstance());
+        }
     }
 
     public record Effect(
-            RegistryEntry<StatusEffect> type,
-            int duration,
-            int amplifier,
-            boolean ambient,
-            boolean showParticles,
-            boolean showIcon
+        RegistryEntry<StatusEffect> type,
+        int duration,
+        int amplifier,
+        boolean ambient,
+        boolean showParticles,
+        boolean showIcon
     )
     {
         public static final Codec<Effect> CODEC = RecordCodecBuilder.create(
-                ins -> ins.group(
-                        Registries.STATUS_EFFECT.getEntryCodec().fieldOf("type").forGetter(Effect::type),
-                        Codec.INT.optionalFieldOf("duration", 20).forGetter(Effect::duration),
-                        Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Effect::amplifier),
-                        Codec.BOOL.optionalFieldOf("ambient", false).forGetter(Effect::ambient),
-                        Codec.BOOL.optionalFieldOf("showParticles", true).forGetter(Effect::showParticles),
-                        Codec.BOOL.optionalFieldOf("showIcon", true).forGetter(Effect::showIcon)
-                ).apply(ins, Effect::new)
+            ins -> ins.group(
+                Registries.STATUS_EFFECT.getEntryCodec().fieldOf("type").forGetter(Effect::type),
+                Codec.INT.optionalFieldOf("duration", 20).forGetter(Effect::duration),
+                Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Effect::amplifier),
+                Codec.BOOL.optionalFieldOf("ambient", false).forGetter(Effect::ambient),
+                Codec.BOOL.optionalFieldOf("showParticles", true).forGetter(Effect::showParticles),
+                Codec.BOOL.optionalFieldOf("showIcon", true).forGetter(Effect::showIcon)
+            ).apply(ins, Effect::new)
         );
         public static final int DEFAULT_DURATION = 20;
 

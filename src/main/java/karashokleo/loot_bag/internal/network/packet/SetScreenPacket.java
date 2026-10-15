@@ -1,10 +1,10 @@
 package karashokleo.loot_bag.internal.network.packet;
 
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public record SetScreenPacket(int slot, Identifier bagId) implements CustomPayload

@@ -17,13 +17,13 @@ import org.lwjgl.opengl.GL14;
 public class TextureIcon extends Icon
 {
     public static final MapCodec<TextureIcon> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
-                    Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
-                    Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
-                    Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
-                    Codec.FLOAT.optionalFieldOf("v1", 1F).forGetter(TextureIcon::getV1)
-            ).and(iconFields()).apply(ins, TextureIcon::new)
+        ins -> ins.group(
+            Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
+            Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
+            Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
+            Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
+            Codec.FLOAT.optionalFieldOf("v1", 1F).forGetter(TextureIcon::getV1)
+        ).and(iconFields()).apply(ins, TextureIcon::new)
     );
 
     public static final IconType<TextureIcon> TYPE = new IconType<>(CODEC);
@@ -105,17 +105,17 @@ public class TextureIcon extends Icon
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
         BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         bufferBuilder.vertex(matrix4f, -0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v0);
+            .color(1F, 1F, 1F, alpha)
+            .texture(u0, v0);
         bufferBuilder.vertex(matrix4f, -0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v1);
+            .color(1F, 1F, 1F, alpha)
+            .texture(u0, v1);
         bufferBuilder.vertex(matrix4f, 0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v1);
+            .color(1F, 1F, 1F, alpha)
+            .texture(u1, v1);
         bufferBuilder.vertex(matrix4f, 0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v0);
+            .color(1F, 1F, 1F, alpha)
+            .texture(u1, v0);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
 

@@ -18,8 +18,8 @@ public abstract class Bag
     public static <T extends Bag> Products.P2<RecordCodecBuilder.Mu<T>, Rarity, Color> bagFields(RecordCodecBuilder.Instance<T> instance)
     {
         return instance.group(
-                CodecUtil.getEnumCodec(Rarity.class).optionalFieldOf("rarity", Rarity.COMMON).forGetter(Bag::getRarity),
-                Color.CODEC.fieldOf("color").forGetter(Bag::getColor)
+            CodecUtil.getEnumCodec(Rarity.class).optionalFieldOf("rarity", Rarity.COMMON).forGetter(Bag::getRarity),
+            Color.CODEC.fieldOf("color").forGetter(Bag::getColor)
         );
     }
 
@@ -50,10 +50,10 @@ public abstract class Bag
     public record Color(int bagBody, int bagString)
     {
         public static final Codec<Color> CODEC = RecordCodecBuilder.create(
-                ins -> ins.group(
-                        Codec.INT.fieldOf("bag_body").forGetter(Color::bagBody),
-                        Codec.INT.fieldOf("bag_string").forGetter(Color::bagString)
-                ).apply(ins, Color::new)
+            ins -> ins.group(
+                Codec.INT.fieldOf("bag_body").forGetter(Color::bagBody),
+                Codec.INT.fieldOf("bag_string").forGetter(Color::bagString)
+            ).apply(ins, Color::new)
         );
 
         public int byTintIndex(int tintIndex)

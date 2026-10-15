@@ -10,9 +10,6 @@ import karashokleo.loot_bag.internal.network.packet.SyncDataPackets;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -28,11 +25,11 @@ public class ServerNetworkHandlers
     public static void init()
     {
         PayloadTypeRegistry.playC2S().register(OpenBagPacket.TYPE, OpenBagPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(SyncDataPackets.AckPacket.TYPE, SyncDataPackets.AckPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(SetScreenPacket.TYPE, SetScreenPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(SyncDataPackets.SYNC_CONTENT_TYPE, SyncDataPackets.SYNC_CONTENT_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncDataPackets.SYNC_BAG_TYPE, SyncDataPackets.SYNC_BAG_CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(SyncDataPackets.AckPacket.TYPE, ServerNetworkHandlers::handleAck);
+        PayloadTypeRegistry.playC2S().register(SyncDataPackets.ACK_TYPE, SyncDataPackets.ACK_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(SyncDataPackets.ACK_TYPE, ServerNetworkHandlers::handleAck);
         ServerPlayNetworking.registerGlobalReceiver(OpenBagPacket.TYPE, ServerNetworkHandlers::handleOpenBag);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(ServerNetworkHandlers::sendSyncData);
     }
@@ -57,8 +54,12 @@ public class ServerNetworkHandlers
     private static void handleAck(SyncDataPackets.AckPacket packet, ServerPlayNetworking.Context context)
     {
         if (packet.count() == LootBagManager.getInstance().getAllContentEntries().size())
+        {
             sendSyncBag(context.player());
-        else sendSyncContent(context.player());
+        } else
+        {
+            sendSyncContent(context.player());
+        }
     }
 
     private static void handleOpenBag(OpenBagPacket packet, ServerPlayNetworking.Context context)

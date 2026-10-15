@@ -1,9 +1,10 @@
 package karashokleo.loot_bag.internal.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.registry.RegistryWrapper;
-import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.registry.RegistryWrapper;
+
+import java.util.concurrent.CompletableFuture;
 
 public class LanguageProvider extends FabricLanguageProvider
 {
@@ -19,21 +20,21 @@ public class LanguageProvider extends FabricLanguageProvider
         {
             builder.add(entry.nameKey(), "Content Name - " + entry.id());
             builder.add(entry.descKey(), "Content Description - " + entry.id() + " - " +
-                    "\n......" +
-                    "\n............" +
-                    "\n.................." +
-                    "\n........................" +
-                    "\n.............................." +
-                    "\n...................................." +
-                    "\n.........................................." +
-                    "\n................................................" +
-                    "\n......................................................" +
-                    "\n............................................................" +
-                    "\n.................................................................." +
-                    "\n........................................................................" +
-                    "\nloooooooooooooooong enough to display multi-line text effects");
+                "\n......" +
+                "\n............" +
+                "\n.................." +
+                "\n........................" +
+                "\n.............................." +
+                "\n...................................." +
+                "\n.........................................." +
+                "\n................................................" +
+                "\n......................................................" +
+                "\n............................................................" +
+                "\n.................................................................." +
+                "\n........................................................................" +
+                "\nloooooooooooooooong enough to display multi-line text effects");
         });
         LootBagDataGenerator.BAGS.forEach(entry ->
-                builder.add(entry.nameKey(), "Bag Name - " + entry.id()));
+            builder.add(entry.nameKey(), "Bag Name - " + entry.id()));
     }
 }

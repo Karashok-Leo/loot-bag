@@ -1,6 +1,5 @@
 package karashokleo.loot_bag.api.common.bag;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
@@ -13,9 +12,9 @@ import java.util.Optional;
 public class SingleBag extends Bag
 {
     public static final MapCodec<SingleBag> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    ContentEntry.CODEC.fieldOf("content").forGetter(SingleBag::getContent)
-            ).and(bagFields(ins)).apply(ins, SingleBag::new)
+        ins -> ins.group(
+            ContentEntry.CODEC.fieldOf("content").forGetter(SingleBag::getContent)
+        ).and(bagFields(ins)).apply(ins, SingleBag::new)
     );
 
     public static final BagType<SingleBag> TYPE = new BagType<>(CODEC, true);

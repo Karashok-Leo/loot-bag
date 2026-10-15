@@ -9,9 +9,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public class CommandContent extends Content
 {
     public static final MapCodec<CommandContent> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    Codec.STRING.fieldOf("command").forGetter(CommandContent::getCommand)
-            ).and(contentFields(ins).t1()).apply(ins, CommandContent::new)
+        ins -> ins.group(
+            Codec.STRING.fieldOf("command").forGetter(CommandContent::getCommand)
+        ).and(contentFields(ins).t1()).apply(ins, CommandContent::new)
     );
 
     public static final ContentType<CommandContent> TYPE = new ContentType<>(CODEC);
@@ -39,12 +39,12 @@ public class CommandContent extends Content
     public void reward(ServerPlayerEntity player)
     {
         player.server
-                .getCommandManager()
-                .executeWithPrefix(
-                        player.getCommandSource()
-                                .withLevel(player.server.getFunctionPermissionLevel())
-                                .withSilent(),
-                        command
-                );
+            .getCommandManager()
+            .executeWithPrefix(
+                player.getCommandSource()
+                    .withLevel(player.server.getFunctionPermissionLevel())
+                    .withSilent(),
+                command
+            );
     }
 }

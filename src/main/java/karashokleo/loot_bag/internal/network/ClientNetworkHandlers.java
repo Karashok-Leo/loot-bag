@@ -34,7 +34,9 @@ public class ClientNetworkHandlers
         LootBagManager manager = LootBagManager.getInstance();
         manager.clearAllContentEntries();
         for (ContentEntry entry : packet.entries())
+        {
             manager.putContent(entry.id(), entry.content());
+        }
         ClientPlayNetworking.send(new SyncDataPackets.AckPacket(manager.getAllContentEntries().size()));
     }
 
@@ -43,13 +45,18 @@ public class ClientNetworkHandlers
         LootBagManager manager = LootBagManager.getInstance();
         manager.clearAllBagEntries();
         for (BagEntry entry : packet.entries())
+        {
             manager.putBag(entry.id(), entry.bag());
+        }
     }
 
     private static void handleSetScreen(SetScreenPacket packet, ClientPlayNetworking.Context context)
     {
         BagEntry entry = LootBagManager.getInstance().getBagEntry(packet.bagId());
-        if (entry == null) throw new IllegalStateException(ConstantTexts.unknownBagMessage(packet.bagId()));
+        if (entry == null)
+        {
+            throw new IllegalStateException(ConstantTexts.unknownBagMessage(packet.bagId()));
+        }
         LootBagScreen<?> screen = LootBagScreenRegistry.getFactory(entry.bag().getType()).createScreen(entry.bag(), packet.slot());
         MinecraftClient.getInstance().setScreen(screen);
     }

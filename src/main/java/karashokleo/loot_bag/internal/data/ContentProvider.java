@@ -4,9 +4,9 @@ import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.data.AbstractContentProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.util.Identifier;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class ContentProvider extends AbstractContentProvider

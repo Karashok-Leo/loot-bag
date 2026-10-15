@@ -5,14 +5,17 @@ import karashokleo.loot_bag.api.common.OpenBagContext;
 import karashokleo.loot_bag.api.common.bag.Bag;
 import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.internal.network.ServerNetworkHandlers;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -33,7 +36,7 @@ public class LootBagItem extends Item
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
         return Optional.ofNullable(stack.get(LootBagComponentRegistry.BAG_ID))
-                .map(LootBagManager.getInstance()::getBagEntry);
+            .map(LootBagManager.getInstance()::getBagEntry);
     }
 
     public Optional<Bag> getBag(ItemStack stack)
@@ -57,8 +60,8 @@ public class LootBagItem extends Item
     public Text getName(ItemStack stack)
     {
         return this.getBagEntry(stack)
-                .map(BagEntry::getName)
-                .orElseGet(this::getName);
+            .map(BagEntry::getName)
+            .orElseGet(this::getName);
     }
 
     @Override
@@ -87,7 +90,10 @@ public class LootBagItem extends Item
                     }
                 }
                 // Open Through Screen
-                else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                else
+                {
+                    ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                }
             }, () -> player.sendMessage(INVALID, true));
         }
         return TypedActionResult.success(stack, world.isClient());
@@ -99,7 +105,9 @@ public class LootBagItem extends Item
         {
             content.reward(player);
             if (!player.isCreative())
+            {
                 stack.decrement(1);
+            }
         });
     }
 
@@ -107,10 +115,12 @@ public class LootBagItem extends Item
     {
         ItemStack stack = player.getInventory().getStack(slot);
         if (stack.getItem() instanceof LootBagItem item)
+        {
             item.getBag(stack).ifPresentOrElse(
-                    bag -> open(player, stack, bag, selectedIndex),
-                    () -> player.sendMessage(INVALID, true)
+                bag -> open(player, stack, bag, selectedIndex),
+                () -> player.sendMessage(INVALID, true)
             );
+        }
     }
 
     @Override
@@ -123,7 +133,10 @@ public class LootBagItem extends Item
             return;
         }
         tooltip.add(OPEN_PREVIEW_SCREEN);
-        if (!optional.get().getType().quick()) return;
+        if (!optional.get().getType().quick())
+        {
+            return;
+        }
         tooltip.add(QUICK_OPEN);
         tooltip.add(QUICK_OPEN_STACK);
     }

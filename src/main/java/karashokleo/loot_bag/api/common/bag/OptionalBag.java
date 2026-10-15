@@ -1,6 +1,5 @@
 package karashokleo.loot_bag.api.common.bag;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import karashokleo.loot_bag.api.common.OpenBagContext;
@@ -14,11 +13,11 @@ import java.util.Optional;
 public class OptionalBag extends Bag implements ContentView
 {
     public static final MapCodec<OptionalBag> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    ContentEntry.CODEC.listOf()
-                            .fieldOf("options")
-                            .forGetter(OptionalBag::getOptions)
-            ).and(bagFields(ins)).apply(ins, OptionalBag::new)
+        ins -> ins.group(
+            ContentEntry.CODEC.listOf()
+                .fieldOf("options")
+                .forGetter(OptionalBag::getOptions)
+        ).and(bagFields(ins)).apply(ins, OptionalBag::new)
     );
 
     public static final BagType<OptionalBag> TYPE = new BagType<>(CODEC, false);
@@ -54,6 +53,6 @@ public class OptionalBag extends Bag implements ContentView
         List<ContentEntry> contents = this.getOptions();
         int selectedIndex = context.selectedIndex();
         return selectedIndex >= contents.size() ?
-                Optional.empty() : Optional.of(contents.get(selectedIndex).content());
+            Optional.empty() : Optional.of(contents.get(selectedIndex).content());
     }
 }

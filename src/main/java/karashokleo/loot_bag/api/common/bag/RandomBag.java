@@ -17,9 +17,9 @@ import java.util.Optional;
 public class RandomBag extends Bag implements ContentView
 {
     public static final MapCodec<RandomBag> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    Entry.CODEC.listOf().fieldOf("pool").forGetter(RandomBag::getPool)
-            ).and(bagFields(ins)).apply(ins, RandomBag::new)
+        ins -> ins.group(
+            Entry.CODEC.listOf().fieldOf("pool").forGetter(RandomBag::getPool)
+        ).and(bagFields(ins)).apply(ins, RandomBag::new)
     );
 
     public static final BagType<RandomBag> TYPE = new BagType<>(CODEC, true);
@@ -56,18 +56,24 @@ public class RandomBag extends Bag implements ContentView
 
         List<Entry> entryList = this.getPool();
 
-        if (entryList.isEmpty()) return Optional.empty();
+        if (entryList.isEmpty())
+        {
+            return Optional.empty();
+        }
 
 
         MutableInt totalWeight = new MutableInt();
         for (Entry entry : entryList)
+        {
             totalWeight.add(entry.weight());
+        }
         int size = entryList.size();
 
         Content content = null;
         if (totalWeight.intValue() == 0 || size == 1)
-            content = entryList.get(0).getContent();
-        else
+        {
+            content = entryList.getFirst().getContent();
+        } else
         {
             int randomInt = random.nextInt(totalWeight.intValue());
             for (Entry entry : entryList)
@@ -86,10 +92,10 @@ public class RandomBag extends Bag implements ContentView
     public record Entry(ContentEntry content, int weight)
     {
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(
-                ins -> ins.group(
-                        ContentEntry.CODEC.fieldOf("content").forGetter(Entry::content),
-                        Codec.INT.fieldOf("weight").forGetter(Entry::weight)
-                ).apply(ins, Entry::new)
+            ins -> ins.group(
+                ContentEntry.CODEC.fieldOf("content").forGetter(Entry::content),
+                Codec.INT.fieldOf("weight").forGetter(Entry::weight)
+            ).apply(ins, Entry::new)
         );
 
         public Content getContent()

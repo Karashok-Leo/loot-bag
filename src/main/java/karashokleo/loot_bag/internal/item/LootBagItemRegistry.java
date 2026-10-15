@@ -2,8 +2,8 @@ package karashokleo.loot_bag.internal.item;
 
 import karashokleo.loot_bag.api.LootBagManager;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
-import net.minecraft.item.Item;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -22,27 +22,27 @@ public class LootBagItemRegistry
         LOOT_BAG = Registry.register(Registries.ITEM, ITEM_GROUP_KEY.getValue(), LOOT_BAG);
 
         Registry.register(
-                Registries.ITEM_GROUP,
-                LootBagMod.id("loot_bag"),
-                FabricItemGroup
-                        .builder()
-                        .icon(() -> LootBagManager
-                                .getInstance()
-                                .getAllBagEntries()
-                                .stream()
-                                .map(LOOT_BAG::getStack)
-                                .findFirst()
-                                .orElse(ItemStack.EMPTY)
-                        )
-                        .entries((displayContext, entries) -> entries.addAll(LootBagManager
-                                .getInstance()
-                                .getAllBagEntries()
-                                .stream()
-                                .map(LOOT_BAG::getStack)
-                                .toList()
-                        ))
-                        .displayName(Text.translatable("itemGroup.loot-bag.loot_bag"))
-                        .build()
+            Registries.ITEM_GROUP,
+            LootBagMod.id("loot_bag"),
+            FabricItemGroup
+                .builder()
+                .icon(() -> LootBagManager
+                    .getInstance()
+                    .getAllBagEntries()
+                    .stream()
+                    .map(LOOT_BAG::getStack)
+                    .findFirst()
+                    .orElse(ItemStack.EMPTY)
+                )
+                .entries((displayContext, entries) -> entries.addAll(LootBagManager
+                    .getInstance()
+                    .getAllBagEntries()
+                    .stream()
+                    .map(LOOT_BAG::getStack)
+                    .toList()
+                ))
+                .displayName(Text.translatable("itemGroup.loot-bag.loot_bag"))
+                .build()
         );
     }
 }

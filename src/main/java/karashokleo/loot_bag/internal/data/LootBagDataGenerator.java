@@ -10,9 +10,9 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
@@ -37,89 +37,89 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
     private static void bootstrap(RegistryWrapper.WrapperLookup registries)
     {
         ContentEntry beef = new ContentEntry(
-                LootBagMod.id("beef"),
-                new ItemContent(
-                        Items.BEEF.getDefaultStack(),
-                        new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F)
-                )
+            LootBagMod.id("beef"),
+            new ItemContent(
+                Items.BEEF.getDefaultStack(),
+                new ItemIcon(Items.BEEF.getDefaultStack(), 0.5F)
+            )
         );
         ItemStack contentDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
         contentDiamondSword.setDamage(66);
         ItemStack iconDiamondSword = Items.DIAMOND_SWORD.getDefaultStack();
         iconDiamondSword.addEnchantment(registries.getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), 3);
         ContentEntry diamondSword = new ContentEntry(
-                LootBagMod.id("diamond_sword"),
-                new ItemContent(
-                        contentDiamondSword,
-                        new ItemIcon(iconDiamondSword, 1)
-                )
+            LootBagMod.id("diamond_sword"),
+            new ItemContent(
+                contentDiamondSword,
+                new ItemIcon(iconDiamondSword, 1)
+            )
         );
         ContentEntry stone = new ContentEntry(
-                LootBagMod.id("stone"),
-                new LootTableContent(
-                        Identifier.of("blocks/stone"),
-                        new ItemIcon(Items.STONE)
-                )
+            LootBagMod.id("stone"),
+            new LootTableContent(
+                Identifier.of("blocks/stone"),
+                new ItemIcon(Items.STONE)
+            )
         );
         ContentEntry effect = new ContentEntry(
-                LootBagMod.id("effect"),
-                new EffectContent(
-                        List.of(
-                                new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
-                                new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
-                        ),
-                        new TextureIcon(Identifier.of("textures/block/stone.png"))
-                )
+            LootBagMod.id("effect"),
+            new EffectContent(
+                List.of(
+                    new EffectContent.Effect(StatusEffects.ABSORPTION, 2400),
+                    new EffectContent.Effect(StatusEffects.REGENERATION, 100, 1)
+                ),
+                new TextureIcon(Identifier.of("textures/block/stone.png"))
+            )
         );
         ContentEntry zombie = new ContentEntry(
-                LootBagMod.id("zombie"),
-                new LootTableContent(
-                        Identifier.of("entities/zombie"),
-                        new TextureIcon(Identifier.of("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
-                )
+            LootBagMod.id("zombie"),
+            new LootTableContent(
+                Identifier.of("entities/zombie"),
+                new TextureIcon(Identifier.of("textures/item/rotten_flesh.png"), 0.25F, 0.25F, 0.75F, 0.75F)
+            )
         );
         ContentEntry skeleton = new ContentEntry(
-                LootBagMod.id("skeleton"),
-                new CommandContent(
-                        "/kill @s",
-                        new TextureIcon(Identifier.of("textures/item/bone.png"))
-                )
+            LootBagMod.id("skeleton"),
+            new CommandContent(
+                "/kill @s",
+                new TextureIcon(Identifier.of("textures/item/bone.png"))
+            )
         );
         ContentEntry creeper = new ContentEntry(
-                LootBagMod.id("creeper"),
-                new CommandContent(
-                        "/summon minecraft:creeper ~ ~ ~",
-                        new TextureIcon(Identifier.of("textures/item/gunpowder.png"))
-                )
+            LootBagMod.id("creeper"),
+            new CommandContent(
+                "/summon minecraft:creeper ~ ~ ~",
+                new TextureIcon(Identifier.of("textures/item/gunpowder.png"))
+            )
         );
 
         BagEntry single = new BagEntry(
-                LootBagMod.id("single"),
-                new SingleBag(
-                        beef,
-                        Rarity.COMMON,
-                        new Bag.Color(0xFFDA76, 0xFF4E88)
-                )
+            LootBagMod.id("single"),
+            new SingleBag(
+                beef,
+                Rarity.COMMON,
+                new Bag.Color(0xFFDA76, 0xFF4E88)
+            )
         );
         BagEntry optional = new BagEntry(
-                LootBagMod.id("optional"),
-                new OptionalBag(
-                        List.of(diamondSword, stone, effect),
-                        Rarity.RARE,
-                        new Bag.Color(0x28DF99, 0x493323)
-                )
+            LootBagMod.id("optional"),
+            new OptionalBag(
+                List.of(diamondSword, stone, effect),
+                Rarity.RARE,
+                new Bag.Color(0x28DF99, 0x493323)
+            )
         );
         BagEntry random = new BagEntry(
-                LootBagMod.id("random"),
-                new RandomBag(
-                        List.of(
-                                new RandomBag.Entry(zombie, 3),
-                                new RandomBag.Entry(skeleton, 2),
-                                new RandomBag.Entry(creeper, 1)
-                        ),
-                        Rarity.EPIC,
-                        new Bag.Color(0xAF47D2, 0xFFDB00)
-                )
+            LootBagMod.id("random"),
+            new RandomBag(
+                List.of(
+                    new RandomBag.Entry(zombie, 3),
+                    new RandomBag.Entry(skeleton, 2),
+                    new RandomBag.Entry(creeper, 1)
+                ),
+                Rarity.EPIC,
+                new Bag.Color(0xAF47D2, 0xFFDB00)
+            )
         );
 
         CONTENTS.add(beef);

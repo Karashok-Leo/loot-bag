@@ -13,9 +13,9 @@ import net.minecraft.item.ItemStack;
 public class ItemIcon extends Icon
 {
     public static final MapCodec<ItemIcon> CODEC = RecordCodecBuilder.mapCodec(
-            ins -> ins.group(
-                    CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
-            ).and(iconFields()).apply(ins, ItemIcon::new)
+        ins -> ins.group(
+            CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
+        ).and(iconFields()).apply(ins, ItemIcon::new)
     );
 
     public static final IconType<ItemIcon> TYPE = new IconType<>(CODEC);
@@ -54,7 +54,10 @@ public class ItemIcon extends Icon
     @Override
     public void render(DrawContext context, MatrixStack matrices, float alpha, float delta)
     {
-        if (stack.isEmpty()) return;
+        if (stack.isEmpty())
+        {
+            return;
+        }
 
         matrices.push();
 //        matrices.multiplyPositionMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));

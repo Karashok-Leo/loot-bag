@@ -10,11 +10,11 @@ import net.minecraft.registry.Registries;
 public class CodecUtil
 {
     public static final Codec<ItemStack> ITEM_STACK_CODEC = Codec.either(
-            Registries.ITEM.getCodec(),
-            ItemStack.CODEC
+        Registries.ITEM.getCodec(),
+        ItemStack.CODEC
     ).xmap(
-            either -> either.map(Item::getDefaultStack, stack -> stack),
-            stack -> stack.getCount() != 1 || !stack.getComponentChanges().isEmpty() ? Either.right(stack) : Either.left(stack.getItem())
+        either -> either.map(Item::getDefaultStack, stack -> stack),
+        stack -> stack.getCount() != 1 || !stack.getComponentChanges().isEmpty() ? Either.right(stack) : Either.left(stack.getItem())
     );
 
     public static <E extends Enum<E>> Codec<E> getEnumCodec(Class<E> cls)

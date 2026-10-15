@@ -9,9 +9,9 @@ import net.minecraft.util.Identifier;
 public class LootBagComponentRegistry
 {
     public static final ComponentType<Identifier> BAG_ID = ComponentType.<Identifier>builder()
-            .codec(Identifier.CODEC)
-            .packetCodec(Identifier.PACKET_CODEC)
-            .build();
+        .codec(Identifier.CODEC)
+        .packetCodec(Identifier.PACKET_CODEC)
+        .build();
 
     public static void init()
     {
