@@ -2,27 +2,27 @@ package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
-import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.RegistryObject;
 import org.joml.Matrix4f;
 
 public class TextureIcon extends Icon
 {
     public static final Codec<TextureIcon> CODEC = RecordCodecBuilder.create(
-            ins -> ins.group(
-                    Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
-                    Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
-                    Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
-                    Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
-                    Codec.FLOAT.optionalFieldOf("v1", 1F).forGetter(TextureIcon::getV1)
-            ).and(iconFields()).apply(ins, TextureIcon::new)
+        ins -> ins.group(
+            Identifier.CODEC.fieldOf("texture").forGetter(TextureIcon::getTexture),
+            Codec.FLOAT.optionalFieldOf("u0", 0F).forGetter(TextureIcon::getU0),
+            Codec.FLOAT.optionalFieldOf("v0", 0F).forGetter(TextureIcon::getV0),
+            Codec.FLOAT.optionalFieldOf("u1", 1F).forGetter(TextureIcon::getU1),
+            Codec.FLOAT.optionalFieldOf("v1", 1F).forGetter(TextureIcon::getV1)
+        ).and(iconFields()).apply(ins, TextureIcon::new)
     );
 
     public static final RegistryObject<IconType<TextureIcon>> TYPE = LootBagRegistry.TEXTURE_ICON;
@@ -102,17 +102,17 @@ public class TextureIcon extends Icon
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
         bufferBuilder.vertex(matrix4f, -0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v0).next();
+            .color(1F, 1F, 1F, alpha)
+            .texture(u0, v0).next();
         bufferBuilder.vertex(matrix4f, -0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u0, v1).next();
+            .color(1F, 1F, 1F, alpha)
+            .texture(u0, v1).next();
         bufferBuilder.vertex(matrix4f, 0.5F, 0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v1).next();
+            .color(1F, 1F, 1F, alpha)
+            .texture(u1, v1).next();
         bufferBuilder.vertex(matrix4f, 0.5F, -0.5F, 0)
-                .color(1F, 1F, 1F, alpha)
-                .texture(u1, v0).next();
+            .color(1F, 1F, 1F, alpha)
+            .texture(u1, v0).next();
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
 

@@ -13,11 +13,11 @@ import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntryType;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 
 import java.util.function.Consumer;
 
@@ -77,11 +77,11 @@ public class LootBagEntry extends LeafEntry
         protected LootBagEntry fromJson(JsonObject entryJson, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions, LootFunction[] functions)
         {
             return new LootBagEntry(
-                    weight,
-                    quality,
-                    conditions,
-                    functions,
-                    new Identifier(JsonHelper.getString(entryJson, KEY))
+                weight,
+                quality,
+                conditions,
+                functions,
+                Identifier.parse(JsonHelper.getString(entryJson, KEY))
             );
         }
     }

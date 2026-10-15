@@ -10,11 +10,11 @@ import karashokleo.loot_bag.api.common.bag.BagEntry;
 import karashokleo.loot_bag.api.common.content.Content;
 import karashokleo.loot_bag.api.common.content.ContentEntry;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.SynchronousResourceReloader;
+import net.minecraft.util.Identifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraft.resource.SynchronousResourceReloader;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -110,10 +110,10 @@ public final class LootBagManagerImpl implements LootBagManager
                     InputStream stream = resourceRef.getInputStream();
                     JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
                     consumer.accept(
-                            id.withPath(s -> s
-                                    .replaceFirst(path + "/", "")
-                                    .replaceFirst(".json", "")),
-                            codec.decode(JsonOps.INSTANCE, data).result().orElseThrow().getFirst()
+                        id.withPath(s -> s
+                            .replaceFirst(path + "/", "")
+                            .replaceFirst(".json", "")),
+                        codec.decode(JsonOps.INSTANCE, data).result().orElseThrow().getFirst()
                     );
                 } catch (Exception e)
                 {

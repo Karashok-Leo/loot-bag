@@ -13,20 +13,27 @@ public class SyncDataPackets
 {
     public record AckPacket(int count)
     {
-        public static AckPacket read(PacketByteBuf buf) { return new AckPacket(buf.readVarInt()); }
-        public void write(PacketByteBuf buf) { buf.writeVarInt(count); }
+        public static AckPacket read(PacketByteBuf buf)
+        {
+            return new AckPacket(buf.readVarInt());
+        }
+
+        public void write(PacketByteBuf buf)
+        {
+            buf.writeVarInt(count);
+        }
     }
 
     public static SyncContentPacket readContent(PacketByteBuf buf)
     {
         return new SyncContentPacket(buf.readCollection(HashSet::new, buffer ->
-                new ContentEntry(buffer.readIdentifier(), buffer.decodeAsJson(Content.CODEC))));
+            new ContentEntry(buffer.readIdentifier(), buffer.decodeAsJson(Content.CODEC))));
     }
 
     public static SyncBagPacket readBag(PacketByteBuf buf)
     {
         return new SyncBagPacket(buf.readCollection(HashSet::new, buffer ->
-                new BagEntry(buffer.readIdentifier(), buffer.decodeAsJson(Bag.CODEC))));
+            new BagEntry(buffer.readIdentifier(), buffer.decodeAsJson(Bag.CODEC))));
     }
 
     public record SyncContentPacket(Collection<ContentEntry> entries)
@@ -34,12 +41,12 @@ public class SyncDataPackets
         public void write(PacketByteBuf buf)
         {
             buf.writeCollection(
-                    entries,
-                    (packetByteBuf, entry) ->
-                    {
-                        packetByteBuf.writeIdentifier(entry.id());
-                        packetByteBuf.encodeAsJson(Content.CODEC, entry.content());
-                    }
+                entries,
+                (packetByteBuf, entry) ->
+                {
+                    packetByteBuf.writeIdentifier(entry.id());
+                    packetByteBuf.encodeAsJson(Content.CODEC, entry.content());
+                }
             );
         }
     }
@@ -49,12 +56,12 @@ public class SyncDataPackets
         public void write(PacketByteBuf buf)
         {
             buf.writeCollection(
-                    entries,
-                    (packetByteBuf, entry) ->
-                    {
-                        packetByteBuf.writeIdentifier(entry.id());
-                        packetByteBuf.encodeAsJson(Bag.CODEC, entry.bag());
-                    }
+                entries,
+                (packetByteBuf, entry) ->
+                {
+                    packetByteBuf.writeIdentifier(entry.id());
+                    packetByteBuf.encodeAsJson(Bag.CODEC, entry.bag());
+                }
             );
         }
     }

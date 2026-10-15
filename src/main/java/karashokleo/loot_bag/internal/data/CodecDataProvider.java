@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-/** Forge replacement for FabricCodecDataProvider; keeps the existing configure API. */
+/**
+ * Forge replacement for FabricCodecDataProvider; keeps the existing configure API.
+ */
 public abstract class CodecDataProvider<T> implements DataProvider
 {
     private final DataOutput.PathResolver resolver;
@@ -31,9 +33,10 @@ public abstract class CodecDataProvider<T> implements DataProvider
     {
         List<CompletableFuture<?>> futures = new ArrayList<>();
         configure((id, value) -> futures.add(DataProvider.writeToPath(writer,
-                codec.encodeStart(JsonOps.INSTANCE, value).getOrThrow(false, message -> {
-                    throw new IllegalStateException(message);
-                }), resolver.resolveJson(id))));
+            codec.encodeStart(JsonOps.INSTANCE, value).getOrThrow(false, message ->
+            {
+                throw new IllegalStateException(message);
+            }), resolver.resolveJson(id))));
         return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
     }
 }

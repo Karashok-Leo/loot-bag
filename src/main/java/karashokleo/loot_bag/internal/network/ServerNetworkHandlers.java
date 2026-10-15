@@ -25,7 +25,7 @@ public class ServerNetworkHandlers
 {
     private static final String PROTOCOL = "1";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            LootBagMod.id("main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
+        LootBagMod.id("main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 
     public static void sendScreen(ServerPlayerEntity player, int slot, Identifier bagId)
     {
@@ -35,38 +35,56 @@ public class ServerNetworkHandlers
     public static void init()
     {
         CHANNEL.messageBuilder(OpenBagPacket.class, 0, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(OpenBagPacket::write).decoder(OpenBagPacket::read)
-                .consumerMainThread((packet, context) -> {
-                    ServerPlayerEntity player = context.get().getSender();
-                    if (player != null) LootBagItem.open(player, packet.slot(), packet.selectedIndex());
-                }).add();
+            .encoder(OpenBagPacket::write).decoder(OpenBagPacket::read)
+            .consumerMainThread((packet, context) ->
+            {
+                ServerPlayerEntity player = context.get().getSender();
+                if (player != null)
+                {
+                    LootBagItem.open(player, packet.slot(), packet.selectedIndex());
+                }
+            }).add();
         CHANNEL.messageBuilder(SyncDataPackets.AckPacket.class, 1, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(SyncDataPackets.AckPacket::write).decoder(SyncDataPackets.AckPacket::read)
-                .consumerMainThread((packet, context) -> {
-                    ServerPlayerEntity player = context.get().getSender();
-                    if (player == null) return;
-                    if (packet.count() == LootBagManager.getInstance().getAllContentEntries().size()) sendSyncBag(player);
-                    else sendSyncContent(player);
-                }).add();
+            .encoder(SyncDataPackets.AckPacket::write).decoder(SyncDataPackets.AckPacket::read)
+            .consumerMainThread((packet, context) ->
+            {
+                ServerPlayerEntity player = context.get().getSender();
+                if (player == null)
+                {
+                    return;
+                }
+                if (packet.count() == LootBagManager.getInstance().getAllContentEntries().size())
+                {
+                    sendSyncBag(player);
+                } else
+                {
+                    sendSyncContent(player);
+                }
+            }).add();
         CHANNEL.messageBuilder(SyncDataPackets.SyncContentPacket.class, 2, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(SyncDataPackets.SyncContentPacket::write).decoder(SyncDataPackets::readContent)
-                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> ClientNetworkHandlers.handleSyncContent(packet))).add();
+            .encoder(SyncDataPackets.SyncContentPacket::write).decoder(SyncDataPackets::readContent)
+            .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientNetworkHandlers.handleSyncContent(packet))).add();
         CHANNEL.messageBuilder(SyncDataPackets.SyncBagPacket.class, 3, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(SyncDataPackets.SyncBagPacket::write).decoder(SyncDataPackets::readBag)
-                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> ClientNetworkHandlers.handleSyncBag(packet))).add();
+            .encoder(SyncDataPackets.SyncBagPacket::write).decoder(SyncDataPackets::readBag)
+            .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientNetworkHandlers.handleSyncBag(packet))).add();
         CHANNEL.messageBuilder(SetScreenPacket.class, 4, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(SetScreenPacket::write).decoder(SetScreenPacket::read)
-                .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> ClientNetworkHandlers.handleSetScreen(packet))).add();
+            .encoder(SetScreenPacket::write).decoder(SetScreenPacket::read)
+            .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientNetworkHandlers.handleSetScreen(packet))).add();
         MinecraftForge.EVENT_BUS.addListener(ServerNetworkHandlers::sendSyncData);
     }
 
     private static void sendSyncData(OnDatapackSyncEvent event)
     {
-        if (event.getPlayer() != null) sendSyncContent(event.getPlayer());
-        else event.getPlayerList().getPlayerList().forEach(ServerNetworkHandlers::sendSyncContent);
+        if (event.getPlayer() != null)
+        {
+            sendSyncContent(event.getPlayer());
+        } else
+        {
+            event.getPlayerList().getPlayerList().forEach(ServerNetworkHandlers::sendSyncContent);
+        }
     }
 
     private static void sendSyncContent(ServerPlayerEntity player)

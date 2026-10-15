@@ -39,13 +39,19 @@ public class LootBagItem extends Item
     public Optional<BagEntry> getBagEntry(ItemStack stack)
     {
         NbtCompound nbt = stack.getNbt();
-        if (nbt == null) return Optional.empty();
+        if (nbt == null)
+        {
+            return Optional.empty();
+        }
         NbtElement element = nbt.get(KEY);
-        if (element == null) return Optional.empty();
+        if (element == null)
+        {
+            return Optional.empty();
+        }
         return BagEntry.CODEC
-                .decode(NbtOps.INSTANCE, element)
-                .result()
-                .map(Pair::getFirst);
+            .decode(NbtOps.INSTANCE, element)
+            .result()
+            .map(Pair::getFirst);
     }
 
     public Optional<Bag> getBag(ItemStack stack)
@@ -57,8 +63,8 @@ public class LootBagItem extends Item
     {
         ItemStack stack = this.getDefaultStack();
         stack.setSubNbt(
-                KEY,
-                NbtString.of(bagId.toString())
+            KEY,
+            NbtString.of(bagId.toString())
         );
         return stack;
     }
@@ -67,11 +73,11 @@ public class LootBagItem extends Item
     {
         ItemStack stack = this.getDefaultStack();
         stack.setSubNbt(
-                KEY,
-                BagEntry.CODEC
-                        .encodeStart(NbtOps.INSTANCE, entry)
-                        .result()
-                        .orElseThrow()
+            KEY,
+            BagEntry.CODEC
+                .encodeStart(NbtOps.INSTANCE, entry)
+                .result()
+                .orElseThrow()
         );
         return stack;
     }
@@ -80,8 +86,8 @@ public class LootBagItem extends Item
     public Text getName(ItemStack stack)
     {
         return this.getBagEntry(stack)
-                .map(BagEntry::getName)
-                .orElseGet(this::getName);
+            .map(BagEntry::getName)
+            .orElseGet(this::getName);
     }
 
     @Override
@@ -116,7 +122,10 @@ public class LootBagItem extends Item
                     }
                 }
                 // Open Through Screen
-                else ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                else
+                {
+                    ServerNetworkHandlers.sendScreen(player, slot, entry.id());
+                }
             }, () -> player.sendMessage(INVALID, true));
         }
         return TypedActionResult.success(stack, world.isClient());
@@ -128,7 +137,9 @@ public class LootBagItem extends Item
         {
             content.reward(player);
             if (!player.isCreative())
+            {
                 stack.decrement(1);
+            }
         });
     }
 
@@ -136,10 +147,12 @@ public class LootBagItem extends Item
     {
         ItemStack stack = player.getInventory().getStack(slot);
         if (stack.getItem() instanceof LootBagItem item)
+        {
             item.getBag(stack).ifPresentOrElse(
-                    bag -> open(player, stack, bag, selectedIndex),
-                    () -> player.sendMessage(INVALID, true)
+                bag -> open(player, stack, bag, selectedIndex),
+                () -> player.sendMessage(INVALID, true)
             );
+        }
     }
 
     @Override
@@ -152,7 +165,10 @@ public class LootBagItem extends Item
             return;
         }
         tooltip.add(OPEN_PREVIEW_SCREEN);
-        if (!optional.get().getType().quick()) return;
+        if (!optional.get().getType().quick())
+        {
+            return;
+        }
         tooltip.add(QUICK_OPEN);
         tooltip.add(QUICK_OPEN_STACK);
     }

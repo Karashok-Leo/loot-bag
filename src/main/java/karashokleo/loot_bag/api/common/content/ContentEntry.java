@@ -13,20 +13,20 @@ public record ContentEntry(Identifier id, Content content, String nameKey, Strin
     public ContentEntry(Identifier id, Content content)
     {
         this(
-                id,
-                content,
-                id.toTranslationKey("content"),
-                id.toTranslationKey("content") + ".desc"
+            id,
+            content,
+            id.toTranslationKey("content"),
+            id.toTranslationKey("content") + ".desc"
         );
     }
 
     public static final Codec<ContentEntry> CODEC = Identifier.CODEC.comapFlatMap(
-            id ->
-            {
-                ContentEntry entry = LootBagManager.getInstance().getContentEntry(id);
-                return entry == null ? DataResult.error(() -> ConstantTexts.unknownContentMessage(id)) : DataResult.success(entry);
-            },
-            ContentEntry::id
+        id ->
+        {
+            ContentEntry entry = LootBagManager.getInstance().getContentEntry(id);
+            return entry == null ? DataResult.error(() -> ConstantTexts.unknownContentMessage(id)) : DataResult.success(entry);
+        },
+        ContentEntry::id
     );
 
     public MutableText getName()

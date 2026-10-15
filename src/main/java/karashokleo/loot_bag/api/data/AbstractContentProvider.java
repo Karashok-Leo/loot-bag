@@ -1,8 +1,8 @@
 package karashokleo.loot_bag.api.data;
 
 import karashokleo.loot_bag.api.common.content.Content;
-import karashokleo.loot_bag.internal.data.ConstantTexts;
 import karashokleo.loot_bag.internal.data.CodecDataProvider;
+import karashokleo.loot_bag.internal.data.ConstantTexts;
 import net.minecraft.data.DataOutput;
 
 public abstract class AbstractContentProvider extends CodecDataProvider<Content>

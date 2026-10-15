@@ -1,9 +1,8 @@
 package karashokleo.loot_bag.api.common.content;
 
 import com.mojang.serialization.Codec;
-import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
@@ -14,6 +13,7 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +21,9 @@ import java.util.List;
 public class LootTableContent extends StacksContent
 {
     public static final Codec<LootTableContent> CODEC = RecordCodecBuilder.create(
-            ins -> ins.group(
-                    Identifier.CODEC.fieldOf("id").forGetter(LootTableContent::getId)
-            ).and(contentFields(ins).t1()).apply(ins, LootTableContent::new)
+        ins -> ins.group(
+            Identifier.CODEC.fieldOf("id").forGetter(LootTableContent::getId)
+        ).and(contentFields(ins).t1()).apply(ins, LootTableContent::new)
     );
 
     public static final RegistryObject<ContentType<LootTableContent>> TYPE = LootBagRegistry.LOOT_TABLE_CONTENT;
@@ -50,12 +50,15 @@ public class LootTableContent extends StacksContent
     @Override
     protected List<ItemStack> getLootStacks(ServerPlayerEntity player)
     {
-        if (id.equals(LootTables.EMPTY)) return Collections.emptyList();
+        if (id.equals(LootTables.EMPTY))
+        {
+            return Collections.emptyList();
+        }
         ServerWorld world = player.getServerWorld();
         LootContextParameterSet lootContextParameterSet = new LootContextParameterSet.Builder(world)
-                .add(LootContextParameters.THIS_ENTITY, player)
-                .add(LootContextParameters.ORIGIN, player.getPos())
-                .build(LootContextTypes.CHEST);
+            .add(LootContextParameters.THIS_ENTITY, player)
+            .add(LootContextParameters.ORIGIN, player.getPos())
+            .build(LootContextTypes.CHEST);
         LootTable lootTable = world.getServer().getLootManager().getLootTable(id);
         return lootTable.generateLoot(lootContextParameterSet);
     }

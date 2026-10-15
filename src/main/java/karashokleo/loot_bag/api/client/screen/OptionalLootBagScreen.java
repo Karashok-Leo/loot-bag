@@ -1,7 +1,7 @@
 package karashokleo.loot_bag.api.client.screen;
 
-import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import karashokleo.loot_bag.api.common.bag.OptionalBag;
+import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;

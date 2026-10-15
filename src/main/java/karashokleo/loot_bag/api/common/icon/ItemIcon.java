@@ -1,23 +1,23 @@
 package karashokleo.loot_bag.api.common.icon;
 
 import com.mojang.serialization.Codec;
-import karashokleo.loot_bag.api.common.LootBagRegistry;
-import net.minecraftforge.registries.RegistryObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import karashokleo.loot_bag.api.common.LootBagRegistry;
 import karashokleo.loot_bag.api.common.util.CodecUtil;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ItemIcon extends Icon
 {
     public static final Codec<ItemIcon> CODEC = RecordCodecBuilder.create(
-            ins -> ins.group(
-                    CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
-            ).and(iconFields()).apply(ins, ItemIcon::new)
+        ins -> ins.group(
+            CodecUtil.ITEM_STACK_CODEC.fieldOf("item").forGetter(ItemIcon::getStack)
+        ).and(iconFields()).apply(ins, ItemIcon::new)
     );
 
     public static final RegistryObject<IconType<ItemIcon>> TYPE = LootBagRegistry.ITEM_ICON;
@@ -56,7 +56,10 @@ public class ItemIcon extends Icon
     @Override
     public void render(DrawContext context, MatrixStack matrices, float alpha, float delta)
     {
-        if (stack.isEmpty()) return;
+        if (stack.isEmpty())
+        {
+            return;
+        }
 
         matrices.push();
 //        matrices.multiplyPositionMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));

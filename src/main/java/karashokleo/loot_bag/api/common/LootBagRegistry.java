@@ -1,28 +1,19 @@
 package karashokleo.loot_bag.api.common;
 
-import karashokleo.loot_bag.api.common.bag.SingleBag;
-import karashokleo.loot_bag.api.common.bag.OptionalBag;
-import karashokleo.loot_bag.api.common.bag.RandomBag;
-import karashokleo.loot_bag.api.common.bag.Bag;
-import karashokleo.loot_bag.api.common.bag.BagType;
-import karashokleo.loot_bag.api.common.content.ItemContent;
-import karashokleo.loot_bag.api.common.content.LootTableContent;
-import karashokleo.loot_bag.api.common.content.CommandContent;
-import karashokleo.loot_bag.api.common.content.EffectContent;
-import karashokleo.loot_bag.api.common.content.Content;
-import karashokleo.loot_bag.api.common.content.ContentType;
-import karashokleo.loot_bag.api.common.icon.ItemIcon;
-import karashokleo.loot_bag.api.common.icon.TextureIcon;
+import karashokleo.loot_bag.api.common.bag.*;
+import karashokleo.loot_bag.api.common.content.*;
 import karashokleo.loot_bag.api.common.icon.Icon;
 import karashokleo.loot_bag.api.common.icon.IconType;
+import karashokleo.loot_bag.api.common.icon.ItemIcon;
+import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
 import net.minecraft.registry.Registries;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
@@ -65,11 +56,11 @@ public class LootBagRegistry
     public static void createRegistries(NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<ContentType<?>>().setName(CONTENT_TYPE_KEY.getValue()).hasTags(),
-                registry -> CONTENT_TYPE_REGISTRY = (Registry<ContentType<?>>) Registries.REGISTRIES.get(CONTENT_TYPE_KEY.getValue()));
+            registry -> CONTENT_TYPE_REGISTRY = (Registry<ContentType<?>>) Registries.REGISTRIES.get(CONTENT_TYPE_KEY.getValue()));
         event.create(new RegistryBuilder<BagType<?>>().setName(BAG_TYPE_KEY.getValue()).hasTags(),
-                registry -> BAG_TYPE_REGISTRY = (Registry<BagType<?>>) Registries.REGISTRIES.get(BAG_TYPE_KEY.getValue()));
+            registry -> BAG_TYPE_REGISTRY = (Registry<BagType<?>>) Registries.REGISTRIES.get(BAG_TYPE_KEY.getValue()));
         event.create(new RegistryBuilder<IconType<?>>().setName(ICON_TYPE_KEY.getValue()).hasTags(),
-                registry -> ICON_TYPE_REGISTRY = (Registry<IconType<?>>) Registries.REGISTRIES.get(ICON_TYPE_KEY.getValue()));
+            registry -> ICON_TYPE_REGISTRY = (Registry<IconType<?>>) Registries.REGISTRIES.get(ICON_TYPE_KEY.getValue()));
     }
 
     public static <T extends Content> RegistryObject<ContentType<T>> registerContentType(String name, Supplier<ContentType<T>> type)

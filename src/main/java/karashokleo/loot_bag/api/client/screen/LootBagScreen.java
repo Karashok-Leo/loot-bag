@@ -40,9 +40,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void init()
     {
         this.openButton = ButtonWidget
-                .builder(TEXT_OPEN, button -> open())
-                .dimensions((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
-                .build();
+            .builder(TEXT_OPEN, button -> open())
+            .dimensions((width - OPEN_WIDTH) / 2, this.getOpenY() - OPEN_HEIGHT / 2, OPEN_WIDTH, OPEN_HEIGHT)
+            .build();
         addDrawableChild(openButton);
         updateContentText();
     }
@@ -130,7 +130,9 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
     protected void open(int selectedIndex)
     {
         if (client != null && client.player != null)
+        {
             ClientNetworkHandlers.sendOpen(slot, selectedIndex);
+        }
         close();
     }
 
@@ -144,7 +146,7 @@ public abstract class LootBagScreen<B extends Bag> extends Screen
         {
             return true;
         } else if (this.client != null &&
-                   this.client.options.inventoryKey.matchesKey(keyCode, scanCode))
+            this.client.options.inventoryKey.matchesKey(keyCode, scanCode))
         {
             this.close();
             return true;
