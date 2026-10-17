@@ -15,9 +15,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-@OnlyIn(Dist.CLIENT)
 public class ClientNetworkHandlers
 {
+    @OnlyIn(Dist.CLIENT)
     public static void sendOpen(int slot, int selectedIndex)
     {
         PacketDistributor.sendToServer(new OpenBagPacket(slot, selectedIndex));
@@ -51,7 +51,13 @@ public class ClientNetworkHandlers
         {
             throw new IllegalStateException(ConstantTexts.unknownBagMessage(packet.bagId()));
         }
-        LootBagScreen<?> screen = LootBagScreenRegistry.getFactory(entry.bag().getType()).createScreen(entry.bag(), packet.slot());
+        setScreen(entry, packet.slot());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void setScreen(BagEntry entry, int slot)
+    {
+        LootBagScreen<?> screen = LootBagScreenRegistry.getFactory(entry.bag().getType()).createScreen(entry.bag(), slot);
         Minecraft.getInstance().setScreen(screen);
     }
 }
