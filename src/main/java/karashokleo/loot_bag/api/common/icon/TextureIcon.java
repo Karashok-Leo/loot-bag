@@ -84,6 +84,18 @@ public class TextureIcon extends Icon
         return TYPE;
     }
 
+    /**
+     * Binds the texture this icon is drawn with.
+     *
+     * @return {@code false} when there is nothing to draw, which skips the icon
+     */
+    @Environment(EnvType.CLIENT)
+    protected boolean bindTexture()
+    {
+        RenderSystem.setShaderTexture(0, texture);
+        return true;
+    }
+
     @Environment(EnvType.CLIENT)
     @Override
     public void render(DrawContext context, MatrixStack matrices, float alpha, float delta)
@@ -93,7 +105,11 @@ public class TextureIcon extends Icon
         matrices.scale(scale, scale, 1);
         matrices.scale(SIZE, SIZE, 1);
 
-        RenderSystem.setShaderTexture(0, texture);
+        if (!this.bindTexture())
+        {
+            matrices.pop();
+            return;
+        }
         RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
         RenderSystem.enableBlend();
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();

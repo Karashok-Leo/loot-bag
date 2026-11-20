@@ -2,6 +2,8 @@
   "bag.loot-bag.optional": "Bag Name - loot-bag:optional",
   "bag.loot-bag.random": "Bag Name - loot-bag:random",
   "bag.loot-bag.single": "Bag Name - loot-bag:single",
+  "content.loot-bag.animated": "Content Name - loot-bag:animated",
+  "content.loot-bag.animated.desc": "Content Description - loot-bag:animated - \n......\n............\n..................\n........................\n..............................\n....................................\n..........................................\n................................................\n......................................................\n............................................................\n..................................................................\n........................................................................\nloooooooooooooooong enough to display multi-line text effects",
   "content.loot-bag.beef": "Content Name - loot-bag:beef",
   "content.loot-bag.beef.desc": "Content Description - loot-bag:beef - \n......\n............\n..................\n........................\n..............................\n....................................\n..........................................\n................................................\n......................................................\n............................................................\n..................................................................\n........................................................................\nloooooooooooooooong enough to display multi-line text effects",
   "content.loot-bag.creeper": "Content Name - loot-bag:creeper",
