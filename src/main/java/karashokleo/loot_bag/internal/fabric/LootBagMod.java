@@ -8,6 +8,7 @@ import karashokleo.loot_bag.api.common.content.CommandContent;
 import karashokleo.loot_bag.api.common.content.EffectContent;
 import karashokleo.loot_bag.api.common.content.ItemContent;
 import karashokleo.loot_bag.api.common.content.LootTableContent;
+import karashokleo.loot_bag.api.common.icon.AnimatedTextureIcon;
 import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.api.common.loot.LootBagEntry;
@@ -45,6 +46,7 @@ public class LootBagMod implements ModInitializer
         LootBagRegistry.registerBagType(id("random"), RandomBag.TYPE);
         LootBagRegistry.registerIconType(id("item"), ItemIcon.TYPE);
         LootBagRegistry.registerIconType(id("texture"), TextureIcon.TYPE);
+        LootBagRegistry.registerIconType(id("animated_texture"), AnimatedTextureIcon.TYPE);
     }
 
     public static Identifier id(String path)

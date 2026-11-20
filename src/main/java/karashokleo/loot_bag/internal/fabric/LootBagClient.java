@@ -1,6 +1,7 @@
 package karashokleo.loot_bag.internal.fabric;
 
 import karashokleo.loot_bag.api.client.LootBagScreenRegistry;
+import karashokleo.loot_bag.api.client.texture.AnimatedTextureManager;
 import karashokleo.loot_bag.api.client.screen.OptionalLootBagScreen;
 import karashokleo.loot_bag.api.client.screen.RandomLootBagScreen;
 import karashokleo.loot_bag.api.client.screen.SingleLootBagScreen;
@@ -22,6 +23,7 @@ public class LootBagClient implements ClientModInitializer
         LootBagScreenRegistry.register(RandomBag.TYPE, RandomLootBagScreen::new);
 
         ClientNetworkHandlers.init();
+        AnimatedTextureManager.init();
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> LootBagItemRegistry.LOOT_BAG.getBag(stack).map(bag -> bag.getColor().byTintIndex(tintIndex)).orElse(tintIndex * 0xffffff), LootBagItemRegistry.LOOT_BAG);
     }

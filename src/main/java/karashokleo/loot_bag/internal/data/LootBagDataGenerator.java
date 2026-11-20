@@ -2,6 +2,7 @@ package karashokleo.loot_bag.internal.data;
 
 import karashokleo.loot_bag.api.common.bag.*;
 import karashokleo.loot_bag.api.common.content.*;
+import karashokleo.loot_bag.api.common.icon.AnimatedTextureIcon;
 import karashokleo.loot_bag.api.common.icon.ItemIcon;
 import karashokleo.loot_bag.api.common.icon.TextureIcon;
 import karashokleo.loot_bag.internal.fabric.LootBagMod;
@@ -91,6 +92,14 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
                 )
         );
 
+        ContentEntry animated = new ContentEntry(
+                LootBagMod.id("animated"),
+                new LootTableContent(
+                        new Identifier("entities/witch"),
+                        new AnimatedTextureIcon(new Identifier("textures/block/fire_0.png"))
+                )
+        );
+
         BagEntry single = new BagEntry(
                 LootBagMod.id("single"),
                 new SingleBag(
@@ -102,7 +111,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         BagEntry optional = new BagEntry(
                 LootBagMod.id("optional"),
                 new OptionalBag(
-                        List.of(diamondSword, stone, effect),
+                        List.of(diamondSword, stone, effect, animated),
                         Rarity.RARE,
                         new Bag.Color(0x28DF99, 0x493323)
                 )
@@ -127,6 +136,7 @@ public class LootBagDataGenerator implements DataGeneratorEntrypoint
         CONTENTS.add(zombie);
         CONTENTS.add(skeleton);
         CONTENTS.add(creeper);
+        CONTENTS.add(animated);
         BAGS.add(single);
         BAGS.add(optional);
         BAGS.add(random);
